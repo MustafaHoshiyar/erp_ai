@@ -13,7 +13,30 @@
 </head>
 
 <body>
+    <!-- Overlay for Sidebar on Mobile -->
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h2>Saved Reports</h2>
+            <button class="close-sidebar-btn" id="close-sidebar-btn" title="Close Sidebar">
+                &times;
+            </button>
+        </div>
+        <div class="saved-reports-list" id="saved-reports-list">
+            <!-- Saved reports will be populated here -->
+        </div>
+    </aside>
+
     <main class="app-container">
+        <button class="open-sidebar-btn" id="open-sidebar-btn" title="Open Saved Reports">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="3" y1="12" x2="21" y2="12"></line>
+                <line x1="3" y1="6" x2="21" y2="6"></line>
+                <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
+        </button>
         <!-- Chat History / Results Area -->
         <div id="results-area" class="results-area">
             <!-- Dynamic content will be appended here -->
@@ -101,6 +124,15 @@
                                     <line x1="18" y1="20" x2="18" y2="10"></line>
                                     <line x1="12" y1="20" x2="12" y2="4"></line>
                                     <line x1="6" y1="20" x2="6" y2="14"></line>
+                                </svg>
+                            </button>
+                            <button class="save-report-btn" title="Save Report & Dashboard">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                                    <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                                    <polyline points="7 3 7 8 15 8"></polyline>
                                 </svg>
                             </button>
                         </div>

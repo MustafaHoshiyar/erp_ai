@@ -4,6 +4,9 @@ from pydantic import BaseModel
 from ai_engine import generate_sql, generate_chart_config
 from sql_validator import validate_sql
 from erp_client import run_query
+from database import SessionLocal, SavedReport, get_db
+from sqlalchemy.orm import Session
+from fastapi import Depends, HTTPException
 
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
@@ -53,3 +56,69 @@ async def api_generate_chart_config(request: ChartConfigRequest):
         return config_json
     except Exception as e:
         return {"error": str(e)}
+
+# --- Saved Reports Endpoints ---
+
+class SaveReportRequest(BaseModel):
+    client_id: str
+    name: str
+    original_prompt: str
+    sql_query: str
+    chart_config: Optional[Dict[str, Any]] = None
+
+@app.post("/api/reports/save")
+def save_report(request: SaveReportRequest, db: Session = Depends(get_db)):
+    try:
+        new_report = SavedReport(
+            client_id=request.client_id,
+            name=request.name,
+            original_prompt=request.original_prompt,
+            sql_query=request.sql_query,
+            chart_config=request.chart_config
+        )
+        db.add(new_report)
+        db.commit()
+        db.refresh(new_report)
+        return {"status": "success", "id": new_report.id}
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/reports/{client_id}")
+def get_saved_reports(client_id: str, db: Session = Depends(get_db)):
+    reports = db.query(SavedReport).filter(SavedReport.client_id == client_id).order_by(SavedReport.created_at.desc()).all()
+    # Format for JSON serialization
+    return [
+        {
+            "id": r.id,
+            "name": r.name,
+            "original_prompt": r.original_prompt,
+            "sql_query": r.sql_query,
+            "chart_config": r.chart_config,
+            "created_at": r.created_at.isoformat() if r.created_at else None
+        }
+        for r in reports
+    ]
+
+@app.post("/api/reports/execute/{report_id}")
+async def execute_saved_report(report_id: int, db: Session = Depends(get_db)):
+    report = db.query(SavedReport).filter(SavedReport.id == report_id).first()
+    if not report:
+        raise HTTPException(status_code=404, detail="Report not found")
+        
+    try:
+        # Re-validate just in case, though it should be safe since it was saved
+        validated_sql = validate_sql(report.sql_query)
+        data = await run_query(validated_sql)
+        
+        return {
+            "id": report.id,
+            "name": report.name,
+            "original_prompt": report.original_prompt,
+            "sql": validated_sql,
+            "chart_config": report.chart_config,
+            "data": data
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error executing report: {str(e)}")
+

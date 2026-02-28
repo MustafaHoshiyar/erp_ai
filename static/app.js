@@ -12,6 +12,91 @@ document.addEventListener('DOMContentLoaded', () => {
     const userMessageTemplate = document.getElementById('user-message-template');
     const aiResponseTemplate = document.getElementById('ai-response-template');
 
+    // Sidebar Elements
+    const sidebar = document.getElementById('sidebar');
+    const sidebarOverlay = document.getElementById('sidebar-overlay');
+    const openSidebarBtn = document.getElementById('open-sidebar-btn');
+    const closeSidebarBtn = document.getElementById('close-sidebar-btn');
+    const savedReportsList = document.getElementById('saved-reports-list');
+
+    // Mock Client ID for Phase 2 demo
+    const CLIENT_ID = "DEMO_CLIENT_123";
+
+    // Sidebar Logic
+    function toggleSidebar() {
+        sidebar.classList.toggle('open');
+        sidebarOverlay.classList.toggle('active');
+        if (sidebar.classList.contains('open')) {
+            loadSavedReports();
+        }
+    }
+
+    openSidebarBtn.addEventListener('click', toggleSidebar);
+    closeSidebarBtn.addEventListener('click', toggleSidebar);
+    sidebarOverlay.addEventListener('click', toggleSidebar);
+
+    async function loadSavedReports() {
+        savedReportsList.innerHTML = '<div class="text-muted" style="padding: 1rem;">Loading...</div>';
+        try {
+            const res = await fetch(`/api/reports/${CLIENT_ID}`);
+            const reports = await res.json();
+
+            savedReportsList.innerHTML = '';
+            if (reports.length === 0) {
+                savedReportsList.innerHTML = '<div class="text-muted" style="padding: 1rem;">No saved reports yet.</div>';
+                return;
+            }
+
+            reports.forEach(report => {
+                const item = document.createElement('div');
+                item.className = 'saved-report-item';
+                item.innerHTML = `
+                    <h4>${report.name}</h4>
+                    <p>${report.original_prompt}</p>
+                    <div class="date">${new Date(report.created_at).toLocaleDateString()}</div>
+                `;
+                item.addEventListener('click', () => {
+                    toggleSidebar();
+                    executeSavedReport(report);
+                });
+                savedReportsList.appendChild(item);
+            });
+        } catch (err) {
+            console.error(err);
+            savedReportsList.innerHTML = '<div class="text-error" style="padding: 1rem;">Failed to load saved reports.</div>';
+        }
+    }
+
+    async function executeSavedReport(report) {
+        // UI Transition: Move prompt bar to bottom
+        if (promptArea.classList.contains('prompt-centered')) {
+            promptArea.classList.remove('prompt-centered');
+            welcomeHeader.classList.add('hidden');
+        }
+
+        addUserMessage(`[Loaded Saved Report] ${report.name}: ${report.original_prompt}`);
+
+        const aiMessageNode = createAiMessagePlaceholder();
+        resultsArea.appendChild(aiMessageNode);
+        scrollToBottom();
+
+        try {
+            const response = await fetch(`/api/reports/execute/${report.id}`, {
+                method: 'POST'
+            });
+
+            if (!response.ok) throw new Error("Failed to execute saved report.");
+
+            const result = await response.json();
+
+            // Format to match what populateAiMessage expects
+            populateAiMessage(aiMessageNode, result, report.chart_config);
+
+        } catch (err) {
+            showAiError(aiMessageNode, err.message);
+        }
+    }
+
     // Auto-resize textarea
     promptInput.addEventListener('input', function () {
         this.style.height = 'auto';
@@ -121,7 +206,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return node;
     }
 
-    function populateAiMessage(messageNode, result) {
+    function populateAiMessage(messageNode, result, preLoadedChartConfig = null) {
         // Remove 'Thinking...' placeholder
         const placeholder = messageNode.querySelector('.placeholder-text');
         if (placeholder) placeholder.remove();
@@ -136,7 +221,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const dashboardBtn = messageNode.querySelector('.dashboard-btn');
         const chartContainer = messageNode.querySelector('.chart-container');
         const canvas = messageNode.querySelector('.dashboard-chart');
+        const saveReportBtn = messageNode.querySelector('.save-report-btn');
         let currentChart = null;
+        let lastChartConfig = null; // Store config for saving
 
         // Setup SQL Copy
         copySqlBtn.addEventListener('click', () => {
@@ -257,6 +344,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         currentChart.destroy();
                     }
 
+                    lastChartConfig = fullConfig; // Save for the 'Save Report' button
                     chartContainer.style.display = 'block';
                     currentChart = new Chart(canvas, fullConfig);
 
@@ -268,6 +356,55 @@ document.addEventListener('DOMContentLoaded', () => {
                     dashboardBtn.disabled = false;
                 }
             });
+        }
+
+        // Setup Save Report
+        if (saveReportBtn && result.sql) {
+            saveReportBtn.addEventListener('click', async () => {
+                const reportName = prompt("Enter a name for this saved report:");
+                if (!reportName) return;
+
+                const originalBtnContent = saveReportBtn.innerHTML;
+                saveReportBtn.innerHTML = '<div class="spinner" style="width:16px; height:16px; border-width:2px; border-color: currentColor; border-right-color: transparent;"></div>';
+                saveReportBtn.disabled = true;
+
+                // Find the user prompt that generated this
+                // In a real app we'd track the prompt ID accurately. Here we just grab the last user prompt from chatHistory
+                let originalPrompt = "Unknown prompt";
+                for (let i = chatHistory.length - 1; i >= 0; i--) {
+                    if (chatHistory[i].role === 'user') {
+                        originalPrompt = chatHistory[i].content;
+                        break;
+                    }
+                }
+
+                try {
+                    const response = await fetch('/api/reports/save', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            client_id: CLIENT_ID,
+                            name: reportName,
+                            original_prompt: originalPrompt,
+                            sql_query: result.sql,
+                            chart_config: lastChartConfig // Include the chart config if it was generated
+                        })
+                    });
+
+                    if (!response.ok) throw new Error("Failed to save report.");
+
+                    saveReportBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--success-color)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>';
+                    setTimeout(() => saveReportBtn.innerHTML = originalBtnContent, 2000);
+
+                } catch (e) {
+                    alert(e.message);
+                    saveReportBtn.innerHTML = originalBtnContent;
+                } finally {
+                    saveReportBtn.disabled = false;
+                }
+            });
+        } else if (saveReportBtn) {
+            saveReportBtn.style.display = 'none'; // Only show save if it generated SQL
         }
 
         // Try rendering SQL (currently removed from backend, but keeping logic if it returns)
@@ -321,6 +458,13 @@ document.addEventListener('DOMContentLoaded', () => {
             const textResponse = document.createElement('p');
             textResponse.textContent = result.message || "No data returned.";
             messageNode.querySelector('.message-content').prepend(textResponse);
+        }
+
+        // Render Pre-loaded Chart if it exists
+        if (preLoadedChartConfig && chartContainer && canvas) {
+            chartContainer.style.display = 'block';
+            lastChartConfig = preLoadedChartConfig;
+            currentChart = new Chart(canvas, preLoadedChartConfig);
         }
     }
 
