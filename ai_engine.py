@@ -3,6 +3,7 @@ import re
 from groq import Groq
 from openai import OpenAI
 from dotenv import load_dotenv
+from memory_manager import get_relevant_schema_context
 
 load_dotenv()
 
@@ -69,8 +70,15 @@ Rules for Conversation:
 - If the user says "hello" or asks a general question, just reply nicely as an AI assistant. DO NOT GENERATE SQL.
 """
 
-def generate_sql(user_prompt, history=None):
-    messages = [{"role": "system", "content": SYSTEM_PROMPT}]
+def generate_sql(user_prompt, history=None, client_id="DEMO_CLIENT_123"):
+    # Fetch relevant historical schema context
+    memory_context = get_relevant_schema_context(client_id, user_prompt)
+    
+    dynamic_system_prompt = SYSTEM_PROMPT
+    if memory_context:
+        dynamic_system_prompt += f"\n\n{memory_context}"
+
+    messages = [{"role": "system", "content": dynamic_system_prompt}]
     
     if history:
         messages.extend(history)

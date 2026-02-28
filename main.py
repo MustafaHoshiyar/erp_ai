@@ -21,10 +21,11 @@ from pydantic import BaseModel
 class PromptRequest(BaseModel):
     prompt: str
     history: Optional[List[Dict[str, str]]] = None
+    client_id: Optional[str] = "DEMO_CLIENT_123"
 
 @app.post("/generate-report")
 async def generate_report(request: PromptRequest):
-    result = generate_sql(request.prompt, request.history)
+    result = generate_sql(request.prompt, request.history, request.client_id)
 
     # If no SQL was generated, just return the conversational message
     if not result.get("sql"):
@@ -99,6 +100,20 @@ def get_saved_reports(client_id: str, db: Session = Depends(get_db)):
         }
         for r in reports
     ]
+
+@app.delete("/api/reports/{report_id}")
+def delete_saved_report(report_id: int, db: Session = Depends(get_db)):
+    report = db.query(SavedReport).filter(SavedReport.id == report_id).first()
+    if not report:
+        raise HTTPException(status_code=404, detail="Report not found")
+        
+    try:
+        db.delete(report)
+        db.commit()
+        return {"status": "success"}
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/api/reports/execute/{report_id}")
 async def execute_saved_report(report_id: int, db: Session = Depends(get_db)):

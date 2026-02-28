@@ -50,15 +50,41 @@ document.addEventListener('DOMContentLoaded', () => {
             reports.forEach(report => {
                 const item = document.createElement('div');
                 item.className = 'saved-report-item';
+                item.style.position = 'relative'; // For absolute positioning of delete bn
                 item.innerHTML = `
+                    <button class="delete-report-btn" title="Delete Report" data-id="${report.id}">&times;</button>
                     <h4>${report.name}</h4>
                     <p>${report.original_prompt}</p>
                     <div class="date">${new Date(report.created_at).toLocaleDateString()}</div>
                 `;
-                item.addEventListener('click', () => {
+
+                item.addEventListener('click', (e) => {
+                    if (e.target.classList.contains('delete-report-btn')) return;
                     toggleSidebar();
                     executeSavedReport(report);
                 });
+
+                // Add delete button logic
+                const deleteBtn = item.querySelector('.delete-report-btn');
+                deleteBtn.addEventListener('click', async (e) => {
+                    e.stopPropagation();
+                    if (confirm(`Are you sure you want to delete "${report.name}"?`)) {
+                        try {
+                            const delRes = await fetch(`/api/reports/${report.id}`, { method: 'DELETE' });
+                            if (delRes.ok) {
+                                item.remove();
+                                if (savedReportsList.children.length === 0) {
+                                    savedReportsList.innerHTML = '<div class="text-muted" style="padding: 1rem;">No saved reports yet.</div>';
+                                }
+                            } else {
+                                alert("Failed to delete report.");
+                            }
+                        } catch (err) {
+                            alert("Error: " + err.message);
+                        }
+                    }
+                });
+
                 savedReportsList.appendChild(item);
             });
         } catch (err) {
@@ -279,6 +305,10 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
+        if (saveReportBtn) {
+            saveReportBtn.style.display = 'none'; // Initially hide when data renders
+        }
+
         // Setup Dashboard Generation
         if (dashboardBtn) {
             dashboardBtn.addEventListener('click', async () => {
@@ -348,6 +378,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     chartContainer.style.display = 'block';
                     currentChart = new Chart(canvas, fullConfig);
 
+                    if (saveReportBtn) {
+                        saveReportBtn.style.display = 'flex'; // Show save button
+                    }
+
                 } catch (e) {
                     console.error("Dashboard error:", e);
                     alert("Could not generate dashboard: " + e.message);
@@ -404,8 +438,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
         } else if (saveReportBtn) {
-            saveReportBtn.style.display = 'none'; // Only show save if it generated SQL
+            saveReportBtn.style.display = 'none'; // Only show save if it generated SQL and a chart
         }
+
+
+
 
         // Try rendering SQL (currently removed from backend, but keeping logic if it returns)
         if (result.sql) {
