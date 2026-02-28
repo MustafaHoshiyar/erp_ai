@@ -1,0 +1,1268 @@
+{
+  "fetched_at": 1772278041.8927376,
+  "fetched_at_readable": "2026-02-28 16:57:21",
+  "custom_doctypes": [
+    {
+      "name": "Customer Device Record",
+      "module": "Selling",
+      "fields": [
+        {
+          "fieldname": "naming_series",
+          "fieldtype": "Select",
+          "label": "Naming series",
+          "options": null
+        },
+        {
+          "fieldname": "date",
+          "fieldtype": "Date",
+          "label": "Date",
+          "options": null
+        },
+        {
+          "fieldname": "customer",
+          "fieldtype": "Link",
+          "label": "Customer",
+          "options": "Customer"
+        },
+        {
+          "fieldname": "customer_name",
+          "fieldtype": "Data",
+          "label": "Customer Name",
+          "options": null
+        },
+        {
+          "fieldname": "civil_id",
+          "fieldtype": "Data",
+          "label": "Civil Id",
+          "options": null
+        },
+        {
+          "fieldname": "date_of_birth",
+          "fieldtype": "Data",
+          "label": "Date of Birth",
+          "options": null
+        },
+        {
+          "fieldname": "file_no",
+          "fieldtype": "Data",
+          "label": "File no.",
+          "options": null
+        },
+        {
+          "fieldname": "mobile_no",
+          "fieldtype": "Data",
+          "label": "Mobile No",
+          "options": null
+        },
+        {
+          "fieldname": "area",
+          "fieldtype": "Link",
+          "label": "Area",
+          "options": "Area"
+        },
+        {
+          "fieldname": "address",
+          "fieldtype": "Data",
+          "label": "Address",
+          "options": null
+        },
+        {
+          "fieldname": "device_no",
+          "fieldtype": "Data",
+          "label": "Device No",
+          "options": null
+        },
+        {
+          "fieldname": "device_type",
+          "fieldtype": "Data",
+          "label": "Device type",
+          "options": null
+        },
+        {
+          "fieldname": "salesman",
+          "fieldtype": "Data",
+          "label": "Salesman",
+          "options": ""
+        },
+        {
+          "fieldname": "supervisor",
+          "fieldtype": "Data",
+          "label": "Supervisor",
+          "options": null
+        },
+        {
+          "fieldname": "telemarketer",
+          "fieldtype": "Data",
+          "label": "Telemarketer",
+          "options": null
+        },
+        {
+          "fieldname": "assist_with",
+          "fieldtype": "Data",
+          "label": "Assist with",
+          "options": null
+        },
+        {
+          "fieldname": "trade_in",
+          "fieldtype": "Data",
+          "label": "Trade In",
+          "options": null
+        },
+        {
+          "fieldname": "sales_amt",
+          "fieldtype": "Data",
+          "label": "Sales Amt",
+          "options": null
+        },
+        {
+          "fieldname": "down_payment",
+          "fieldtype": "Data",
+          "label": "Down Payment",
+          "options": null
+        },
+        {
+          "fieldname": "remaining_balance",
+          "fieldtype": "Data",
+          "label": "Remaining Balance",
+          "options": null
+        },
+        {
+          "fieldname": "amended_from",
+          "fieldtype": "Link",
+          "label": "Amended From",
+          "options": "Customer Device Record"
+        }
+      ],
+      "child_tables": []
+    },
+    {
+      "name": "Internal Transfer",
+      "module": "Super Natural",
+      "fields": [],
+      "child_tables": []
+    },
+    {
+      "name": "Lead Report",
+      "module": "Super Natural",
+      "fields": [
+        {
+          "fieldname": "referral_number",
+          "fieldtype": "Data",
+          "label": "Referral Number",
+          "options": null
+        },
+        {
+          "fieldname": "referred_by_customer",
+          "fieldtype": "Data",
+          "label": "Referred By Customer",
+          "options": null
+        },
+        {
+          "fieldname": "mobile_no",
+          "fieldtype": "Data",
+          "label": "Mobile No",
+          "options": null
+        },
+        {
+          "fieldname": "date",
+          "fieldtype": "Date",
+          "label": "Date",
+          "options": null
+        },
+        {
+          "fieldname": "assigned_to",
+          "fieldtype": "Data",
+          "label": "Assigned To",
+          "options": null
+        },
+        {
+          "fieldname": "description",
+          "fieldtype": "Small Text",
+          "label": "Description",
+          "options": null
+        },
+        {
+          "fieldname": "status",
+          "fieldtype": "Data",
+          "label": "Status",
+          "options": null
+        },
+        {
+          "fieldname": "result",
+          "fieldtype": "Data",
+          "label": "Result",
+          "options": null
+        }
+      ],
+      "child_tables": []
+    },
+    {
+      "name": "Lead Results",
+      "module": "Super Natural",
+      "fields": [
+        {
+          "fieldname": "date",
+          "fieldtype": "Date",
+          "label": "Date",
+          "options": null
+        },
+        {
+          "fieldname": "description",
+          "fieldtype": "Data",
+          "label": "Description",
+          "options": null
+        },
+        {
+          "fieldname": "result",
+          "fieldtype": "Link",
+          "label": "Result",
+          "options": "Results"
+        },
+        {
+          "fieldname": "assign_to",
+          "fieldtype": "Link",
+          "label": "Assign To",
+          "options": "User"
+        }
+      ],
+      "child_tables": []
+    },
+    {
+      "name": "Maintenance Visit Table",
+      "module": "Super Natural",
+      "fields": [
+        {
+          "fieldname": "item_code",
+          "fieldtype": "Link",
+          "label": "Item Code",
+          "options": "Item"
+        },
+        {
+          "fieldname": "item_name",
+          "fieldtype": "Data",
+          "label": "Item Name",
+          "options": null
+        },
+        {
+          "fieldname": "qty",
+          "fieldtype": "Int",
+          "label": "Quantity",
+          "options": null
+        },
+        {
+          "fieldname": "rate",
+          "fieldtype": "Currency",
+          "label": "Rate",
+          "options": null
+        },
+        {
+          "fieldname": "amount",
+          "fieldtype": "Currency",
+          "label": "Amount",
+          "options": null
+        }
+      ],
+      "child_tables": []
+    },
+    {
+      "name": "Previous Lead",
+      "module": "Super Natural",
+      "fields": [
+        {
+          "fieldname": "naming_series",
+          "fieldtype": "Select",
+          "label": "series",
+          "options": "PRV-LEAD-.YYYY.-"
+        },
+        {
+          "fieldname": "lead_name",
+          "fieldtype": "Data",
+          "label": "Lead Name",
+          "options": null
+        },
+        {
+          "fieldname": "lead_type",
+          "fieldtype": "Select",
+          "label": "Lead Type",
+          "options": "\nFOP\nOffie\nOwn\nPersonal"
+        },
+        {
+          "fieldname": "phone",
+          "fieldtype": "Data",
+          "label": "Phone",
+          "options": null
+        },
+        {
+          "fieldname": "address",
+          "fieldtype": "Text",
+          "label": "Address",
+          "options": null
+        },
+        {
+          "fieldname": "referred_by",
+          "fieldtype": "Data",
+          "label": "Referred By",
+          "options": null
+        },
+        {
+          "fieldname": "result",
+          "fieldtype": "Data",
+          "label": "Result",
+          "options": null
+        },
+        {
+          "fieldname": "cb_date",
+          "fieldtype": "Date",
+          "label": "CB Date",
+          "options": null
+        },
+        {
+          "fieldname": "telemarketer",
+          "fieldtype": "Data",
+          "label": "Telemarketer",
+          "options": null
+        },
+        {
+          "fieldname": "last_date",
+          "fieldtype": "Date",
+          "label": "Last Date",
+          "options": null
+        },
+        {
+          "fieldname": "last_notes",
+          "fieldtype": "Small Text",
+          "label": "Last Notes",
+          "options": null
+        },
+        {
+          "fieldname": "last_result",
+          "fieldtype": "Data",
+          "label": "Last Result",
+          "options": null
+        },
+        {
+          "fieldname": "notes",
+          "fieldtype": "Small Text",
+          "label": "Notes",
+          "options": null
+        },
+        {
+          "fieldname": "ref_number",
+          "fieldtype": "Data",
+          "label": "Ref. Number",
+          "options": null
+        },
+        {
+          "fieldname": "sales_person",
+          "fieldtype": "Link",
+          "label": "Sales Person",
+          "options": "Sales Person"
+        }
+      ],
+      "child_tables": []
+    },
+    {
+      "name": "Results",
+      "module": "Super Natural",
+      "fields": [
+        {
+          "fieldname": "result",
+          "fieldtype": "Data",
+          "label": "Result",
+          "options": null
+        }
+      ],
+      "child_tables": []
+    }
+  ],
+  "custom_fields": [
+    {
+      "name": "Address-custom_apartment",
+      "dt": "Address",
+      "fieldname": "custom_apartment",
+      "fieldtype": "Data",
+      "label": "Apartment",
+      "options": null
+    },
+    {
+      "name": "Address-custom_area_n",
+      "dt": "Address",
+      "fieldname": "custom_area_n",
+      "fieldtype": "Link",
+      "label": "Area",
+      "options": "Area"
+    },
+    {
+      "name": "Address-custom_block",
+      "dt": "Address",
+      "fieldname": "custom_block",
+      "fieldtype": "Data",
+      "label": "Block",
+      "options": null
+    },
+    {
+      "name": "Address-custom_building",
+      "dt": "Address",
+      "fieldname": "custom_building",
+      "fieldtype": "Data",
+      "label": "Building",
+      "options": null
+    },
+    {
+      "name": "Address-custom_floor",
+      "dt": "Address",
+      "fieldname": "custom_floor",
+      "fieldtype": "Data",
+      "label": "Floor",
+      "options": null
+    },
+    {
+      "name": "Address-custom_street",
+      "dt": "Address",
+      "fieldname": "custom_street",
+      "fieldtype": "Data",
+      "label": "Street",
+      "options": ""
+    },
+    {
+      "name": "Address-is_your_company_address",
+      "dt": "Address",
+      "fieldname": "is_your_company_address",
+      "fieldtype": "Check",
+      "label": "Is Your Company Address",
+      "options": null
+    },
+    {
+      "name": "Address-tax_category",
+      "dt": "Address",
+      "fieldname": "tax_category",
+      "fieldtype": "Link",
+      "label": "Tax Category",
+      "options": "Tax Category"
+    },
+    {
+      "name": "Advance Payment-custom_sales_invoice_status",
+      "dt": "Advance Payment",
+      "fieldname": "custom_sales_invoice_status",
+      "fieldtype": "Data",
+      "label": "Sales Invoice Status",
+      "options": null
+    },
+    {
+      "name": "Communication-company",
+      "dt": "Communication",
+      "fieldname": "company",
+      "fieldtype": "Link",
+      "label": "Company",
+      "options": "Company"
+    },
+    {
+      "name": "Contact-is_billing_contact",
+      "dt": "Contact",
+      "fieldname": "is_billing_contact",
+      "fieldtype": "Check",
+      "label": "Is Billing Contact",
+      "options": null
+    },
+    {
+      "name": "Customer-custom_civil_id_number",
+      "dt": "Customer",
+      "fieldname": "custom_civil_id_number",
+      "fieldtype": "Data",
+      "label": "Civil Id Number",
+      "options": null
+    },
+    {
+      "name": "Customer-custom_date_of_birth",
+      "dt": "Customer",
+      "fieldname": "custom_date_of_birth",
+      "fieldtype": "Date",
+      "label": "Date of Birth",
+      "options": null
+    },
+    {
+      "name": "Customer-custom_file_number",
+      "dt": "Customer",
+      "fieldname": "custom_file_number",
+      "fieldtype": "Data",
+      "label": "File Number",
+      "options": null
+    },
+    {
+      "name": "Customer-custom_nationality",
+      "dt": "Customer",
+      "fieldname": "custom_nationality",
+      "fieldtype": "Link",
+      "label": "Nationality",
+      "options": "Nationality"
+    },
+    {
+      "name": "Customer-custom_status",
+      "dt": "Customer",
+      "fieldname": "custom_status",
+      "fieldtype": "Select",
+      "label": "Status",
+      "options": "M.I.A\nACTIVE\nLAW SUIT\nCANCELLED\nSETTLED\nNOT INSTALLED"
+    },
+    {
+      "name": "Email Account-company",
+      "dt": "Email Account",
+      "fieldname": "company",
+      "fieldtype": "Link",
+      "label": "Company",
+      "options": "Company"
+    },
+    {
+      "name": "Installment-custom_sales_invoice_status",
+      "dt": "Installment",
+      "fieldname": "custom_sales_invoice_status",
+      "fieldtype": "Data",
+      "label": "Sales Invoice Status",
+      "options": null
+    },
+    {
+      "name": "Item-custom_is_maintenance_item",
+      "dt": "Item",
+      "fieldname": "custom_is_maintenance_item",
+      "fieldtype": "Check",
+      "label": "Is Maintenance Item",
+      "options": null
+    },
+    {
+      "name": "Journal Entry-custom_is_commission_entry",
+      "dt": "Journal Entry",
+      "fieldname": "custom_is_commission_entry",
+      "fieldtype": "Check",
+      "label": "Is_Commission_Entry",
+      "options": null
+    },
+    {
+      "name": "Lead Pending Calls-custom_history",
+      "dt": "Lead Pending Calls",
+      "fieldname": "custom_history",
+      "fieldtype": "Table",
+      "label": "History",
+      "options": "Lead Results"
+    },
+    {
+      "name": "Lead Pending Calls-custom_history_table",
+      "dt": "Lead Pending Calls",
+      "fieldname": "custom_history_table",
+      "fieldtype": "Section Break",
+      "label": "History Table",
+      "options": null
+    },
+    {
+      "name": "Lead-custom_area",
+      "dt": "Lead",
+      "fieldname": "custom_area",
+      "fieldtype": "Link",
+      "label": "Area",
+      "options": "Area"
+    },
+    {
+      "name": "Lead-custom_column_break_gszax",
+      "dt": "Lead",
+      "fieldname": "custom_column_break_gszax",
+      "fieldtype": "Column Break",
+      "label": "",
+      "options": null
+    },
+    {
+      "name": "Lead-custom_final_lead_result",
+      "dt": "Lead",
+      "fieldname": "custom_final_lead_result",
+      "fieldtype": "Data",
+      "label": "Final Lead Result",
+      "options": null
+    },
+    {
+      "name": "Lead-custom_from_referral_form",
+      "dt": "Lead",
+      "fieldname": "custom_from_referral_form",
+      "fieldtype": "Link",
+      "label": "From Referral Form",
+      "options": "Referral Form"
+    },
+    {
+      "name": "Lead-custom_lead_date",
+      "dt": "Lead",
+      "fieldname": "custom_lead_date",
+      "fieldtype": "Date",
+      "label": "Lead Date",
+      "options": null
+    },
+    {
+      "name": "Lead-custom_lead_report",
+      "dt": "Lead",
+      "fieldname": "custom_lead_report",
+      "fieldtype": "Table",
+      "label": "Lead Report",
+      "options": "Lead Report"
+    },
+    {
+      "name": "Lead-custom_lead_result",
+      "dt": "Lead",
+      "fieldname": "custom_lead_result",
+      "fieldtype": "Table",
+      "label": "Lead Result",
+      "options": "Lead Results"
+    },
+    {
+      "name": "Lead-custom_lead_type",
+      "dt": "Lead",
+      "fieldname": "custom_lead_type",
+      "fieldtype": "Select",
+      "label": "Lead Type",
+      "options": "\nFOP\nOffice\nOwn\nPersonal"
+    },
+    {
+      "name": "Lead-custom_manual_customer_name",
+      "dt": "Lead",
+      "fieldname": "custom_manual_customer_name",
+      "fieldtype": "Data",
+      "label": "Manual Customer Name",
+      "options": null
+    },
+    {
+      "name": "Lead-custom_mobileno",
+      "dt": "Lead",
+      "fieldname": "custom_mobileno",
+      "fieldtype": "Data",
+      "label": "Mobile No",
+      "options": null
+    },
+    {
+      "name": "Lead-custom_name",
+      "dt": "Lead",
+      "fieldname": "custom_name",
+      "fieldtype": "Data",
+      "label": "Name",
+      "options": null
+    },
+    {
+      "name": "Lead-custom_nationality",
+      "dt": "Lead",
+      "fieldname": "custom_nationality",
+      "fieldtype": "Link",
+      "label": "Nationality",
+      "options": "Nationality"
+    },
+    {
+      "name": "Lead-custom_note",
+      "dt": "Lead",
+      "fieldname": "custom_note",
+      "fieldtype": "Small Text",
+      "label": "Note",
+      "options": null
+    },
+    {
+      "name": "Lead-custom_referral_",
+      "dt": "Lead",
+      "fieldname": "custom_referral_",
+      "fieldtype": "Data",
+      "label": "Referral Number",
+      "options": null
+    },
+    {
+      "name": "Lead-custom_referral_number",
+      "dt": "Lead",
+      "fieldname": "custom_referral_number",
+      "fieldtype": "Data",
+      "label": "Referral Number",
+      "options": null
+    },
+    {
+      "name": "Lead-custom_referred_by_customer",
+      "dt": "Lead",
+      "fieldname": "custom_referred_by_customer",
+      "fieldtype": "Link",
+      "label": "Referred By Customer",
+      "options": "Customer"
+    },
+    {
+      "name": "Lead-custom_referred_by_customer_name",
+      "dt": "Lead",
+      "fieldname": "custom_referred_by_customer_name",
+      "fieldtype": "Data",
+      "label": "Referred By Customer Name",
+      "options": null
+    },
+    {
+      "name": "Lead-custom_referred_customer",
+      "dt": "Lead",
+      "fieldname": "custom_referred_customer",
+      "fieldtype": "Data",
+      "label": "Referred by Customer",
+      "options": null
+    },
+    {
+      "name": "Lead-custom_report",
+      "dt": "Lead",
+      "fieldname": "custom_report",
+      "fieldtype": "Tab Break",
+      "label": "Report",
+      "options": null
+    },
+    {
+      "name": "Lead-custom_sales_person",
+      "dt": "Lead",
+      "fieldname": "custom_sales_person",
+      "fieldtype": "Link",
+      "label": "Sales Person",
+      "options": "Sales Person"
+    },
+    {
+      "name": "Lead-custom_section_break_dzip5",
+      "dt": "Lead",
+      "fieldname": "custom_section_break_dzip5",
+      "fieldtype": "Section Break",
+      "label": "",
+      "options": null
+    },
+    {
+      "name": "Lead-custom_section_break_qm8gj",
+      "dt": "Lead",
+      "fieldname": "custom_section_break_qm8gj",
+      "fieldtype": "Section Break",
+      "label": "",
+      "options": null
+    },
+    {
+      "name": "Lead-custom_telemarketer_id",
+      "dt": "Lead",
+      "fieldname": "custom_telemarketer_id",
+      "fieldtype": "Link",
+      "label": "Telemarketer Id",
+      "options": "Sales Person"
+    },
+    {
+      "name": "Maintenance Schedule Item-custom_perriodicity",
+      "dt": "Maintenance Schedule Item",
+      "fieldname": "custom_perriodicity",
+      "fieldtype": "Select",
+      "label": "Periodicity",
+      "options": "1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12"
+    },
+    {
+      "name": "Maintenance Schedule-custom_history",
+      "dt": "Maintenance Schedule",
+      "fieldname": "custom_history",
+      "fieldtype": "Table",
+      "label": "History",
+      "options": "Schedule History"
+    },
+    {
+      "name": "Maintenance Schedule-custom_installation_date",
+      "dt": "Maintenance Schedule",
+      "fieldname": "custom_installation_date",
+      "fieldtype": "Data",
+      "label": "Installation Date",
+      "options": null
+    },
+    {
+      "name": "Maintenance Schedule-custom_maintenance_type",
+      "dt": "Maintenance Schedule",
+      "fieldname": "custom_maintenance_type",
+      "fieldtype": "Select",
+      "label": "Maintenance Type",
+      "options": "\nPlanned Maintenance\nMaintenance Call"
+    },
+    {
+      "name": "Maintenance Schedule-custom_mobile_no",
+      "dt": "Maintenance Schedule",
+      "fieldname": "custom_mobile_no",
+      "fieldtype": "Link",
+      "label": "Mobile No",
+      "options": "Customer"
+    },
+    {
+      "name": "Maintenance Schedule-custom_schedule_history",
+      "dt": "Maintenance Schedule",
+      "fieldname": "custom_schedule_history",
+      "fieldtype": "Section Break",
+      "label": "Schedule History",
+      "options": null
+    },
+    {
+      "name": "Maintenance Visit-custom_replace_item",
+      "dt": "Maintenance Visit",
+      "fieldname": "custom_replace_item",
+      "fieldtype": "Table",
+      "label": "Replace Item",
+      "options": "Maintenance Visit Table"
+    },
+    {
+      "name": "Maintenance Visit-custom_sales_invoice_ref",
+      "dt": "Maintenance Visit",
+      "fieldname": "custom_sales_invoice_ref",
+      "fieldtype": "Data",
+      "label": "Sales Invoice Ref",
+      "options": null
+    },
+    {
+      "name": "Maintenance Visit-custom_section_break_yoc18",
+      "dt": "Maintenance Visit",
+      "fieldname": "custom_section_break_yoc18",
+      "fieldtype": "Section Break",
+      "label": "",
+      "options": null
+    },
+    {
+      "name": "Maintenance Visit-custom_total_",
+      "dt": "Maintenance Visit",
+      "fieldname": "custom_total_",
+      "fieldtype": "Currency",
+      "label": "Total ",
+      "options": null
+    },
+    {
+      "name": "Maintenance Visit-custom_warehouse",
+      "dt": "Maintenance Visit",
+      "fieldname": "custom_warehouse",
+      "fieldtype": "Link",
+      "label": "Warehouse",
+      "options": "Warehouse"
+    },
+    {
+      "name": "Maintenance-custom_address_dropdown",
+      "dt": "Maintenance",
+      "fieldname": "custom_address_dropdown",
+      "fieldtype": "Link",
+      "label": "Select Address",
+      "options": "Address"
+    },
+    {
+      "name": "Maintenance-custom_column_break_eeogj",
+      "dt": "Maintenance",
+      "fieldname": "custom_column_break_eeogj",
+      "fieldtype": "Column Break",
+      "label": "",
+      "options": null
+    },
+    {
+      "name": "Maintenance-custom_new_maintenance_id",
+      "dt": "Maintenance",
+      "fieldname": "custom_new_maintenance_id",
+      "fieldtype": "Link",
+      "label": "New Maintenance ID",
+      "options": "Maintenance"
+    },
+    {
+      "name": "Payment Entry-custom_is_partial",
+      "dt": "Payment Entry",
+      "fieldname": "custom_is_partial",
+      "fieldtype": "Check",
+      "label": "Is Partial?",
+      "options": null
+    },
+    {
+      "name": "Payment Entry-custom_linked_payment_entry",
+      "dt": "Payment Entry",
+      "fieldname": "custom_linked_payment_entry",
+      "fieldtype": "Link",
+      "label": "Linked Payment Entry",
+      "options": "Payment Entry"
+    },
+    {
+      "name": "Payment Entry-custom_manual_voucher_number",
+      "dt": "Payment Entry",
+      "fieldname": "custom_manual_voucher_number",
+      "fieldtype": "Data",
+      "label": "Manual Voucher Number",
+      "options": null
+    },
+    {
+      "name": "Payment Entry-custom_party_status",
+      "dt": "Payment Entry",
+      "fieldname": "custom_party_status",
+      "fieldtype": "Data",
+      "label": "Party Status",
+      "options": null
+    },
+    {
+      "name": "Payment Entry-custom_payment_purpose",
+      "dt": "Payment Entry",
+      "fieldname": "custom_payment_purpose",
+      "fieldtype": "Select",
+      "label": "Payment Purpose",
+      "options": "\nDown Payment\nInstallment\nMaintenance"
+    },
+    {
+      "name": "Payment Entry-custom_sales_order_id",
+      "dt": "Payment Entry",
+      "fieldname": "custom_sales_order_id",
+      "fieldtype": "Link",
+      "label": "Sales Order Id",
+      "options": "Sales Order"
+    },
+    {
+      "name": "Print Settings-compact_item_print",
+      "dt": "Print Settings",
+      "fieldname": "compact_item_print",
+      "fieldtype": "Check",
+      "label": "Compact Item Print",
+      "options": null
+    },
+    {
+      "name": "Print Settings-print_taxes_with_zero_amount",
+      "dt": "Print Settings",
+      "fieldname": "print_taxes_with_zero_amount",
+      "fieldtype": "Check",
+      "label": "Print taxes with zero amount",
+      "options": null
+    },
+    {
+      "name": "Print Settings-print_uom_after_quantity",
+      "dt": "Print Settings",
+      "fieldname": "print_uom_after_quantity",
+      "fieldtype": "Check",
+      "label": "Print UOM after Quantity",
+      "options": null
+    },
+    {
+      "name": "Referral Form-custom_customer_name",
+      "dt": "Referral Form",
+      "fieldname": "custom_customer_name",
+      "fieldtype": "Data",
+      "label": "Referred Customer Name",
+      "options": null
+    },
+    {
+      "name": "Sales Invoice-custom_column_break_5fsfa",
+      "dt": "Sales Invoice",
+      "fieldname": "custom_column_break_5fsfa",
+      "fieldtype": "Column Break",
+      "label": "",
+      "options": null
+    },
+    {
+      "name": "Sales Invoice-custom_column_break_subfx",
+      "dt": "Sales Invoice",
+      "fieldname": "custom_column_break_subfx",
+      "fieldtype": "Column Break",
+      "label": "",
+      "options": null
+    },
+    {
+      "name": "Sales Invoice-custom_commission_details",
+      "dt": "Sales Invoice",
+      "fieldname": "custom_commission_details",
+      "fieldtype": "Section Break",
+      "label": "Commission Details",
+      "options": null
+    },
+    {
+      "name": "Sales Invoice-custom_invoice_type",
+      "dt": "Sales Invoice",
+      "fieldname": "custom_invoice_type",
+      "fieldtype": "Select",
+      "label": "Invoice Type",
+      "options": "\nSales\nMaintenance"
+    },
+    {
+      "name": "Sales Invoice-custom_jv_entry",
+      "dt": "Sales Invoice",
+      "fieldname": "custom_jv_entry",
+      "fieldtype": "Link",
+      "label": "Jv Entry",
+      "options": "Journal Entry"
+    },
+    {
+      "name": "Sales Invoice-custom_maintenance_id",
+      "dt": "Sales Invoice",
+      "fieldname": "custom_maintenance_id",
+      "fieldtype": "Link",
+      "label": "Maintenance ID",
+      "options": "Maintenance"
+    },
+    {
+      "name": "Sales Invoice-custom_maintenance_visit_ref",
+      "dt": "Sales Invoice",
+      "fieldname": "custom_maintenance_visit_ref",
+      "fieldtype": "Data",
+      "label": "Maintenance Visit Ref",
+      "options": null
+    },
+    {
+      "name": "Sales Invoice-custom_maintenance_voucher_details",
+      "dt": "Sales Invoice",
+      "fieldname": "custom_maintenance_voucher_details",
+      "fieldtype": "Section Break",
+      "label": "Maintenance Voucher Details",
+      "options": null
+    },
+    {
+      "name": "Sales Invoice-custom_make_commission",
+      "dt": "Sales Invoice",
+      "fieldname": "custom_make_commission",
+      "fieldtype": "Button",
+      "label": "Make Commission",
+      "options": null
+    },
+    {
+      "name": "Sales Invoice-custom_manual_contract_no",
+      "dt": "Sales Invoice",
+      "fieldname": "custom_manual_contract_no",
+      "fieldtype": "Data",
+      "label": "Manual Contract No",
+      "options": null
+    },
+    {
+      "name": "Sales Invoice-custom_manual_voucher_number",
+      "dt": "Sales Invoice",
+      "fieldname": "custom_manual_voucher_number",
+      "fieldtype": "Data",
+      "label": "Manual Voucher Number",
+      "options": null
+    },
+    {
+      "name": "Sales Invoice-custom_sales_commission",
+      "dt": "Sales Invoice",
+      "fieldname": "custom_sales_commission",
+      "fieldtype": "Float",
+      "label": "Sales Commission",
+      "options": null
+    },
+    {
+      "name": "Sales Invoice-custom_sales_order_id",
+      "dt": "Sales Invoice",
+      "fieldname": "custom_sales_order_id",
+      "fieldtype": "Data",
+      "label": "Sales Order ID",
+      "options": null
+    },
+    {
+      "name": "Sales Invoice-custom_sales_person",
+      "dt": "Sales Invoice",
+      "fieldname": "custom_sales_person",
+      "fieldtype": "Link",
+      "label": "Sales Person",
+      "options": "Sales Person"
+    },
+    {
+      "name": "Sales Invoice-custom_section_break_cbrsu",
+      "dt": "Sales Invoice",
+      "fieldname": "custom_section_break_cbrsu",
+      "fieldtype": "Section Break",
+      "label": "",
+      "options": null
+    },
+    {
+      "name": "Sales Invoice-custom_sold_item_details",
+      "dt": "Sales Invoice",
+      "fieldname": "custom_sold_item_details",
+      "fieldtype": "Table",
+      "label": "Sold item Details",
+      "options": "Item Detail"
+    },
+    {
+      "name": "Sales Invoice-custom_supervisior",
+      "dt": "Sales Invoice",
+      "fieldname": "custom_supervisior",
+      "fieldtype": "Link",
+      "label": "Supervisior",
+      "options": "Sales Person"
+    },
+    {
+      "name": "Sales Invoice-custom_supervisior_commission",
+      "dt": "Sales Invoice",
+      "fieldname": "custom_supervisior_commission",
+      "fieldtype": "Float",
+      "label": "Supervisior Commission",
+      "options": null
+    },
+    {
+      "name": "Sales Invoice-custom_telemarketer",
+      "dt": "Sales Invoice",
+      "fieldname": "custom_telemarketer",
+      "fieldtype": "Link",
+      "label": "Telemarketer",
+      "options": "Sales Person"
+    },
+    {
+      "name": "Sales Invoice-custom_telemarketer_commission",
+      "dt": "Sales Invoice",
+      "fieldname": "custom_telemarketer_commission",
+      "fieldtype": "Float",
+      "label": "Telemarketer Commission",
+      "options": null
+    },
+    {
+      "name": "Sales Order Item-custom_is_maintenance_item",
+      "dt": "Sales Order Item",
+      "fieldname": "custom_is_maintenance_item",
+      "fieldtype": "Check",
+      "label": "Is Maintenance Item",
+      "options": null
+    },
+    {
+      "name": "Sales Order-custom_column_break_aspdc",
+      "dt": "Sales Order",
+      "fieldname": "custom_column_break_aspdc",
+      "fieldtype": "Column Break",
+      "label": "",
+      "options": null
+    },
+    {
+      "name": "Sales Order-custom_column_break_zzfyc",
+      "dt": "Sales Order",
+      "fieldname": "custom_column_break_zzfyc",
+      "fieldtype": "Column Break",
+      "label": "",
+      "options": null
+    },
+    {
+      "name": "Sales Order-custom_commission_details",
+      "dt": "Sales Order",
+      "fieldname": "custom_commission_details",
+      "fieldtype": "Section Break",
+      "label": "Commission Details",
+      "options": null
+    },
+    {
+      "name": "Sales Order-custom_contract_type",
+      "dt": "Sales Order",
+      "fieldname": "custom_contract_type",
+      "fieldtype": "Select",
+      "label": "Contract Type",
+      "options": "\nSigned\nUnsigned"
+    },
+    {
+      "name": "Sales Order-custom_discount_account",
+      "dt": "Sales Order",
+      "fieldname": "custom_discount_account",
+      "fieldtype": "Link",
+      "label": "Discount Account",
+      "options": "Account"
+    },
+    {
+      "name": "Sales Order-custom_down_payment_amount",
+      "dt": "Sales Order",
+      "fieldname": "custom_down_payment_amount",
+      "fieldtype": "Data",
+      "label": "Down Payment Amount",
+      "options": null
+    },
+    {
+      "name": "Sales Order-custom_from_lead",
+      "dt": "Sales Order",
+      "fieldname": "custom_from_lead",
+      "fieldtype": "Data",
+      "label": "From Lead",
+      "options": null
+    },
+    {
+      "name": "Sales Order-custom_jv_entry",
+      "dt": "Sales Order",
+      "fieldname": "custom_jv_entry",
+      "fieldtype": "Link",
+      "label": "Jv Entry",
+      "options": "Journal Entry"
+    },
+    {
+      "name": "Sales Order-custom_make_commission",
+      "dt": "Sales Order",
+      "fieldname": "custom_make_commission",
+      "fieldtype": "Button",
+      "label": "Make Commission",
+      "options": null
+    },
+    {
+      "name": "Sales Order-custom_make_payment_entry",
+      "dt": "Sales Order",
+      "fieldname": "custom_make_payment_entry",
+      "fieldtype": "Button",
+      "label": "Make Payment Entry",
+      "options": null
+    },
+    {
+      "name": "Sales Order-custom_make_sales_invoice",
+      "dt": "Sales Order",
+      "fieldname": "custom_make_sales_invoice",
+      "fieldtype": "Button",
+      "label": "Make Sales Invoice",
+      "options": null
+    },
+    {
+      "name": "Sales Order-custom_sales_commission",
+      "dt": "Sales Order",
+      "fieldname": "custom_sales_commission",
+      "fieldtype": "Float",
+      "label": "Sales Commission",
+      "options": null
+    },
+    {
+      "name": "Sales Order-custom_sales_invoice_id",
+      "dt": "Sales Order",
+      "fieldname": "custom_sales_invoice_id",
+      "fieldtype": "Link",
+      "label": "Sales Invoice ID",
+      "options": "Sales Invoice"
+    },
+    {
+      "name": "Sales Order-custom_sales_person",
+      "dt": "Sales Order",
+      "fieldname": "custom_sales_person",
+      "fieldtype": "Link",
+      "label": "Sales Person",
+      "options": "Sales Person"
+    },
+    {
+      "name": "Sales Order-custom_serial_no",
+      "dt": "Sales Order",
+      "fieldname": "custom_serial_no",
+      "fieldtype": "Data",
+      "label": "Serial No",
+      "options": null
+    },
+    {
+      "name": "Sales Order-custom_supervisior",
+      "dt": "Sales Order",
+      "fieldname": "custom_supervisior",
+      "fieldtype": "Link",
+      "label": "Supervisior",
+      "options": "Sales Person"
+    },
+    {
+      "name": "Sales Order-custom_supervisior_commission",
+      "dt": "Sales Order",
+      "fieldname": "custom_supervisior_commission",
+      "fieldtype": "Float",
+      "label": "Supervisior Commission",
+      "options": null
+    },
+    {
+      "name": "Sales Order-custom_telemarketer",
+      "dt": "Sales Order",
+      "fieldname": "custom_telemarketer",
+      "fieldtype": "Link",
+      "label": "Telemarketer",
+      "options": "Sales Person"
+    },
+    {
+      "name": "Sales Order-custom_telemarketer_commission",
+      "dt": "Sales Order",
+      "fieldname": "custom_telemarketer_commission",
+      "fieldtype": "Float",
+      "label": "Telemarketer Commission",
+      "options": null
+    },
+    {
+      "name": "Sales Person-custom_sales_person_commission_ac",
+      "dt": "Sales Person",
+      "fieldname": "custom_sales_person_commission_ac",
+      "fieldtype": "Link",
+      "label": "Sales Person Commission A/C",
+      "options": "Account"
+    },
+    {
+      "name": "ToDo-custom_result",
+      "dt": "ToDo",
+      "fieldname": "custom_result",
+      "fieldtype": "Link",
+      "label": "Result",
+      "options": "Results"
+    }
+  ]
+}

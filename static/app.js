@@ -22,18 +22,123 @@ document.addEventListener('DOMContentLoaded', () => {
     // Mock Client ID for Phase 2 demo
     const CLIENT_ID = "DEMO_CLIENT_123";
 
+    // Modal Elements
+    const modalBackdrop = document.getElementById('modal-backdrop');
+    const customPromptModal = document.getElementById('custom-prompt-modal');
+    const promptModalTitle = document.getElementById('prompt-modal-title');
+    const promptModalMessage = document.getElementById('prompt-modal-message');
+    const promptModalInput = document.getElementById('prompt-modal-input');
+    const promptModalCancel = document.getElementById('prompt-modal-cancel');
+    const promptModalSubmit = document.getElementById('prompt-modal-submit');
+
+    const customConfirmModal = document.getElementById('custom-confirm-modal');
+    const confirmModalTitle = document.getElementById('confirm-modal-title');
+    const confirmModalMessage = document.getElementById('confirm-modal-message');
+    const confirmModalCancel = document.getElementById('confirm-modal-cancel');
+    const confirmModalSubmit = document.getElementById('confirm-modal-submit');
+
+    // Custom Modal Logic
+    function showCustomPrompt(message, title = "Enter Value") {
+        return new Promise((resolve) => {
+            promptModalTitle.textContent = title;
+            promptModalMessage.textContent = message;
+            promptModalInput.value = '';
+
+            modalBackdrop.classList.remove('hidden');
+            customPromptModal.classList.remove('hidden');
+            promptModalInput.focus();
+
+            const cleanup = () => {
+                modalBackdrop.classList.add('hidden');
+                customPromptModal.classList.add('hidden');
+                promptModalCancel.removeEventListener('click', onCancel);
+                promptModalSubmit.removeEventListener('click', onSubmit);
+                promptModalInput.removeEventListener('keydown', onKeydown);
+            };
+
+            const onCancel = () => { cleanup(); resolve(null); };
+            const onSubmit = () => { cleanup(); resolve(promptModalInput.value); };
+            const onKeydown = (e) => {
+                if (e.key === 'Enter') onSubmit();
+                if (e.key === 'Escape') onCancel();
+            };
+
+            promptModalCancel.addEventListener('click', onCancel);
+            promptModalSubmit.addEventListener('click', onSubmit);
+            promptModalInput.addEventListener('keydown', onKeydown);
+        });
+    }
+
+    function showCustomConfirm(message, title = "Confirm Action") {
+        return new Promise((resolve) => {
+            confirmModalTitle.textContent = title;
+            confirmModalMessage.textContent = message;
+
+            modalBackdrop.classList.remove('hidden');
+            customConfirmModal.classList.remove('hidden');
+
+            const cleanup = () => {
+                modalBackdrop.classList.add('hidden');
+                customConfirmModal.classList.add('hidden');
+                confirmModalCancel.removeEventListener('click', onCancel);
+                confirmModalSubmit.removeEventListener('click', onSubmit);
+            };
+
+            const onCancel = () => { cleanup(); resolve(false); };
+            const onSubmit = () => { cleanup(); resolve(true); };
+
+            confirmModalCancel.addEventListener('click', onCancel);
+            confirmModalSubmit.addEventListener('click', onSubmit);
+        });
+    }
+
     // Sidebar Logic
     function toggleSidebar() {
-        sidebar.classList.toggle('open');
-        sidebarOverlay.classList.toggle('active');
-        if (sidebar.classList.contains('open')) {
-            loadSavedReports();
+        if (window.innerWidth > 768) {
+            sidebar.classList.toggle('collapsed');
+        } else {
+            sidebar.classList.toggle('open');
+            sidebarOverlay.classList.toggle('active');
+            // Load reports if opening on mobile
+            if (sidebar.classList.contains('open') && savedReportsList.children.length === 0) {
+                loadSavedReports();
+            }
         }
     }
 
     openSidebarBtn.addEventListener('click', toggleSidebar);
     closeSidebarBtn.addEventListener('click', toggleSidebar);
     sidebarOverlay.addEventListener('click', toggleSidebar);
+
+    // New Chat button - reset to initial state
+    const newChatBtn = document.getElementById('new-chat-btn');
+    newChatBtn.addEventListener('click', () => {
+        // Clear chat history
+        chatHistory = [];
+
+        // Clear all messages from results area
+        resultsArea.innerHTML = '';
+
+        // Re-center the prompt bar and show welcome header
+        promptArea.classList.add('prompt-centered');
+        welcomeHeader.classList.remove('hidden');
+
+        // Reset input
+        promptInput.value = '';
+        promptInput.style.height = 'auto';
+        generateBtn.disabled = true;
+
+        // Close sidebar on mobile
+        if (window.innerWidth <= 768) {
+            sidebar.classList.remove('open');
+            sidebarOverlay.classList.remove('active');
+        }
+
+        promptInput.focus();
+    });
+
+    // Initial load for desktop where sidebar is visible
+    loadSavedReports();
 
     async function loadSavedReports() {
         savedReportsList.innerHTML = '<div class="text-muted" style="padding: 1rem;">Loading...</div>';
@@ -60,7 +165,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 item.addEventListener('click', (e) => {
                     if (e.target.classList.contains('delete-report-btn')) return;
-                    toggleSidebar();
+                    if (window.innerWidth <= 768) {
+                        toggleSidebar();
+                    }
                     executeSavedReport(report);
                 });
 
@@ -68,7 +175,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 const deleteBtn = item.querySelector('.delete-report-btn');
                 deleteBtn.addEventListener('click', async (e) => {
                     e.stopPropagation();
-                    if (confirm(`Are you sure you want to delete "${report.name}"?`)) {
+                    const confirmed = await showCustomConfirm(`Are you sure you want to delete "${report.name}"?`, "Delete Report");
+                    if (confirmed) {
                         try {
                             const delRes = await fetch(`/api/reports/${report.id}`, { method: 'DELETE' });
                             if (delRes.ok) {
@@ -395,7 +503,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Setup Save Report
         if (saveReportBtn && result.sql) {
             saveReportBtn.addEventListener('click', async () => {
-                const reportName = prompt("Enter a name for this saved report:");
+                const reportName = await showCustomPrompt("Enter a name for this saved report:", "Save Report");
                 if (!reportName) return;
 
                 const originalBtnContent = saveReportBtn.innerHTML;
@@ -460,6 +568,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Header
             const trHead = document.createElement('tr');
+            // Add Sr column header
+            const thSr = document.createElement('th');
+            thSr.textContent = 'Sr';
+            trHead.appendChild(thSr);
             headers.forEach(header => {
                 const th = document.createElement('th');
                 th.textContent = header.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
@@ -468,8 +580,12 @@ document.addEventListener('DOMContentLoaded', () => {
             thead.appendChild(trHead);
 
             // Body
-            data.forEach(row => {
+            data.forEach((row, index) => {
                 const tr = document.createElement('tr');
+                // Add Sr column value
+                const tdSr = document.createElement('td');
+                tdSr.textContent = index + 1;
+                tr.appendChild(tdSr);
                 headers.forEach(header => {
                     const td = document.createElement('td');
                     td.textContent = row[header] !== null && row[header] !== undefined ? row[header] : '—';
@@ -479,6 +595,31 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             dataSection.classList.remove('hidden');
+
+            // Wire up collapsible toggle
+            const collapseBtn = messageNode.querySelector('.collapse-toggle-btn');
+            const collapsibleBody = messageNode.querySelector('.collapsible-body');
+            const collapsibleHeader = messageNode.querySelector('.collapsible-header');
+
+            if (collapseBtn && collapsibleBody) {
+                const toggleCollapse = () => {
+                    collapseBtn.classList.toggle('collapsed');
+                    collapsibleBody.classList.toggle('collapsed');
+                };
+                collapseBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    toggleCollapse();
+                });
+                // Also allow clicking the title area
+                const titleGroup = messageNode.querySelector('.section-title-group');
+                if (titleGroup) {
+                    titleGroup.addEventListener('click', (e) => {
+                        if (e.target !== collapseBtn && !collapseBtn.contains(e.target)) {
+                            toggleCollapse();
+                        }
+                    });
+                }
+            }
         } else if (data) {
             // No rows but successful query
             rowCountBadge.textContent = '0 rows';

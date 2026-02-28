@@ -4,11 +4,22 @@ from groq import Groq
 from openai import OpenAI
 from dotenv import load_dotenv
 from memory_manager import get_relevant_schema_context
+from schema_fetcher import get_local_schema, format_local_schema_for_prompt
 
 load_dotenv()
 
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 #client = Groq(api_key=os.getenv("GROQ_API_KEY"))
+
+# Load global schema once at startup
+_GLOBAL_SCHEMA_PATH = os.path.join(os.path.dirname(__file__), "schemas", "global_schema.txt")
+try:
+    with open(_GLOBAL_SCHEMA_PATH, "r", encoding="utf-8") as f:
+        GLOBAL_SCHEMA = f.read()
+    print(f"[AI Engine] Loaded global schema ({len(GLOBAL_SCHEMA)} chars)")
+except FileNotFoundError:
+    GLOBAL_SCHEMA = ""
+    print("[AI Engine] WARNING: global_schema.txt not found. AI will operate without global schema.")
 
 SYSTEM_PROMPT = """
 You are a senior ERPNext database engineer and MariaDB expert.
@@ -71,10 +82,26 @@ Rules for Conversation:
 """
 
 def generate_sql(user_prompt, history=None, client_id="DEMO_CLIENT_123"):
-    # Fetch relevant historical schema context
+    # Fetch relevant historical schema context (Memory Layer)
     memory_context = get_relevant_schema_context(client_id, user_prompt)
     
+    # Build the dynamic system prompt with all 3 layers
     dynamic_system_prompt = SYSTEM_PROMPT
+    
+    # Layer 1: Global Schema
+    if GLOBAL_SCHEMA:
+        dynamic_system_prompt += f"\n\n{GLOBAL_SCHEMA}"
+    
+    # Layer 2: Local Schema (client customizations)
+    try:
+        local_schema = get_local_schema()
+        local_schema_text = format_local_schema_for_prompt(local_schema)
+        if local_schema_text:
+            dynamic_system_prompt += f"\n\n{local_schema_text}"
+    except Exception as e:
+        print(f"[AI Engine] Could not load local schema: {e}")
+    
+    # Layer 3: Memory (previously successful queries)
     if memory_context:
         dynamic_system_prompt += f"\n\n{memory_context}"
 

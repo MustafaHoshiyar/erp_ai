@@ -115,6 +115,20 @@ def delete_saved_report(report_id: int, db: Session = Depends(get_db)):
         db.rollback()
         raise HTTPException(status_code=500, detail=str(e))
 
+@app.post("/api/schema/refresh")
+def refresh_schema():
+    """Manually triggers a fresh fetch of the client's custom schema from ERPNext."""
+    from schema_fetcher import fetch_and_cache_local_schema
+    try:
+        schema = fetch_and_cache_local_schema()
+        return {
+            "status": "success",
+            "custom_doctypes": len(schema.get("custom_doctypes", [])),
+            "custom_fields": len(schema.get("custom_fields", []))
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Schema refresh failed: {str(e)}")
+
 @app.post("/api/reports/execute/{report_id}")
 async def execute_saved_report(report_id: int, db: Session = Depends(get_db)):
     report = db.query(SavedReport).filter(SavedReport.id == report_id).first()
