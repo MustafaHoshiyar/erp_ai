@@ -8,6 +8,8 @@
     <!-- Google Fonts: Inter for clean, modern typography -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
+    <!-- Chart.js for Dashboards -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
 <body>
@@ -92,6 +94,15 @@
                                     <line x1="12" y1="15" x2="12" y2="3"></line>
                                 </svg>
                             </button>
+                            <button class="dashboard-btn" title="Generate Dashboard">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <line x1="18" y1="20" x2="18" y2="10"></line>
+                                    <line x1="12" y1="20" x2="12" y2="4"></line>
+                                    <line x1="6" y1="20" x2="6" y2="14"></line>
+                                </svg>
+                            </button>
                         </div>
                     </div>
                     <div class="table-wrapper">
@@ -100,6 +111,9 @@
                             <tbody class="data-tbody"></tbody>
                         </table>
                     </div>
+                    <div class="chart-container" style="display: none; margin-top: 20px;">
+                        <canvas class="dashboard-chart"></canvas>
+                    </div>
                 </section>
 
                 <div class="error-toast hidden"></div>
@@ -107,7 +121,7 @@
         </div>
     </template>
 
-    <script src="app.js"></script>
+    <script src="app.js?v=2"></script>
 </body>
 
 </html>

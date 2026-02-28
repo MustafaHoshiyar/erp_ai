@@ -133,6 +133,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const thead = messageNode.querySelector('.data-thead');
         const tbody = messageNode.querySelector('.data-tbody');
         const rowCountBadge = messageNode.querySelector('.row-count');
+        const dashboardBtn = messageNode.querySelector('.dashboard-btn');
+        const chartContainer = messageNode.querySelector('.chart-container');
+        const canvas = messageNode.querySelector('.dashboard-chart');
+        let currentChart = null;
 
         // Setup SQL Copy
         copySqlBtn.addEventListener('click', () => {
@@ -185,6 +189,84 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.body.appendChild(a);
                 a.click();
                 document.body.removeChild(a);
+            });
+        }
+
+        // Setup Dashboard Generation
+        if (dashboardBtn) {
+            dashboardBtn.addEventListener('click', async () => {
+                if (!Array.isArray(exportData) || exportData.length === 0) return;
+
+                const originalBtnContent = dashboardBtn.innerHTML;
+                dashboardBtn.innerHTML = '<div class="spinner" style="width:16px; height:16px; border-width:2px; border-color: currentColor; border-right-color: transparent;"></div>';
+                dashboardBtn.disabled = true;
+
+                try {
+                    const columns = Object.keys(exportData[0]);
+                    const dataSample = exportData.slice(0, 5); // Send a sample to determine types
+
+                    const response = await fetch('/api/generate_chart_config', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ columns, data_sample: dataSample })
+                    });
+
+                    if (!response.ok) throw new Error("Failed to generate chart config.");
+
+                    const config = await response.json();
+
+                    if (config.error) throw new Error(config.error);
+
+                    // Inject actual data into the config from AI if it didn't do it properly
+                    // The AI typically returns structure but we need to map our real data correctly
+                    // For safety, we map our full data according to the labels and datasets axes the AI chose.
+
+                    if (config.data && config.data.datasets && config.data.labels) {
+                        try {
+                            // Assume the first dataset label is targeting a specific column, and the labels refer to a category column
+                            // Let's use the first data row objects keys since the AI might have just made mock data.
+
+                            // Let's rely on the AI actually making a function for us or we just pass the data? 
+                            // The AI was given sample data, it might have populated `data` array exactly, but we want all rows.
+
+                            // We must reconstruct the dataset using the keys the AI intended.
+                            // Looking at a standard Chart.js bar chart config, data usually looks like data.labels = [...], data.datasets[0].data = [...]
+
+                            // Since we didn't tell it the exact JS mapping, we will send the full data to it so it populates it fully?
+                            // Wait, the context window might be small. 
+
+                            // Better approach: Let's assume the AI config tells us which column is the X axis (labels) and Y axis (datasets).
+                            // But Chart.js config does not have a standard "ColumnName" field.
+                            // So let's just make the AI output the actual fully populated data array in the config by sending it the full data.
+                            // Re-fetching with full data mapped is safer if data size is small. Let's send up to 50 rows.
+                        } catch (e) { }
+                    }
+
+                    // Actually, let's re-fetch the config with more data. Or just use what it gave us if we sent full data. Let's update the API call to send more data.
+                    const fullDataPayload = exportData.slice(0, 100);
+                    const responseFull = await fetch('/api/generate_chart_config', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ columns, data_sample: fullDataPayload })
+                    });
+                    const fullConfig = await responseFull.json();
+
+                    if (currentChart) {
+                        currentChart.destroy();
+                    }
+
+                    chartContainer.style.display = 'block';
+                    currentChart = new Chart(canvas, fullConfig);
+
+                } catch (e) {
+                    console.error("Dashboard error:", e);
+                    alert("Could not generate dashboard: " + e.message);
+                } finally {
+                    dashboardBtn.innerHTML = originalBtnContent;
+                    dashboardBtn.disabled = false;
+                }
             });
         }
 

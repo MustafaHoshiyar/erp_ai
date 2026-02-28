@@ -103,3 +103,38 @@ def generate_sql(user_prompt, history=None):
 
     # Conversational reply, no SQL
     return {"sql": None, "message": raw_output, "tokens_used": tokens_used}
+
+
+def generate_chart_config(columns, data_sample):
+    system_prompt = """
+You are an expert data visualization assistant.
+Given a list of column names, their inferred data types, and a small JSON sample of the data, your task is to generate a valid, optimized JSON configuration object for Chart.js.
+Choose the best chart type (e.g., 'bar', 'line', 'pie', 'doughnut') that represents the data.
+Usually, there is one categorical column (for labels) and one or more numerical columns (for datasets).
+
+CRITICAL SCALING INSTRUCTION:
+If there are multiple numerical datasets and their values have vastly different scales (for example, "Total Orders" ranges from 1-100, while "Total Sales" ranges from 1,000-10,000+), you MUST configure multiple Y-axes (e.g., `y` and `y1`) in the `options.scales` configuration and assign each dataset to the appropriate `yAxisID`.
+
+Return ONLY the raw JSON object for the Chart.js configuration, starting with `{` and ending with `}`.
+Do NOT include explanations, markdown formatting, or comments.
+"""
+    user_prompt = f"Columns: {columns}\nData Sample: {data_sample}"
+
+    response = client.chat.completions.create(
+        model="gpt-4o",
+        messages=[
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_prompt}
+        ],
+        temperature=0
+    )
+
+    raw_output = response.choices[0].message.content.strip()
+
+    # Try to extract JSON from a markdown block
+    match = re.search(r"```json(.*?)```", raw_output, re.IGNORECASE | re.DOTALL)
+    if match:
+        return match.group(1).strip()
+    
+    # Fallback to direct output if no markdown
+    return raw_output.strip()
