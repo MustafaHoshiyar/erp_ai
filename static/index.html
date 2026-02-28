@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SMB Solutions ERPNext AI Reports</title>
+    <!-- Google Fonts: Inter for clean, modern typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <main class="app-container">
+        <!-- Chat History / Results Area -->
+        <div id="results-area" class="results-area">
+            <!-- Dynamic content will be appended here -->
+        </div>
+        <!-- Prompt Area (Initially centered, moves to bottom) -->
+        <div id="prompt-area" class="prompt-area prompt-centered">
+            <header class="welcome-header" id="welcome-header">
+                <h1>SMB Solutions ERPNext AI Reports</h1>
+                <p>Generate dynamic ERP reports effortlessly using plain English.</p>
+            </header>
+
+            <form id="prompt-form" autocomplete="off" class="prompt-form">
+                <div class="input-wrapper">
+                    <textarea id="user-prompt" placeholder="Message AI Data Explorer..." rows="1" required></textarea>
+                    <button type="submit" id="generate-btn" class="send-btn" title="Send message">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="22" y1="2" x2="11" y2="13"></line>
+                            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                        </svg>
+                        <div class="spinner hidden" id="loading-spinner"></div>
+                    </button>
+                </div>
+                <div class="disclaimer">AI Data Explorer can make mistakes. Consider verifying important information.
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <!-- Template for a user message -->
+    <template id="user-message-template">
+        <div class="message user-message">
+            <div class="avatar">U</div>
+            <div class="message-content"></div>
+        </div>
+    </template>
+
+    <!-- Template for an AI response -->
+    <template id="ai-response-template">
+        <div class="message ai-message">
+            <div class="avatar ai-avatar">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round" />
+                    <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round" />
+                    <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round" />
+                </svg>
+            </div>
+            <div class="message-content w-full">
+                <section class="sql-section hidden">
+                    <div class="section-header">
+                        <h2>Generated SQL</h2>
+                        <button class="icon-btn copy-btn" title="Copy SQL">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                            </svg>
+                        </button>
+                    </div>
+                    <pre><code class="sql-output"></code></pre>
+                </section>
+
+                <section class="data-section hidden">
+                    <div class="section-header">
+                        <span class="section-title">Results Data</span>
+                        <div class="header-actions">
+                            <span class="row-count">0 rows</span>
+                            <button class="export-btn" title="Export as CSV">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                    <polyline points="7 10 12 15 17 10"></polyline>
+                                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="table-wrapper">
+                        <table class="data-table">
+                            <thead class="data-thead"></thead>
+                            <tbody class="data-tbody"></tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <div class="error-toast hidden"></div>
+            </div>
+        </div>
+    </template>
+
+    <script src="app.js"></script>
+</body>
+
+</html>
