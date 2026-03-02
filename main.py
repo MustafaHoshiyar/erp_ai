@@ -11,6 +11,13 @@ from fastapi import Depends, HTTPException
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
+# In-memory session token usage tracker
+token_stats = {
+    "total_tokens": 0,
+    "request_count": 0,
+    "history": []  # Last N requests with token counts
+}
+
 @app.get("/")
 def home():
     return {"message": "ERP AI Backend is running"}
@@ -26,13 +33,28 @@ class PromptRequest(BaseModel):
 @app.post("/generate-report")
 async def generate_report(request: PromptRequest):
     result = generate_sql(request.prompt, request.history, request.client_id)
+    
+    tokens_used = result.get("tokens_used", 0)
+    
+    # Track token usage
+    if tokens_used:
+        token_stats["total_tokens"] += tokens_used
+        token_stats["request_count"] += 1
+        token_stats["history"].append({
+            "tokens": tokens_used,
+            "prompt": request.prompt[:80]
+        })
+        # Keep only last 50 entries
+        if len(token_stats["history"]) > 50:
+            token_stats["history"] = token_stats["history"][-50:]
 
     # If no SQL was generated, just return the conversational message
     if not result.get("sql"):
         return {
             "sql": None,
             "data": None,
-            "message": result.get("message")
+            "message": result.get("message"),
+            "tokens_used": tokens_used
         }
 
     validated_sql = validate_sql(result["sql"])
@@ -41,7 +63,8 @@ async def generate_report(request: PromptRequest):
     return {
         "sql": validated_sql,
         "data": data,
-        "message": result.get("message")
+        "message": result.get("message"),
+        "tokens_used": tokens_used
     }
 
 class ChartConfigRequest(BaseModel):
@@ -150,4 +173,21 @@ async def execute_saved_report(report_id: int, db: Session = Depends(get_db)):
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error executing report: {str(e)}")
+
+@app.get("/api/token-stats")
+def get_token_stats():
+    """Returns cumulative session token usage statistics."""
+    return {
+        "total_tokens": token_stats["total_tokens"],
+        "request_count": token_stats["request_count"],
+        "history": token_stats["history"][-10:]  # Last 10 for the frontend
+    }
+
+@app.post("/api/token-stats/reset")
+def reset_token_stats():
+    """Resets the session token usage counter."""
+    token_stats["total_tokens"] = 0
+    token_stats["request_count"] = 0
+    token_stats["history"] = []
+    return {"status": "success"}
 

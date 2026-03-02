@@ -22,6 +22,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // Mock Client ID for Phase 2 demo
     const CLIENT_ID = "DEMO_CLIENT_123";
 
+    // Token Usage Elements
+    const totalTokensEl = document.getElementById('total-tokens');
+    const requestCountEl = document.getElementById('request-count');
+    const avgTokensEl = document.getElementById('avg-tokens');
+    const resetTokensBtn = document.getElementById('reset-tokens-btn');
+
     // Modal Elements
     const modalBackdrop = document.getElementById('modal-backdrop');
     const customPromptModal = document.getElementById('custom-prompt-modal');
@@ -139,6 +145,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Initial load for desktop where sidebar is visible
     loadSavedReports();
+    fetchTokenStats();  // Load token stats on startup
 
     async function loadSavedReports() {
         savedReportsList.innerHTML = '<div class="text-muted" style="padding: 1rem;">Loading...</div>';
@@ -307,6 +314,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // 4. Fill AI Response Block with Data
             populateAiMessage(aiMessageNode, result);
+
+            // 5. Update token usage stats
+            if (result.tokens_used) {
+                fetchTokenStats();
+            }
 
         } catch (err) {
             console.error(err);
@@ -674,4 +686,39 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Initialize button state
     generateBtn.disabled = true;
+
+    // --- Token Usage Stats ---
+    async function fetchTokenStats() {
+        try {
+            const res = await fetch('/api/token-stats');
+            const stats = await res.json();
+            totalTokensEl.textContent = formatNumber(stats.total_tokens);
+            requestCountEl.textContent = formatNumber(stats.request_count);
+            const avg = stats.request_count > 0
+                ? Math.round(stats.total_tokens / stats.request_count)
+                : 0;
+            avgTokensEl.textContent = formatNumber(avg);
+        } catch (err) {
+            console.error('Failed to fetch token stats:', err);
+        }
+    }
+
+    function formatNumber(num) {
+        return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    }
+
+    resetTokensBtn.addEventListener('click', async () => {
+        const confirmed = await showCustomConfirm(
+            'This will reset your session token counter to zero. Continue?',
+            'Reset Token Stats'
+        );
+        if (!confirmed) return;
+
+        try {
+            await fetch('/api/token-stats/reset', { method: 'POST' });
+            fetchTokenStats();
+        } catch (err) {
+            console.error('Failed to reset token stats:', err);
+        }
+    });
 });

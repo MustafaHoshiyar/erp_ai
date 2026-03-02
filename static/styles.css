@@ -988,3 +988,103 @@ body:has(.sidebar.collapsed) .open-sidebar-btn {
 .btn-primary:hover {
     filter: brightness(1.1);
 }
+
+/* Token Usage Panel */
+.token-usage-panel {
+    padding: 1rem;
+    border-top: 1px solid var(--border-color);
+    background: linear-gradient(180deg, transparent, rgba(16, 163, 127, 0.04));
+    flex-shrink: 0;
+}
+
+.token-usage-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.75rem;
+}
+
+.token-usage-header svg {
+    color: var(--primary-color);
+}
+
+.token-stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.token-stat {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 0.6rem 0.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+}
+
+.token-stat-value {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    font-variant-numeric: tabular-nums;
+    line-height: 1.2;
+}
+
+.token-stat-label {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    font-weight: 400;
+}
+
+.token-per-request {
+    padding: 0.35rem 0;
+    margin-bottom: 0.5rem;
+}
+
+.token-per-request strong {
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+.token-reset-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+    padding: 0.4rem 0.75rem;
+    background: transparent;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    color: var(--text-muted);
+    font-family: inherit;
+    font-size: 0.7rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.token-reset-btn:hover {
+    color: var(--text-primary);
+    border-color: var(--border-highlight);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+/* Mobile adjustments for token panel */
+@media (max-width: 480px) {
+    .token-usage-panel {
+        padding: 0.75rem;
+    }
+
+    .token-stat-value {
+        font-size: 0.95rem;
+    }
+}
