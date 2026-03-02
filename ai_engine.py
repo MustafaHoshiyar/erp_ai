@@ -8,8 +8,17 @@ from schema_fetcher import get_local_schema, format_local_schema_for_prompt
 
 load_dotenv()
 
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
-#client = Groq(api_key=os.getenv("GROQ_API_KEY"))
+AI_PROVIDER = os.getenv("AI_PROVIDER", "openai").lower()
+AI_MODEL    = os.getenv("AI_MODEL", "gpt-4o")
+
+if AI_PROVIDER == "groq":
+    client = Groq(api_key=os.getenv("GROQ_API_KEY"))
+elif AI_PROVIDER == "openai":
+    client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+else:
+    raise ValueError(f"Unsupported AI_PROVIDER: {AI_PROVIDER}")
+
+print(f"[AI Engine] Using provider: {AI_PROVIDER}, model: {AI_MODEL}")
 
 # Load global schema once at startup
 _GLOBAL_SCHEMA_PATH = os.path.join(os.path.dirname(__file__), "schemas", "global_schema.txt")
@@ -113,7 +122,7 @@ def generate_sql(user_prompt, history=None, client_id="DEMO_CLIENT_123"):
     messages.append({"role": "user", "content": user_prompt})
 
     response = client.chat.completions.create(
-        model="gpt-4o",
+        model=AI_MODEL,
         messages=messages,
         temperature=0
     )
@@ -156,7 +165,7 @@ Do NOT include explanations, markdown formatting, or comments.
     user_prompt = f"Columns: {columns}\nData Sample: {data_sample}"
 
     response = client.chat.completions.create(
-        model="gpt-4o",
+        model=AI_MODEL,
         messages=[
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": user_prompt}
