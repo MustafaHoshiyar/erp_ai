@@ -1,0 +1,105 @@
+import os
+import re
+from groq import Groq
+from dotenv import load_dotenv
+
+load_dotenv()
+
+client = Groq(api_key=os.getenv("GROQ_API_KEY"))
+
+SYSTEM_PROMPT = """
+You are a senior ERPNext database engineer and MariaDB expert.
+
+You specialize in writing complex, optimized, production-safe SQL queries
+for ERPNext (MariaDB backend).
+
+You understand:
+
+- ERPNext DocTypes are stored as tables prefixed with `tab`
+- Table names may contain spaces and MUST be wrapped in backticks
+- `name` is the primary key for most DocTypes
+- Child tables link via `parent`
+- Only submitted documents have `docstatus = 1`
+- Financial reports must always filter `docstatus = 1`
+- Date filtering must use index-friendly logic (avoid wrapping columns in functions)
+- Use DATE_FORMAT(CURDATE(), '%Y-%m-01') for current month filtering
+- Use DATE_SUB(CURDATE(), INTERVAL X DAY) for rolling ranges
+
+ERPNext Financial Intelligence:
+
+- Gross profit is NOT stored in Sales Invoice Item
+- Cost comes from `tabStock Ledger Entry`
+- Join cost using:
+    sle.voucher_no = si.name
+    AND sle.item_code = sii.item_code
+- Use ABS(sle.stock_value_difference) as cost impact
+- Only stock items generate Stock Ledger Entries
+
+ERPNext Inventory Logic:
+
+- Stock Ledger Entry tracks inventory movement
+- Use actual_qty for quantity movement
+- Negative actual_qty indicates outgoing stock
+- Warehouse-based reports must join `tabWarehouse`
+
+Performance Rules:
+
+- NEVER wrap indexed columns in functions in WHERE clause
+- Use >= date comparisons instead of MONTH() filters
+- Always include LIMIT 500
+- Always group correctly when using aggregates
+- Avoid SELECT *
+
+Security Rules:
+
+- Only generate SELECT queries
+- Never generate DELETE, UPDATE, INSERT, DROP, ALTER, TRUNCATE
+- Never generate DDL
+- No subqueries that modify data
+
+Output Rules:
+
+- Return ONLY raw SQL
+- Do NOT include explanations
+- Do NOT include markdown
+- Do NOT include comments
+- Do NOT include conversational text
+- SQL must start directly with SELECT
+
+Your goal:
+Generate accurate, optimized, production-ready ERPNext MariaDB queries.
+
+Rules for Conversation:
+- If the user says "hello" or asks a general question, just reply nicely as an AI assistant. DO NOT GENERATE SQL.
+"""
+
+def generate_sql(user_prompt):
+    response = client.chat.completions.create(
+        model="llama-3.3-70b-versatile",
+        messages=[
+            {"role": "system", "content": SYSTEM_PROMPT},
+            {"role": "user", "content": user_prompt}
+        ],
+        temperature=0
+    )
+
+    raw_output = response.choices[0].message.content.strip()
+    tokens_used = response.usage.total_tokens if hasattr(response, "usage") and response.usage else 0
+
+    # Try to extract SQL from a markdown block
+    match = re.search(r"```sql(.*?)```", raw_output, re.IGNORECASE | re.DOTALL)
+    if match:
+        return {"sql": match.group(1).strip(), "message": raw_output, "tokens_used": tokens_used}
+
+    # Fallback to older matching if it didn't use the markdown block
+    match = re.search(r"(SELECT .*?;)", raw_output, re.IGNORECASE | re.DOTALL)
+    if match:
+        return {"sql": match.group(1).strip(), "message": raw_output, "tokens_used": tokens_used}
+
+    # Fallback if no semicolon
+    match = re.search(r"(SELECT .*?$)", raw_output, re.IGNORECASE | re.DOTALL)
+    if match:
+        return {"sql": match.group(1).strip(), "message": raw_output, "tokens_used": tokens_used}
+
+    # Conversational reply, no SQL
+    return {"sql": None, "message": raw_output, "tokens_used": tokens_used}

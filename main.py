@@ -139,6 +139,7 @@ def delete_saved_report(report_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/api/schema/refresh")
+@app.get("/api/schema/refresh")
 def refresh_schema():
     """Manually triggers a fresh fetch of the client's custom schema from ERPNext."""
     from schema_fetcher import fetch_and_cache_local_schema
@@ -190,4 +191,39 @@ def reset_token_stats():
     token_stats["request_count"] = 0
     token_stats["history"] = []
     return {"status": "success"}
+
+class LoginRequest(BaseModel):
+    username: str
+    password: str
+
+@app.post("/api/login")
+async def login(req: LoginRequest):
+    try:
+        from erp_client import ERP_URL
+        import httpx
+        
+        async with httpx.AsyncClient() as client:
+            # Frappe API uses usr and pwd for authentication
+            resp = await client.post(
+                f"{ERP_URL}/api/method/login",
+                json={"usr": req.username, "pwd": req.password}
+            )
+            data = resp.json()
+            
+            # Frappe success check
+            if resp.status_code == 200 and data.get("message") == "Logged In":
+                # On success, return a demo token for the middleware boundary to let them in
+                return {
+                    "token": data.get("full_name", req.username) + "-auth-token",
+                    "email": req.username
+                }
+                
+            raise HTTPException(status_code=401, detail="Invalid credentials for Frappe")
+            
+    except httpx.RequestError as exc:
+        raise HTTPException(status_code=502, detail=f"Failed to connect to ERPNext: {str(exc)}")
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 

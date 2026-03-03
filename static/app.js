@@ -1,4 +1,10 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // Auth Check
+    if (!localStorage.getItem('auth_token')) {
+        window.location.href = 'login.html';
+        return; // Stop rendering and redirect
+    }
+
     let chatHistory = [];
     const form = document.getElementById('prompt-form');
     const promptInput = document.getElementById('user-prompt');
@@ -19,8 +25,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const closeSidebarBtn = document.getElementById('close-sidebar-btn');
     const savedReportsList = document.getElementById('saved-reports-list');
 
-    // Mock Client ID for Phase 2 demo
-    const CLIENT_ID = "DEMO_CLIENT_123";
+    // Dynamic Client ID based on logged in user
+    const CLIENT_ID = localStorage.getItem('user_email') || "DEMO_CLIENT_123";
 
     // Token Usage Elements
     const totalTokensEl = document.getElementById('total-tokens');
@@ -142,6 +148,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
         promptInput.focus();
     });
+
+    // Token toggle logic
+    const tokenToggleHeader = document.getElementById('token-toggle-header');
+    const tokenUsagePanel = document.getElementById('token-usage-panel');
+    const tokenUsageContent = document.getElementById('token-usage-content');
+    if (tokenToggleHeader) {
+        tokenToggleHeader.addEventListener('click', () => {
+            tokenUsagePanel.classList.toggle('collapsed');
+            tokenUsageContent.classList.toggle('collapsed');
+        });
+    }
 
     // Initial load for desktop where sidebar is visible
     loadSavedReports();
@@ -482,7 +499,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
 
                     // Actually, let's re-fetch the config with more data. Or just use what it gave us if we sent full data. Let's update the API call to send more data.
-                    const fullDataPayload = exportData.slice(0, 100);
+                    const fullDataPayload = exportData;
                     const responseFull = await fetch('/api/generate_chart_config', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
@@ -721,4 +738,12 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error('Failed to reset token stats:', err);
         }
     });
+
+    const logoutBtn = document.getElementById('logout-btn');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', () => {
+            localStorage.removeItem('auth_token');
+            window.location.href = 'login.html';
+        });
+    }
 });

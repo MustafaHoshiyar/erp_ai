@@ -295,20 +295,24 @@ textarea::placeholder {
     box-shadow: 0 4px 6px -1px var(--border-color);
 }
 
-/* Delete Report Button */
 .delete-report-btn {
     position: absolute;
-    top: 8px;
-    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    right: 0.25rem;
     background: transparent;
     border: none;
     color: var(--text-muted);
-    font-size: 1.2rem;
+    font-size: 1rem;
     cursor: pointer;
-    line-height: 1;
     padding: 2px 6px;
     border-radius: 4px;
     transition: all 0.2s ease;
+    opacity: 0;
+}
+
+.saved-report-item:hover .delete-report-btn {
+    opacity: 1;
 }
 
 .delete-report-btn:hover {
@@ -811,46 +815,38 @@ body:has(.sidebar.collapsed) .open-sidebar-btn {
     transition: all 0.2s ease;
 }
 
-.new-chat-btn:hover {
-    background: rgba(255, 255, 255, 0.08);
-    border-color: var(--border-highlight);
-}
-
 .saved-report-item {
-    background: var(--bg-color-dark);
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    padding: 1rem;
+    background: transparent;
+    border: none;
+    border-radius: 6px;
+    padding: 0.5rem 0.5rem;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: background 0.2s;
+    position: relative;
+    display: flex;
+    align-items: center;
 }
 
 .saved-report-item:hover {
-    border-color: var(--border-highlight);
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(255, 255, 255, 0.08);
+    /* slight grey hover */
 }
 
 .saved-report-item h4 {
-    font-size: 0.95rem;
-    margin-bottom: 0.25rem;
-    color: var(--text-primary);
-}
-
-.saved-report-item p {
-    font-size: 0.75rem;
-    color: var(--text-muted);
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    line-clamp: 2;
-    -webkit-box-orient: vertical;
+    font-size: 0.9rem;
+    font-weight: 500;
+    margin: 0;
+    color: #e5e5e5;
     overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 90%;
+    padding-left: 0.25rem;
 }
 
+.saved-report-item p,
 .saved-report-item .date {
-    font-size: 0.7rem;
-    color: var(--text-secondary);
-    margin-top: 0.5rem;
-    text-align: right;
+    display: none;
 }
 
 .save-report-btn {
@@ -1000,17 +996,50 @@ body:has(.sidebar.collapsed) .open-sidebar-btn {
 .token-usage-header {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    justify-content: space-between;
     font-size: 0.75rem;
     font-weight: 600;
     color: var(--text-secondary);
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    margin-bottom: 0.75rem;
+    cursor: pointer;
+    user-select: none;
+    padding-bottom: 0.5rem;
 }
 
-.token-usage-header svg {
+.token-usage-header-left {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.token-usage-header-left svg {
     color: var(--primary-color);
+}
+
+.token-usage-toggle-icon {
+    transition: transform 0.2s ease;
+}
+
+.token-usage-content {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transition: max-height 0.3s ease, opacity 0.3s ease, margin-top 0.3s ease;
+    max-height: 500px;
+    /* arbitrary high number */
+    opacity: 1;
+    margin-top: 0.5rem;
+}
+
+.token-usage-content.collapsed {
+    max-height: 0;
+    opacity: 0;
+    margin-top: 0;
+}
+
+.token-usage-panel.collapsed .token-usage-toggle-icon {
+    transform: rotate(-180deg);
 }
 
 .token-stats-grid {
