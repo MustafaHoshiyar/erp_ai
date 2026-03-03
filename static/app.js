@@ -368,7 +368,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const contentDiv = node.querySelector('.message-content');
         const loadingText = document.createElement('div');
         loadingText.className = 'placeholder-text text-muted';
-        loadingText.textContent = 'Thinking...';
+        loadingText.innerHTML = 'Thinking<span class="dots">...</span>';
         loadingText.style.fontStyle = 'italic';
         contentDiv.prepend(loadingText);
 

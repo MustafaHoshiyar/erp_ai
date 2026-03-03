@@ -469,24 +469,44 @@ code {
 @keyframes thinking-sparkle {
     0% {
         transform: scale(1) rotate(0deg);
-        opacity: 0.8;
+        opacity: 0.6;
     }
 
     50% {
-        transform: scale(1.15) rotate(10deg);
+        transform: scale(1.3) rotate(20deg);
         opacity: 1;
-        filter: drop-shadow(0 0 5px var(--success-color));
+        filter: drop-shadow(0 0 8px var(--success-color));
+        color: #fff;
     }
 
     100% {
         transform: scale(1) rotate(0deg);
-        opacity: 0.8;
+        opacity: 0.6;
     }
 }
 
 .thinking-animation {
-    animation: thinking-sparkle 1.5s infinite ease-in-out;
+    animation: thinking-sparkle 1s infinite ease-in-out;
     transform-origin: center center;
+}
+
+@keyframes pulse-text {
+    0% {
+        opacity: 0.4;
+    }
+
+    50% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0.4;
+    }
+}
+
+.placeholder-text {
+    animation: pulse-text 1.5s infinite ease-in-out;
+    letter-spacing: 0.5px;
 }
 
 /* Error Toast */
