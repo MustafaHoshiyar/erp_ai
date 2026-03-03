@@ -197,9 +197,30 @@ class LoginRequest(BaseModel):
     password: str
 
 @app.post("/api/login")
-def login(req: LoginRequest):
-    # Hardcoded check for demo purposes
-    if req.username == "admin" and req.password == "admin123":
-        return {"token": "demo-auth-token-xyz"}
-    raise HTTPException(status_code=401, detail="Invalid username or password")
+async def login(req: LoginRequest):
+    try:
+        from erp_client import ERP_URL
+        import httpx
+        
+        async with httpx.AsyncClient() as client:
+            # Frappe API uses usr and pwd for authentication
+            resp = await client.post(
+                f"{ERP_URL}/api/method/login",
+                json={"usr": req.username, "pwd": req.password}
+            )
+            data = resp.json()
+            
+            # Frappe success check
+            if resp.status_code == 200 and data.get("message") == "Logged In":
+                # On success, return a demo token for the middleware boundary to let them in
+                return {"token": data.get("full_name", req.username) + "-auth-token"}
+                
+            raise HTTPException(status_code=401, detail="Invalid credentials for Frappe")
+            
+    except httpx.RequestError as exc:
+        raise HTTPException(status_code=502, detail=f"Failed to connect to ERPNext: {str(exc)}")
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 

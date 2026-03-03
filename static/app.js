@@ -149,6 +149,17 @@ document.addEventListener('DOMContentLoaded', () => {
         promptInput.focus();
     });
 
+    // Token toggle logic
+    const tokenToggleHeader = document.getElementById('token-toggle-header');
+    const tokenUsagePanel = document.getElementById('token-usage-panel');
+    const tokenUsageContent = document.getElementById('token-usage-content');
+    if (tokenToggleHeader) {
+        tokenToggleHeader.addEventListener('click', () => {
+            tokenUsagePanel.classList.toggle('collapsed');
+            tokenUsageContent.classList.toggle('collapsed');
+        });
+    }
+
     // Initial load for desktop where sidebar is visible
     loadSavedReports();
     fetchTokenStats();  // Load token stats on startup
