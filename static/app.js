@@ -1,4 +1,10 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // Auth Check
+    if (!localStorage.getItem('auth_token')) {
+        window.location.href = 'login.html';
+        return; // Stop rendering and redirect
+    }
+
     let chatHistory = [];
     const form = document.getElementById('prompt-form');
     const promptInput = document.getElementById('user-prompt');
@@ -482,7 +488,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
 
                     // Actually, let's re-fetch the config with more data. Or just use what it gave us if we sent full data. Let's update the API call to send more data.
-                    const fullDataPayload = exportData.slice(0, 100);
+                    const fullDataPayload = exportData;
                     const responseFull = await fetch('/api/generate_chart_config', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
@@ -721,4 +727,12 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error('Failed to reset token stats:', err);
         }
     });
+
+    const logoutBtn = document.getElementById('logout-btn');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', () => {
+            localStorage.removeItem('auth_token');
+            window.location.href = 'login.html';
+        });
+    }
 });

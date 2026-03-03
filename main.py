@@ -139,6 +139,7 @@ def delete_saved_report(report_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/api/schema/refresh")
+@app.get("/api/schema/refresh")
 def refresh_schema():
     """Manually triggers a fresh fetch of the client's custom schema from ERPNext."""
     from schema_fetcher import fetch_and_cache_local_schema
@@ -190,4 +191,15 @@ def reset_token_stats():
     token_stats["request_count"] = 0
     token_stats["history"] = []
     return {"status": "success"}
+
+class LoginRequest(BaseModel):
+    username: str
+    password: str
+
+@app.post("/api/login")
+def login(req: LoginRequest):
+    # Hardcoded check for demo purposes
+    if req.username == "admin" and req.password == "admin123":
+        return {"token": "demo-auth-token-xyz"}
+    raise HTTPException(status_code=401, detail="Invalid username or password")
 
