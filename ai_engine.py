@@ -97,18 +97,16 @@ def generate_sql(user_prompt, history=None, client_id="DEMO_CLIENT_123"):
     # Build the dynamic system prompt with all 3 layers
     dynamic_system_prompt = SYSTEM_PROMPT
     
-    # Layer 1: Global Schema
-    if GLOBAL_SCHEMA:
-        dynamic_system_prompt += f"\n\n{GLOBAL_SCHEMA}"
-    
-    # Layer 2: Local Schema (client customizations)
+    # Schema Routing (Pass 1 - Token Optimization)
+    from schema_router import get_optimized_schema_context
+    local_schema = None
     try:
         local_schema = get_local_schema()
-        local_schema_text = format_local_schema_for_prompt(local_schema)
-        if local_schema_text:
-            dynamic_system_prompt += f"\n\n{local_schema_text}"
     except Exception as e:
-        print(f"[AI Engine] Could not load local schema: {e}")
+        print(f"[AI Engine] Could not load local schema for router: {e}")
+        
+    filtered_schema, pass1_tokens = get_optimized_schema_context(user_prompt, GLOBAL_SCHEMA, local_schema)
+    dynamic_system_prompt += f"\n\n{filtered_schema}"
     
     # Layer 3: Memory (previously successful queries)
     if memory_context:
@@ -129,6 +127,7 @@ def generate_sql(user_prompt, history=None, client_id="DEMO_CLIENT_123"):
 
     raw_output = response.choices[0].message.content.strip()
     tokens_used = response.usage.total_tokens if hasattr(response, "usage") and response.usage else 0
+    tokens_used += pass1_tokens
 
     # Try to extract SQL from a markdown block
     match = re.search(r"```sql(.*?)```", raw_output, re.IGNORECASE | re.DOTALL)
