@@ -311,6 +311,7 @@
                 if (res.ok) {
                     const data = await res.json();
                     localStorage.setItem('auth_token', data.token);
+                    localStorage.setItem('user_email', data.email);
 
                     submitBtn.textContent = 'Success';
                     setTimeout(() => {

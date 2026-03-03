@@ -25,8 +25,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const closeSidebarBtn = document.getElementById('close-sidebar-btn');
     const savedReportsList = document.getElementById('saved-reports-list');
 
-    // Mock Client ID for Phase 2 demo
-    const CLIENT_ID = "DEMO_CLIENT_123";
+    // Dynamic Client ID based on logged in user
+    const CLIENT_ID = localStorage.getItem('user_email') || "DEMO_CLIENT_123";
 
     // Token Usage Elements
     const totalTokensEl = document.getElementById('total-tokens');

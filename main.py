@@ -213,7 +213,10 @@ async def login(req: LoginRequest):
             # Frappe success check
             if resp.status_code == 200 and data.get("message") == "Logged In":
                 # On success, return a demo token for the middleware boundary to let them in
-                return {"token": data.get("full_name", req.username) + "-auth-token"}
+                return {
+                    "token": data.get("full_name", req.username) + "-auth-token",
+                    "email": req.username
+                }
                 
             raise HTTPException(status_code=401, detail="Invalid credentials for Frappe")
             
