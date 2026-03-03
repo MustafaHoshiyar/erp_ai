@@ -1,6 +1,6 @@
 import os
-from sqlalchemy import create_engine, Column, Integer, String, Text, DateTime, JSON
-from sqlalchemy.orm import declarative_base, sessionmaker
+from sqlalchemy import create_engine, Column, Integer, String, Text, DateTime, JSON, ForeignKey, Boolean
+from sqlalchemy.orm import declarative_base, sessionmaker, relationship
 from sqlalchemy.sql import func
 from dotenv import load_dotenv
 
@@ -36,9 +36,38 @@ class SavedReport(Base):
     original_prompt = Column(Text)
     sql_query = Column(Text, nullable=False)
     chart_config = Column(JSON, nullable=True) # Stores Chart.js configuration
+    embedding = Column(JSON, nullable=True)    # Stores specific float array for semantic search
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
 # Create all tables in the engine
+Base.metadata.create_all(bind=engine)
+
+class Conversation(Base):
+    __tablename__ = "conversations"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    client_id = Column(String(50), index=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    
+    messages = relationship("ConversationMessage", back_populates="conversation", cascade="all, delete-orphan")
+
+class ConversationMessage(Base):
+    __tablename__ = "conversation_messages"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    conversation_id = Column(Integer, ForeignKey("conversations.id"), index=True)
+    user_prompt = Column(Text, nullable=False)
+    generated_sql = Column(Text, nullable=True)
+    execution_status = Column(String(50), nullable=True) # "success", "error"
+    error_message = Column(Text, nullable=True)
+    user_feedback = Column(Integer, nullable=True) # 1 (positive), -1 (negative), etc.
+    tokens_used = Column(Integer, nullable=True)
+    embedding = Column(JSON, nullable=True)    # Stores specific float array for semantic search
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    
+    conversation = relationship("Conversation", back_populates="messages")
+
+# Re-run create_all in case new tables were added (SQLite safe if tables don't exist)
 Base.metadata.create_all(bind=engine)
 
 def get_db():

@@ -4,7 +4,7 @@ from pydantic import BaseModel
 from ai_engine import generate_sql, generate_chart_config
 from sql_validator import validate_sql
 from erp_client import run_query
-from database import SessionLocal, SavedReport, get_db
+from database import SessionLocal, SavedReport, get_db, Conversation, ConversationMessage
 from sqlalchemy.orm import Session
 from fastapi import Depends, HTTPException
 
@@ -29,9 +29,10 @@ class PromptRequest(BaseModel):
     prompt: str
     history: Optional[List[Dict[str, str]]] = None
     client_id: Optional[str] = "DEMO_CLIENT_123"
+    conversation_id: Optional[int] = None
 
 @app.post("/generate-report")
-async def generate_report(request: PromptRequest):
+async def generate_report(request: PromptRequest, db: Session = Depends(get_db)):
     result = generate_sql(request.prompt, request.history, request.client_id)
     
     tokens_used = result.get("tokens_used", 0)
@@ -48,9 +49,33 @@ async def generate_report(request: PromptRequest):
         if len(token_stats["history"]) > 50:
             token_stats["history"] = token_stats["history"][-50:]
 
+    # Handle Conversation DB Logging
+    conversation_id = request.conversation_id
+    if not conversation_id:
+        new_conv = Conversation(client_id=request.client_id)
+        db.add(new_conv)
+        db.commit()
+        db.refresh(new_conv)
+        conversation_id = new_conv.id
+
+    msg = ConversationMessage(
+        conversation_id=conversation_id,
+        user_prompt=request.prompt,
+        generated_sql=result.get("sql"),
+        tokens_used=tokens_used
+    )
+    db.add(msg)
+    db.commit()
+    db.refresh(msg)
+
     # If no SQL was generated, just return the conversational message
     if not result.get("sql"):
+        msg.execution_status = "error"
+        msg.error_message = "No SQL generated"
+        db.commit()
         return {
+            "conversation_id": conversation_id,
+            "message_id": msg.id,
             "sql": None,
             "data": None,
             "message": result.get("message"),
@@ -58,9 +83,20 @@ async def generate_report(request: PromptRequest):
         }
 
     validated_sql = validate_sql(result["sql"])
-    data = await run_query(validated_sql)
+    
+    try:
+        data = await run_query(validated_sql)
+        msg.execution_status = "success"
+        db.commit()
+    except Exception as e:
+        msg.execution_status = "error"
+        msg.error_message = str(e)
+        db.commit()
+        raise HTTPException(status_code=500, detail=str(e))
 
     return {
+        "conversation_id": conversation_id,
+        "message_id": msg.id,
         "sql": validated_sql,
         "data": data,
         "message": result.get("message"),
@@ -227,3 +263,16 @@ async def login(req: LoginRequest):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+class FeedbackRequest(BaseModel):
+    message_id: int
+    feedback: int # e.g., 1 for thumbs up, -1 for thumbs down
+
+@app.post("/api/conversations/feedback")
+def submit_feedback(request: FeedbackRequest, db: Session = Depends(get_db)):
+    msg = db.query(ConversationMessage).filter(ConversationMessage.id == request.message_id).first()
+    if not msg:
+        raise HTTPException(status_code=404, detail="Message not found")
+        
+    msg.user_feedback = request.feedback
+    db.commit()
+    return {"status": "success", "message_id": msg.id, "feedback": msg.user_feedback}
