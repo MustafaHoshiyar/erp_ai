@@ -358,6 +358,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const clone = aiResponseTemplate.content.cloneNode(true);
         const node = clone.querySelector('.message');
 
+        // Add thinking animation to the avatar
+        const avatarSvg = node.querySelector('.ai-avatar svg');
+        if (avatarSvg) {
+            avatarSvg.classList.add('thinking-animation');
+        }
+
         // Add a temporary loading indicator inside the message content
         const contentDiv = node.querySelector('.message-content');
         const loadingText = document.createElement('div');
@@ -373,6 +379,12 @@ document.addEventListener('DOMContentLoaded', () => {
         // Remove 'Thinking...' placeholder
         const placeholder = messageNode.querySelector('.placeholder-text');
         if (placeholder) placeholder.remove();
+
+        // Remove thinking animation from avatar
+        const avatarSvg = messageNode.querySelector('.ai-avatar svg');
+        if (avatarSvg) {
+            avatarSvg.classList.remove('thinking-animation');
+        }
 
         const sqlSection = messageNode.querySelector('.sql-section');
         const sqlOutput = messageNode.querySelector('.sql-output');
@@ -566,6 +578,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     saveReportBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--success-color)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>';
                     setTimeout(() => saveReportBtn.innerHTML = originalBtnContent, 2000);
+
+                    // Refresh sidebar to show newly saved report
+                    loadSavedReports();
 
                 } catch (e) {
                     alert(e.message);

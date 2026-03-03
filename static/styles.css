@@ -466,6 +466,29 @@ code {
     }
 }
 
+@keyframes thinking-sparkle {
+    0% {
+        transform: scale(1) rotate(0deg);
+        opacity: 0.8;
+    }
+
+    50% {
+        transform: scale(1.15) rotate(10deg);
+        opacity: 1;
+        filter: drop-shadow(0 0 5px var(--success-color));
+    }
+
+    100% {
+        transform: scale(1) rotate(0deg);
+        opacity: 0.8;
+    }
+}
+
+.thinking-animation {
+    animation: thinking-sparkle 1.5s infinite ease-in-out;
+    transform-origin: center center;
+}
+
 /* Error Toast */
 .error-toast {
     margin-top: 1rem;

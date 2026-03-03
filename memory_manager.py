@@ -51,14 +51,19 @@ def get_relevant_schema_context(client_id: str, new_prompt: str, top_k: int = 3)
         if not query_embedding:
             return ""
 
+        embedded_count = 0
         scored_records = []
         for record in all_past_queries:
             if not record.embedding:
-                text_to_embed = record.original_prompt if hasattr(record, 'original_prompt') else record.user_prompt
-                emb = get_embedding(text_to_embed)
-                if emb:
-                    record.embedding = emb
-                    db.commit()
+                if embedded_count < 2: # Limit backfill to avoid huge latency spikes
+                    text_to_embed = record.original_prompt if hasattr(record, 'original_prompt') else record.user_prompt
+                    emb = get_embedding(text_to_embed)
+                    if emb:
+                        record.embedding = emb
+                        db.commit()
+                        embedded_count += 1
+                else:
+                    continue # Skip records without embeddings to keep response fast
             
             if record.embedding:
                 sim = cosine_similarity(query_embedding, record.embedding)
