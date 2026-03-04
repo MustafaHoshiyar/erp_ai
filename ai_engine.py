@@ -68,7 +68,7 @@ Performance & Syntax Rules:
 - Use DATE_SUB(CURDATE(), INTERVAL X DAY) for rolling ranges.
 - NEVER wrap indexed columns in functions in WHERE clause.
 - Use >= date comparisons instead of MONTH() filters.
-- Always include LIMIT.
+- Always include a LIMIT clause (default 100), UNLESS the user explicitly requests all records or 'no limit'. If they request all records, omit LIMIT and include the exact comment /* NO_LIMIT */ BEFORE the semicolon (e.g. `FROM tabCustomer /* NO_LIMIT */;`).
 - Format the totals and amount columns with 2 decimal places.
 - Always group correctly when using aggregates.
 - Avoid SELECT *. Return specific columns.
@@ -80,7 +80,7 @@ Security Rules:
 
 Output Rules:
 - Return ONLY raw SQL.
-- Do NOT include explanations, markdown formatting, comments, or conversational text.
+- Do NOT include explanations, markdown formatting, or conversational text (but SQL comments like /* NO_LIMIT */ ARE ALLOWED).
 - SQL must start directly with SELECT.
 
 Your goal:
@@ -157,6 +157,9 @@ Usually, there is one categorical column (for labels) and one or more numerical 
 
 CRITICAL SCALING INSTRUCTION:
 If there are multiple numerical datasets and their values have vastly different scales (for example, "Total Orders" ranges from 1-100, while "Total Sales" ranges from 1,000-10,000+), you MUST configure multiple Y-axes (e.g., `y` and `y1`) in the `options.scales` configuration and assign each dataset to the appropriate `yAxisID`.
+
+CRITICAL DATE ISSUES:
+Do NOT use `type: 'time'` for x-axis or y-axis scales. The frontend does not have a date adapter loaded. Treat dates as simple categorical strings (i.e. use the default `type: 'category'` or omit `type` for the x-axis).
 
 Return ONLY the raw JSON object for the Chart.js configuration, starting with `{` and ending with `}`.
 Do NOT include explanations, markdown formatting, or comments.

@@ -10,7 +10,14 @@ def validate_sql(sql: str):
         if word in upper_sql:
             raise Exception("Forbidden SQL detected.")
 
+    if "/* NO_LIMIT */" in upper_sql:
+        return sql
+
     if "LIMIT" not in upper_sql:
-        sql += " LIMIT 600"
+        sql = sql.strip()
+        if sql.endswith(";"):
+            sql = sql[:-1] + " LIMIT 600;"
+        else:
+            sql += " LIMIT 600"
 
     return sql

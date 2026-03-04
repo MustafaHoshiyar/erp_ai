@@ -115,7 +115,7 @@ async def api_generate_chart_config(request: ChartConfigRequest):
         config_json = json.loads(config_str)
         return config_json
     except Exception as e:
-        return {"error": str(e)}
+        raise HTTPException(status_code=500, detail=str(e))
 
 # --- Saved Reports Endpoints ---
 

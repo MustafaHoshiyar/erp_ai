@@ -510,14 +510,31 @@ document.addEventListener('DOMContentLoaded', () => {
                         } catch (e) { }
                     }
 
-                    // Actually, let's re-fetch the config with more data. Or just use what it gave us if we sent full data. Let's update the API call to send more data.
-                    const fullDataPayload = exportData;
+                    // To prevent token limits (OpenAI 429), we should limit how much data we send to the LLM to infer the structure.
+                    // 30 rows is typically more than enough for the AI to understand the dataset and ranges.
+                    const maxRowsForAI = 30;
+                    const fullDataPayload = exportData.slice(0, maxRowsForAI);
                     const responseFull = await fetch('/api/generate_chart_config', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ columns, data_sample: fullDataPayload })
                     });
+
+                    if (!responseFull.ok) {
+                        try {
+                            const errorJson = await responseFull.json();
+                            throw new Error(errorJson.detail || "Failed to generate chart config.");
+                        } catch (e) {
+                            if (e.message) throw e;
+                            throw new Error("Failed to generate chart config.");
+                        }
+                    }
+
                     const fullConfig = await responseFull.json();
+
+                    if (fullConfig.error) {
+                        throw new Error(fullConfig.error);
+                    }
 
                     if (currentChart) {
                         currentChart.destroy();
