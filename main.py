@@ -106,11 +106,12 @@ async def generate_report(request: PromptRequest, db: Session = Depends(get_db))
 class ChartConfigRequest(BaseModel):
     columns: List[str]
     data_sample: List[Dict[str, Any]]
+    dataset_summary: Optional[Dict[str, Any]] = None
 
 @app.post("/api/generate_chart_config")
 async def api_generate_chart_config(request: ChartConfigRequest):
     try:
-        config_str = generate_chart_config(request.columns, request.data_sample)
+        config_str = generate_chart_config(request.columns, request.data_sample, request.dataset_summary)
         import json
         config_json = json.loads(config_str)
         return config_json

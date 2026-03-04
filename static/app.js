@@ -514,10 +514,39 @@ document.addEventListener('DOMContentLoaded', () => {
                     // 30 rows is typically more than enough for the AI to understand the dataset and ranges.
                     const maxRowsForAI = 30;
                     const fullDataPayload = exportData.slice(0, maxRowsForAI);
+
+                    // Pre-compute summaries for the AI so it can generate accurate KPIs for the FULL dataset
+                    const datasetSummary = {
+                        total_rows_in_full_dataset: exportData.length,
+                        column_sums: {}
+                    };
+
+                    // Attempt to sum numerical columns across the entire dataset
+                    if (exportData.length > 0) {
+                        const numericCols = Object.keys(exportData[0]).filter(col => {
+                            // Check if the first row value looks like a number
+                            const val = exportData[0][col];
+                            return typeof val === 'number' || (typeof val === 'string' && !isNaN(parseFloat(val)) && isFinite(val));
+                        });
+
+                        numericCols.forEach(col => {
+                            let sum = 0;
+                            exportData.forEach(row => {
+                                const val = parseFloat(row[col]);
+                                if (!isNaN(val)) sum += val;
+                            });
+                            datasetSummary.column_sums[col] = sum;
+                        });
+                    }
+
                     const responseFull = await fetch('/api/generate_chart_config', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ columns, data_sample: fullDataPayload })
+                        body: JSON.stringify({
+                            columns,
+                            data_sample: fullDataPayload,
+                            dataset_summary: datasetSummary
+                        })
                     });
 
                     if (!responseFull.ok) {
@@ -540,9 +569,46 @@ document.addEventListener('DOMContentLoaded', () => {
                         currentChart.destroy();
                     }
 
-                    lastChartConfig = fullConfig; // Save for the 'Save Report' button
+                    // Pre-existing saved configs might just be the chart config
+                    const chartConfigOptions = fullConfig.chart || fullConfig;
+                    const kpis = fullConfig.kpis || [];
+
+                    lastChartConfig = fullConfig; // Save the wrapper with kpis for the 'Save Report' button
+
+                    // Render KPIs if available
+                    // Clean up any existing KPI grid
+                    let existingGrid = messageNode.querySelector('.kpi-grid');
+                    if (existingGrid) existingGrid.remove();
+
+                    if (kpis.length > 0) {
+                        const kpiGrid = document.createElement('div');
+                        kpiGrid.className = 'kpi-grid';
+
+                        kpis.forEach(kpi => {
+                            const card = document.createElement('div');
+                            card.className = 'kpi-card';
+
+                            let trendSection = '';
+                            if (kpi.trend_percentage && kpi.trend_direction) {
+                                const arrow = kpi.trend_direction === 'up' ? '↑' : (kpi.trend_direction === 'down' ? '↓' : '→');
+                                const trendClass = kpi.trend_direction === 'neutral' ? 'kpi-trend' : `kpi-trend ${kpi.trend_direction}`;
+                                trendSection = `<div class="${trendClass}">${arrow} ${kpi.trend_percentage}%</div>`;
+                            }
+
+                            card.innerHTML = `
+                                <div class="kpi-label">${kpi.label}</div>
+                                <div class="kpi-value">${kpi.value}</div>
+                                ${trendSection}
+                            `;
+                            kpiGrid.appendChild(card);
+                        });
+
+                        // Insert right before chart container
+                        chartContainer.parentNode.insertBefore(kpiGrid, chartContainer);
+                    }
+
                     chartContainer.style.display = 'block';
-                    currentChart = new Chart(canvas, fullConfig);
+                    currentChart = new Chart(canvas, chartConfigOptions);
 
                     if (saveReportBtn) {
                         saveReportBtn.style.display = 'flex'; // Show save button
@@ -699,11 +765,45 @@ document.addEventListener('DOMContentLoaded', () => {
             messageNode.querySelector('.message-content').prepend(textResponse);
         }
 
-        // Render Pre-loaded Chart if it exists
+        // Render Pre-loaded Chart and KPIs if it exists
         if (preLoadedChartConfig && chartContainer && canvas) {
+            const chartConfigOptions = preLoadedChartConfig.chart || preLoadedChartConfig;
+            const kpis = preLoadedChartConfig.kpis || [];
+
+            // Clean up any existing KPI grid
+            let existingGrid = messageNode.querySelector('.kpi-grid');
+            if (existingGrid) existingGrid.remove();
+
+            if (kpis.length > 0) {
+                const kpiGrid = document.createElement('div');
+                kpiGrid.className = 'kpi-grid';
+
+                kpis.forEach(kpi => {
+                    const card = document.createElement('div');
+                    card.className = 'kpi-card';
+
+                    let trendSection = '';
+                    if (kpi.trend_percentage && kpi.trend_direction) {
+                        const arrow = kpi.trend_direction === 'up' ? '↑' : (kpi.trend_direction === 'down' ? '↓' : '→');
+                        const trendClass = kpi.trend_direction === 'neutral' ? 'kpi-trend' : `kpi-trend ${kpi.trend_direction}`;
+                        trendSection = `<div class="${trendClass}">${arrow} ${kpi.trend_percentage}%</div>`;
+                    }
+
+                    card.innerHTML = `
+                        <div class="kpi-label">${kpi.label}</div>
+                        <div class="kpi-value">${kpi.value}</div>
+                        ${trendSection}
+                    `;
+                    kpiGrid.appendChild(card);
+                });
+
+                // Insert right before chart container
+                chartContainer.parentNode.insertBefore(kpiGrid, chartContainer);
+            }
+
             chartContainer.style.display = 'block';
             lastChartConfig = preLoadedChartConfig;
-            currentChart = new Chart(canvas, preLoadedChartConfig);
+            currentChart = new Chart(canvas, chartConfigOptions);
         }
     }
 

@@ -148,10 +148,34 @@ def generate_sql(user_prompt, history=None, client_id="DEMO_CLIENT_123"):
     return {"sql": None, "message": raw_output, "tokens_used": tokens_used}
 
 
-def generate_chart_config(columns, data_sample):
+def generate_chart_config(columns, data_sample, dataset_summary=None):
     system_prompt = """
-You are an expert data visualization assistant.
-Given a list of column names, their inferred data types, and a small JSON sample of the data, your task is to generate a valid, optimized JSON configuration object for Chart.js.
+You are an expert data visualization and dashboard assistant.
+Given a list of column names, their inferred data types, a small JSON sample of the data, and an overall dataset summary (total rows and sums of numerical columns), your task is to generate a comprehensive JSON dashboard configuration.
+
+Your output MUST be a single raw JSON object with the following structure:
+{
+  "kpis": [
+    {
+      "label": "Total Orders",
+      "value": "66",
+      "trend_percentage": "24.53",
+      "trend_direction": "up"
+    }
+  ],
+  "chart": {
+     // Valid Chart.js configuration object here
+  }
+}
+
+KPI INSTRUCTIONS:
+- Generate up to 4 Key Performance Indicators (KPIs) that summarize the data.
+- **CRITICAL**: Use the `dataset_summary` provided in the user prompt to populate the KPI values (e.g. Total Rows, Sums of key numerical columns). Do NOT base the KPIs solely on the small `Data Sample`.
+- `value` should be formatted nicely (e.g., "99.4k", "140.7", "$12.5M").
+- `trend_percentage` is optional (an estimated trend based on the data context, e.g., "24.5"). Omit if not applicable.
+- `trend_direction` must be "up", "down", or "neutral".
+
+CHART INSTRUCTIONS:
 Choose the best chart type (e.g., 'bar', 'line', 'pie', 'doughnut') that represents the data.
 Usually, there is one categorical column (for labels) and one or more numerical columns (for datasets).
 
@@ -161,10 +185,13 @@ If there are multiple numerical datasets and their values have vastly different 
 CRITICAL DATE ISSUES:
 Do NOT use `type: 'time'` for x-axis or y-axis scales. The frontend does not have a date adapter loaded. Treat dates as simple categorical strings (i.e. use the default `type: 'category'` or omit `type` for the x-axis).
 
-Return ONLY the raw JSON object for the Chart.js configuration, starting with `{` and ending with `}`.
+Return ONLY the raw JSON object, starting with `{` and ending with `}`.
 Do NOT include explanations, markdown formatting, or comments.
 """
+    
     user_prompt = f"Columns: {columns}\nData Sample: {data_sample}"
+    if dataset_summary:
+        user_prompt += f"\nDataset Summary (Real Totals for KPIs): {dataset_summary}"
 
     response = client.chat.completions.create(
         model=AI_MODEL,
