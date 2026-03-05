@@ -469,48 +469,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 try {
                     const columns = Object.keys(exportData[0]);
-                    const dataSample = exportData.slice(0, 5); // Send a sample to determine types
 
-                    const response = await fetch('/api/generate_chart_config', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({ columns, data_sample: dataSample })
-                    });
-
-                    if (!response.ok) throw new Error("Failed to generate chart config.");
-
-                    const config = await response.json();
-
-                    if (config.error) throw new Error(config.error);
-
-                    // Inject actual data into the config from AI if it didn't do it properly
-                    // The AI typically returns structure but we need to map our real data correctly
-                    // For safety, we map our full data according to the labels and datasets axes the AI chose.
-
-                    if (config.data && config.data.datasets && config.data.labels) {
-                        try {
-                            // Assume the first dataset label is targeting a specific column, and the labels refer to a category column
-                            // Let's use the first data row objects keys since the AI might have just made mock data.
-
-                            // Let's rely on the AI actually making a function for us or we just pass the data? 
-                            // The AI was given sample data, it might have populated `data` array exactly, but we want all rows.
-
-                            // We must reconstruct the dataset using the keys the AI intended.
-                            // Looking at a standard Chart.js bar chart config, data usually looks like data.labels = [...], data.datasets[0].data = [...]
-
-                            // Since we didn't tell it the exact JS mapping, we will send the full data to it so it populates it fully?
-                            // Wait, the context window might be small. 
-
-                            // Better approach: Let's assume the AI config tells us which column is the X axis (labels) and Y axis (datasets).
-                            // But Chart.js config does not have a standard "ColumnName" field.
-                            // So let's just make the AI output the actual fully populated data array in the config by sending it the full data.
-                            // Re-fetching with full data mapped is safer if data size is small. Let's send up to 50 rows.
-                        } catch (e) { }
-                    }
-
-                    // To prevent token limits (OpenAI 429), we should limit how much data we send to the LLM to infer the structure.
+                    // To prevent token limits (OpenAI 429), limit how much data we send to the LLM to infer the structure.
                     // 30 rows is typically more than enough for the AI to understand the dataset and ranges.
                     const maxRowsForAI = 30;
                     const fullDataPayload = exportData.slice(0, maxRowsForAI);
@@ -606,6 +566,50 @@ document.addEventListener('DOMContentLoaded', () => {
                         // Insert right before chart container
                         chartContainer.parentNode.insertBefore(kpiGrid, chartContainer);
                     }
+
+                    // --- MAP FULL DATASET OVER AI SAMPLE DATA ---
+                    // The AI config (chartConfigOptions) likely contains data mapped from the small `fullDataPayload` (30 rows).
+                    // We need to inject the full `exportData` (e.g. 600+ rows) into this config.
+                    if (chartConfigOptions && chartConfigOptions.data && chartConfigOptions.data.datasets && exportData.length > 0) {
+                        try {
+                            // 1. Identify which keys (columns) the AI intended to use
+                            // We look at the first dataset and the labels array length to guess the x-axis and y-axis keys from our exportData.
+
+                            // Guess X-axis key (Labels) by finding a column in exportData[0] whose value matches the first created label.
+                            // If we can't find it reliably, we assume the first non-numeric column.
+                            let xKey = columns.find(c => typeof exportData[0][c] === 'string' && isNaN(parseFloat(exportData[0][c]))) || columns[0];
+
+                            // Map the full labels array
+                            chartConfigOptions.data.labels = exportData.map(row => {
+                                let val = row[xKey];
+                                // Truncate long labels
+                                return (typeof val === 'string' && val.length > 25) ? val.substring(0, 22) + '...' : val;
+                            });
+
+                            // Guess Y-axis keys for each dataset
+                            chartConfigOptions.data.datasets.forEach((dataset, index) => {
+                                // Try to match the dataset label to a column name, or guess by looking for the AI's first data point in our columns
+                                let yKey = null;
+
+                                // Direct match
+                                if (columns.includes(dataset.label)) {
+                                    yKey = dataset.label;
+                                } else {
+                                    // Fallback: pick the first numeric column we haven't used as X
+                                    const numericCols = columns.filter(col => col !== xKey && !isNaN(parseFloat(exportData[0][col])));
+                                    yKey = numericCols[Math.min(index, numericCols.length - 1)];
+                                }
+
+                                if (yKey) {
+                                    dataset.data = exportData.map(row => parseFloat(row[yKey]) || 0);
+                                }
+                            });
+                        } catch (mappingError) {
+                            console.warn("Failed to automatically map full dataset to AI chart config:", mappingError);
+                            // It will fallback to rendering whatever data the AI returned in the config
+                        }
+                    }
+                    // ---------------------------------------------
 
                     chartContainer.style.display = 'block';
                     currentChart = new Chart(canvas, chartConfigOptions);
@@ -875,6 +879,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (logoutBtn) {
         logoutBtn.addEventListener('click', () => {
             localStorage.removeItem('auth_token');
+            localStorage.removeItem('user_email');
             window.location.href = 'login.html';
         });
     }

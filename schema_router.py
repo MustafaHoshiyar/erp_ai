@@ -10,11 +10,29 @@ ROUTER_MODEL = "gpt-4o-mini" # Fast, cheap model for Pass 1
 openai_api_key = os.getenv("OPENAI_API_KEY")
 client = OpenAI(api_key=openai_api_key) if openai_api_key else None
 
+# In-memory cache for the generated schema index string
+_SCHEMA_INDEX_CACHE = {
+    "global_length": 0,
+    "local_length": 0,
+    "index_string": ""
+}
+
 def build_schema_index(global_schema: str, local_schema: dict) -> str:
     """
     Builds a very lightweight list of available tables and a tiny subset of columns
-    just so the router knows what exists.
+    just so the router knows what exists. Results are cached in memory.
     """
+    global _SCHEMA_INDEX_CACHE
+    
+    local_schema_len = len(str(local_schema)) if local_schema else 0
+    global_schema_len = len(global_schema)
+    
+    # Return cached index if schemas haven't changed size
+    if (global_schema_len == _SCHEMA_INDEX_CACHE["global_length"] and 
+        local_schema_len == _SCHEMA_INDEX_CACHE["local_length"] and 
+        _SCHEMA_INDEX_CACHE["index_string"]):
+        return _SCHEMA_INDEX_CACHE["index_string"]
+    
     lines = ["Available Database Tables:"]
     
     # Process global schema lines
@@ -36,7 +54,14 @@ def build_schema_index(global_schema: str, local_schema: dict) -> str:
                     field_strs.append(f"{fname}")
             lines.append(f"{table_name}: {', '.join(field_strs)} ...")
             
-    return "\n".join(lines)
+    index_str = "\n".join(lines)
+    
+    # Update cache
+    _SCHEMA_INDEX_CACHE["global_length"] = global_schema_len
+    _SCHEMA_INDEX_CACHE["local_length"] = local_schema_len
+    _SCHEMA_INDEX_CACHE["index_string"] = index_str
+    
+    return index_str
 
 def identify_required_tables(user_prompt: str, schema_index: str) -> tuple[list[str], int]:
     """

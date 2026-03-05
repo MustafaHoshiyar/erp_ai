@@ -3,8 +3,8 @@ FORBIDDEN = ["DELETE", "UPDATE", "DROP", "INSERT", "ALTER", "TRUNCATE"]
 def validate_sql(sql: str):
     upper_sql = sql.upper()
 
-    if not upper_sql.startswith("SELECT"):
-        raise Exception("Only SELECT queries are allowed.")
+    if not (upper_sql.startswith("SELECT") or upper_sql.startswith("WITH")):
+        raise Exception("Only SELECT or WITH queries are allowed.")
 
     for word in FORBIDDEN:
         if word in upper_sql:

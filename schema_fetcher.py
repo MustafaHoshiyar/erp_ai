@@ -17,7 +17,7 @@ ERP_API_SECRET = os.getenv("ERP_API_SECRET")
 
 CACHE_DIR = os.path.join(os.path.dirname(__file__), "schemas")
 LOCAL_SCHEMA_CACHE = os.path.join(CACHE_DIR, "local_schema_cache.json")
-CACHE_TTL_SECONDS = 60  # 1 Minute
+CACHE_TTL_SECONDS = 86400  # 24 Hours
 
 
 def _get_headers():
