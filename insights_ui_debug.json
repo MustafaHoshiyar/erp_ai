@@ -1,0 +1,30 @@
+{
+  "charts": [
+    {
+      "name": "26d3op4qcs",
+      "title": "Chart 1",
+      "chart_type": "Bar",
+      "config": "{\n \"filters\": {\n  \"filters\": [],\n  \"logical_operator\": \"And\"\n },\n \"limit\": 100,\n \"order_by\": [],\n \"x_axis\": {\n  \"dimension\": {\n   \"column_name\": \"customer\",\n   \"data_type\": \"String\",\n   \"dimension_name\": \"customer\",\n   \"label\": \"customer\",\n   \"value\": \"customer\"\n  },\n  \"label_rotation\": 0\n },\n \"y_axis\": {\n  \"series\": [\n   {\n    \"measure\": {\n     \"aggregation\": \"sum\",\n     \"column_name\": \"total_revenue\",\n     \"data_type\": \"Decimal\",\n     \"measure_name\": \"sum_of_total_revenue\"\n    }\n   }\n  ],\n  \"stack\": true\n }\n}",
+      "query": "1jsa12s5df"
+    },
+    {
+      "name": "32rro9f5p7",
+      "title": "Customer",
+      "chart_type": "Bar",
+      "config": "{\n \"filters\": {\n  \"filters\": [],\n  \"logical_operator\": \"And\"\n },\n \"limit\": 100,\n \"order_by\": [],\n \"x_axis\": {\n  \"dimension\": {\n   \"column_name\": \"name\",\n   \"data_type\": \"String\",\n   \"dimension_name\": \"name\",\n   \"label\": \"name\",\n   \"value\": \"name\"\n  },\n  \"label_rotation\": 90\n },\n \"y_axis\": {\n  \"series\": [\n   {\n    \"measure\": {\n     \"aggregation\": \"\",\n     \"column_name\": \"\",\n     \"data_type\": \"Decimal\",\n     \"measure_name\": \"\"\n    }\n   }\n  ],\n  \"stack\": true\n }\n}",
+      "query": "2tndj51hj5"
+    }
+  ],
+  "dashboards": [
+    {
+      "name": "2ng2hfsnvc",
+      "title": "Dashboard 1",
+      "items": "[]"
+    },
+    {
+      "name": "3lhe7nvu4v",
+      "title": "Dashboard 1",
+      "items": "[]"
+    }
+  ]
+}

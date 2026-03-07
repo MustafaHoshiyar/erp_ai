@@ -307,7 +307,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ prompt: promptText, history: chatHistory })
+                body: JSON.stringify({ prompt: promptText, history: chatHistory, client_id: CLIENT_ID })
             });
 
             if (!response.ok) {
@@ -397,6 +397,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const chartContainer = messageNode.querySelector('.chart-container');
         const canvas = messageNode.querySelector('.dashboard-chart');
         const saveReportBtn = messageNode.querySelector('.save-report-btn');
+        const exportInsightsBtn = messageNode.querySelector('.export-insights-btn');
         let currentChart = null;
         let lastChartConfig = null; // Store config for saving
 
@@ -456,6 +457,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (saveReportBtn) {
             saveReportBtn.style.display = 'none'; // Initially hide when data renders
+        }
+        if (exportInsightsBtn) {
+            exportInsightsBtn.style.display = 'none'; // Initially hide until rendering completes
         }
 
         // Setup Dashboard Generation
@@ -617,6 +621,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (saveReportBtn) {
                         saveReportBtn.style.display = 'flex'; // Show save button
                     }
+                    if (exportInsightsBtn && result.sql) {
+                        exportInsightsBtn.style.display = 'flex';
+                    }
 
                 } catch (e) {
                     console.error("Dashboard error:", e);
@@ -668,8 +675,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     // Refresh sidebar to show newly saved report
                     loadSavedReports();
-
-                } catch (e) {
                     alert(e.message);
                     saveReportBtn.innerHTML = originalBtnContent;
                 } finally {
@@ -680,8 +685,167 @@ document.addEventListener('DOMContentLoaded', () => {
             saveReportBtn.style.display = 'none'; // Only show save if it generated SQL and a chart
         }
 
+        // Setup Export to Insights
+        if (exportInsightsBtn && result.sql) {
+            exportInsightsBtn.style.display = 'flex';
+            exportInsightsBtn.addEventListener('click', async () => {
+                const modal = document.getElementById('insights-export-modal');
+                const backdrop = document.getElementById('modal-backdrop');
+                const titleInput = document.getElementById('insights-title-input');
+                const dashSelect = document.getElementById('insights-dashboard-select');
+                const newDashInput = document.getElementById('insights-new-dashboard-input');
+                const cancelBtn = document.getElementById('insights-modal-cancel');
+                const submitBtn = document.getElementById('insights-modal-submit');
 
+                // Reset and Show
+                titleInput.value = '';
+                newDashInput.value = '';
+                newDashInput.style.display = 'block'; // Default to "Create New" selected
 
+                dashSelect.innerHTML = '<option value="_new_">-- Create New Dashboard --</option>';
+
+                // Fetch existing dashboards
+                try {
+                    const res = await fetch('/api/reports/insights-dashboards');
+                    if (res.ok) {
+                        const data = await res.json();
+                        data.dashboards.forEach(d => {
+                            const opt = document.createElement('option');
+                            opt.value = d.name;
+                            opt.textContent = d.title;
+                            dashSelect.appendChild(opt);
+                        });
+                    }
+                } catch (e) { console.error("Could not fetch dashboards"); }
+
+                dashSelect.addEventListener('change', () => {
+                    if (dashSelect.value === '_new_') {
+                        newDashInput.style.display = 'block';
+                    } else {
+                        newDashInput.style.display = 'none';
+                    }
+                });
+
+                backdrop.classList.remove('hidden');
+                modal.classList.remove('hidden');
+
+                const cleanup = () => {
+                    backdrop.classList.add('hidden');
+                    modal.classList.add('hidden');
+                    cancelBtn.removeEventListener('click', handleCancel);
+                    submitBtn.removeEventListener('click', handleSubmit);
+                };
+
+                const handleCancel = () => cleanup();
+
+                const handleSubmit = async () => {
+                    const title = titleInput.value.trim();
+                    let dashboardName = dashSelect.value;
+                    const newDashName = newDashInput.value.trim();
+
+                    if (!title) { alert('Please enter a title'); return; }
+
+                    if (dashboardName === '_new_') {
+                        if (!newDashName) { alert('Please enter a new dashboard name'); return; }
+                        dashboardName = newDashName;
+                        // For a new dashboard, the API expects the title, not the ID (since it doesn't exist yet)
+                        // actually frappe_insights.py takes dashboard_name which it searches by title.
+                    } else {
+                        // User selected an existing ID, but the backend script filters by title.
+                        // Let's get the title of the selected option
+                        const selectedOption = dashSelect.options[dashSelect.selectedIndex];
+                        dashboardName = selectedOption.textContent;
+                    }
+
+                    cleanup();
+
+                    const originalBtnContent = exportInsightsBtn.innerHTML;
+                    exportInsightsBtn.innerHTML = '<div class="spinner" style="width:16px; height:16px; border-width:2px; border-color: currentColor; border-right-color: transparent;"></div>';
+                    exportInsightsBtn.disabled = true;
+
+                    // Extract chart type
+                    let chartType = "Bar";
+                    if (lastChartConfig) {
+                        try {
+                            const config = JSON.parse(lastChartConfig);
+                            if (config.chart && config.chart.type) {
+                                chartType = config.chart.type;
+                            }
+                        } catch (e) { }
+                    }
+
+                    try {
+                        const response = await fetch('/api/reports/export-insights', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                title: title,
+                                sql: result.sql,
+                                chart_type: chartType,
+                                dashboard_name: dashboardName
+                            })
+                        });
+
+                        const resData = await response.json();
+                        if (!response.ok) throw new Error(resData.detail || "Failed to export");
+
+                        exportInsightsBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--success-color)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>';
+                        setTimeout(() => exportInsightsBtn.innerHTML = originalBtnContent, 2000);
+
+                        // If successful, the API returns {"status": "success", "url": "..."}
+                        if (resData.url) {
+                            alert(`Successfully exported to Frappe Insights! It is saved in the "${resData.workbook_name}" workbook.`);
+                            window.open(resData.url, '_blank');
+                        } else {
+                            alert("Exported successfully, but no URL was returned.");
+                        }
+
+                    } catch (e) {
+                        alert("Export failed: " + e.message);
+                        exportInsightsBtn.innerHTML = originalBtnContent;
+                    } finally {
+                        exportInsightsBtn.disabled = false;
+                    }
+                };
+
+                cancelBtn.addEventListener('click', handleCancel);
+                submitBtn.addEventListener('click', handleSubmit);
+            });
+        } else if (exportInsightsBtn) {
+            exportInsightsBtn.style.display = 'none';
+        }
+
+        // Setup Feedback Buttons
+        const thumbsUpBtn = messageNode.querySelector('.thumbs-up');
+        const thumbsDownBtn = messageNode.querySelector('.thumbs-down');
+
+        if (thumbsUpBtn && thumbsDownBtn && result.message_id) {
+            thumbsUpBtn.addEventListener('click', async () => {
+                try {
+                    thumbsUpBtn.classList.add('active');
+                    thumbsDownBtn.classList.remove('active');
+                    await fetch('/api/conversations/feedback', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ message_id: result.message_id, feedback: 1, comment: null })
+                    });
+                } catch (e) { console.error("Feedback error", e); }
+            });
+
+            thumbsDownBtn.addEventListener('click', async () => {
+                try {
+                    const comment = await showCustomPrompt("Please tell us what went wrong so the AI can learn (Optional):", "Feedback");
+
+                    thumbsDownBtn.classList.add('active');
+                    thumbsUpBtn.classList.remove('active');
+                    await fetch('/api/conversations/feedback', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ message_id: result.message_id, feedback: -1, comment: comment || null })
+                    });
+                } catch (e) { console.error("Feedback error", e); }
+            });
+        }
 
         // Try rendering SQL (currently removed from backend, but keeping logic if it returns)
         if (result.sql) {

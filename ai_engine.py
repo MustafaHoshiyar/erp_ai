@@ -61,6 +61,10 @@ ERPNext Inventory Logic:
 - Negative actual_qty indicates outgoing stock.
 - Warehouse-based reports must join `tabWarehouse`.
 
+Aggregation & Metrics Rules:
+- If the user asks "how many" or "total number of", you MUST use the `COUNT(name)` function (e.g. `SELECT COUNT(name) AS total_users FROM tabUser`). Do NOT just return a list of records.
+- Use `SUM()` for requests like "total amount", "total sales", or "revenue".
+
 Performance & Syntax Rules:
 - STRICTLY USE MariaDB functions! (e.g., IFNULL, DATE_FORMAT, CURDATE(), DATEDIFF, CONCAT).
 - NEVER use backticks around date literals or string values (e.g. use '2025-11-30', NEVER `2025-11-30`). Backticks are ONLY for table and column names.
@@ -68,12 +72,13 @@ Performance & Syntax Rules:
 - Use DATE_FORMAT(CURDATE(), '%Y-%m-01') for current month filtering.
 - Use DATE_SUB(CURDATE(), INTERVAL X DAY) for rolling ranges.
 - NEVER wrap indexed columns in functions in WHERE clause.
-- For TIME-SERIES grouping (e.g. predictions, forecasts, or trends over months/days), you MUST generate a continuous sequence of dates to ensure months with 0 data are not skipped.
-  - Since MariaDB 10.2+, you MUST use a Recursive CTE to generate the calendar sequence, then LEFT JOIN the main table to it.
-  - Example of Recursive CTE for 6 months:
-    `WITH RECURSIVE calendar AS (SELECT DATE_FORMAT(CURDATE(), '%Y-%m-01') AS month_date UNION ALL SELECT DATE_ADD(month_date, INTERVAL 1 MONTH) FROM calendar WHERE month_date < DATE_ADD(DATE_FORMAT(CURDATE(), '%Y-%m-01'), INTERVAL 5 MONTH))`
-  - Example of LEFT JOIN:
-    `SELECT DATE_FORMAT(c.month_date, '%Y-%m') AS 'Month', IFNULL(SUM(si.grand_total), 0) AS 'Total' FROM calendar c LEFT JOIN \`tabSales Invoice\` si ON DATE_FORMAT(si.posting_date, '%Y-%m-01') = c.month_date GROUP BY c.month_date`
+- For TIME-SERIES FORECASTING or PREDICTIONS:
+  - Do NOT attempt to calculate the forecast in SQL using recursive CTEs.
+  - INSTEAD: 
+    1. Write a simple SQL query to extract the historical data grouped by month (e.g. `SELECT DATE_FORMAT(posting_date, '%Y-%m') AS 'Month', SUM(grand_total) AS 'Sales' FROM ... GROUP BY Month`).
+    2. You MUST include the exact string "FORECAST: <date_col>, <target_col>, <periods>" anywhere in your markdown response outside the SQL block. 
+       Example: FORECAST: Month, Sales, 6
+  - The Python backend will catch this flag, execute your historical SQL, and run a statistical forecast model (Holt-Winters) on the results automatically.
 - Format the totals and amount columns with 2 decimal places.
 - Always group correctly when using aggregates.
 - Avoid SELECT *. Return specific columns.
@@ -134,23 +139,28 @@ def generate_sql(user_prompt, history=None, client_id="DEMO_CLIENT_123"):
     tokens_used = response.usage.total_tokens if hasattr(response, "usage") and response.usage else 0
     tokens_used += pass1_tokens
 
+    # Check for Python Forecaster Command
+    needs_forecast = False
+    if "FORECAST:" in raw_output:
+        needs_forecast = True
+        
     # Try to extract SQL from a markdown block
     match = re.search(r"```sql(.*?)```", raw_output, re.IGNORECASE | re.DOTALL)
     if match:
-        return {"sql": match.group(1).strip(), "message": raw_output, "tokens_used": tokens_used}
+        return {"sql": match.group(1).strip(), "message": raw_output, "tokens_used": tokens_used, "needs_forecast": needs_forecast}
 
     # Fallback to older matching if it didn't use the markdown block
     match = re.search(r"(SELECT .*?;)", raw_output, re.IGNORECASE | re.DOTALL)
     if match:
-        return {"sql": match.group(1).strip(), "message": raw_output, "tokens_used": tokens_used}
+        return {"sql": match.group(1).strip(), "message": raw_output, "tokens_used": tokens_used, "needs_forecast": needs_forecast}
 
     # Fallback if no semicolon
     match = re.search(r"(SELECT .*?$)", raw_output, re.IGNORECASE | re.DOTALL)
     if match:
-        return {"sql": match.group(1).strip(), "message": raw_output, "tokens_used": tokens_used}
+        return {"sql": match.group(1).strip(), "message": raw_output, "tokens_used": tokens_used, "needs_forecast": needs_forecast}
 
     # Conversational reply, no SQL
-    return {"sql": None, "message": raw_output, "tokens_used": tokens_used}
+    return {"sql": None, "message": raw_output, "tokens_used": tokens_used, "needs_forecast": False}
 
 
 def generate_chart_config(columns, data_sample, dataset_summary=None):

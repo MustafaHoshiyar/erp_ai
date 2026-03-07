@@ -31,9 +31,47 @@ def cosine_similarity(vec1: list[float], vec2: list[float]) -> float:
         return 0.0
     return dot_product / (norm_a * norm_b)
 
-def get_relevant_schema_context(client_id: str, new_prompt: str, top_k: int = 3) -> str:
+def backfill_embeddings_in_background(client_id: str):
     db = SessionLocal()
     try:
+        reports = db.query(SavedReport).filter(SavedReport.client_id == client_id, SavedReport.embedding == None).all()
+        success_msgs = db.query(ConversationMessage).join(Conversation).filter(
+            Conversation.client_id == client_id,
+            ConversationMessage.execution_status == "success",
+            ConversationMessage.embedding == None,
+            ConversationMessage.user_feedback != -1
+        ).all()
+        
+        for record in list(reports) + success_msgs:
+            text_to_embed = record.original_prompt if hasattr(record, 'original_prompt') else record.user_prompt
+            emb = get_embedding(text_to_embed)
+            if emb:
+                record.embedding = emb
+                db.commit()
+    except Exception as e:
+        print(f"[MemoryManager] Background backfill failed: {e}")
+    finally:
+        db.close()
+
+def get_relevant_schema_context(client_id: str, new_prompt: str, top_k: int = 3) -> str:
+    from database import ClientContextOverride
+    db = SessionLocal()
+    try:
+        # Load Context Overrides
+        overrides = db.query(ClientContextOverride).filter(ClientContextOverride.client_id == client_id).all()
+        override_text = ""
+        if overrides:
+            override_lines = [
+                "### CLIENT SPECIFIC CONTEXT OVERRIDES ###",
+                "The following definitions overrides standard logic for this client:",
+                ""
+            ]
+            for o in overrides:
+                desc = f" ({o.description})" if o.description else ""
+                override_lines.append(f"- '{o.term}': USE `{o.sql_logic}`{desc}")
+            override_lines.append("")
+            override_text = "\n".join(override_lines) + "\n"
+
         reports = db.query(SavedReport).filter(SavedReport.client_id == client_id).all()
         
         success_msgs = db.query(ConversationMessage).join(Conversation).filter(
@@ -45,26 +83,14 @@ def get_relevant_schema_context(client_id: str, new_prompt: str, top_k: int = 3)
         all_past_queries = list(reports) + success_msgs
             
         if not all_past_queries:
-            return ""
+            return override_text
 
         query_embedding = get_embedding(new_prompt)
         if not query_embedding:
-            return ""
+            return override_text
 
-        embedded_count = 0
         scored_records = []
         for record in all_past_queries:
-            if not record.embedding:
-                if embedded_count < 2: # Limit backfill to avoid huge latency spikes
-                    text_to_embed = record.original_prompt if hasattr(record, 'original_prompt') else record.user_prompt
-                    emb = get_embedding(text_to_embed)
-                    if emb:
-                        record.embedding = emb
-                        db.commit()
-                        embedded_count += 1
-                else:
-                    continue # Skip records without embeddings to keep response fast
-            
             if record.embedding:
                 sim = cosine_similarity(query_embedding, record.embedding)
                 scored_records.append((sim, record))
@@ -74,9 +100,10 @@ def get_relevant_schema_context(client_id: str, new_prompt: str, top_k: int = 3)
         best_matches = [r for score, r in scored_records if score > 0.4][:top_k]
         
         if not best_matches:
-            return ""
+            return override_text
             
         context_lines = [
+            override_text,
             "### PREVIOUSLY SUCCESSFUL CLIENT QUERIES ###",
             "The following are examples of how EXACTLY to format the SQL for this specific client based on their past successful queries. USE THESE AS YOUR BLUEPRINT for table joins, column names, and formula logic:",
             ""
