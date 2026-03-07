@@ -6,7 +6,8 @@ from sql_validator import validate_sql
 from erp_client import run_query
 from database import SessionLocal, SavedReport, get_db, Conversation, ConversationMessage
 from sqlalchemy.orm import Session
-from fastapi import Depends, HTTPException
+from fastapi import Depends, HTTPException, BackgroundTasks
+from memory_manager import backfill_embeddings_in_background
 
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
@@ -32,7 +33,7 @@ class PromptRequest(BaseModel):
     conversation_id: Optional[int] = None
 
 @app.post("/generate-report")
-async def generate_report(request: PromptRequest, db: Session = Depends(get_db)):
+async def generate_report(request: PromptRequest, background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
     result = generate_sql(request.prompt, request.history, request.client_id)
     
     tokens_used = result.get("tokens_used", 0)
@@ -86,8 +87,24 @@ async def generate_report(request: PromptRequest, db: Session = Depends(get_db))
     
     try:
         data = await run_query(validated_sql)
+        
+        # Check if the AI requested a Python forecast
+        if result.get("needs_forecast"):
+            # Try to parse the forecast parameters from the message:
+            # e.g., FORECAST: Month, Sales, 6
+            import re
+            from forecaster import generate_forecast
+            match = re.search(r"FORECAST:\s*(.+?),\s*(.+?),\s*(\d+)", result.get("message", ""))
+            if match:
+                date_col = match.group(1).strip()
+                target_col = match.group(2).strip()
+                periods = int(match.group(3).strip())
+                print(f"[Main] Running Python forecast: {date_col}, {target_col}, for {periods} periods.")
+                data = generate_forecast(data, date_col, target_col, periods)
+
         msg.execution_status = "success"
         db.commit()
+        background_tasks.add_task(backfill_embeddings_in_background, request.client_id)
     except Exception as e:
         msg.execution_status = "error"
         msg.error_message = str(e)
@@ -128,7 +145,7 @@ class SaveReportRequest(BaseModel):
     chart_config: Optional[Dict[str, Any]] = None
 
 @app.post("/api/reports/save")
-def save_report(request: SaveReportRequest, db: Session = Depends(get_db)):
+def save_report(request: SaveReportRequest, background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
     try:
         new_report = SavedReport(
             client_id=request.client_id,
@@ -140,6 +157,7 @@ def save_report(request: SaveReportRequest, db: Session = Depends(get_db)):
         db.add(new_report)
         db.commit()
         db.refresh(new_report)
+        background_tasks.add_task(backfill_embeddings_in_background, request.client_id)
         return {"status": "success", "id": new_report.id}
     except Exception as e:
         db.rollback()
@@ -229,6 +247,37 @@ def reset_token_stats():
     token_stats["history"] = []
     return {"status": "success"}
 
+class ExportInsightsRequest(BaseModel):
+    title: str
+    sql: str
+    chart_type: str = "Bar"
+    dashboard_name: str = "ERP AI Dashboard"
+
+@app.post("/api/reports/export-insights")
+async def export_to_insights(request: ExportInsightsRequest):
+    from frappe_insights import export_chart_and_dashboard_to_insights
+    try:
+        # Validate SQL just in case
+        validate_sql(request.sql)
+        result = await export_chart_and_dashboard_to_insights(
+            title=request.title, 
+            sql=request.sql, 
+            chart_type=request.chart_type, 
+            dashboard_name=request.dashboard_name
+        )
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/reports/insights-dashboards")
+async def get_insights_dashboards():
+    from frappe_insights import get_all_dashboards
+    try:
+        dashboards = await get_all_dashboards()
+        return {"status": "success", "dashboards": dashboards}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 class LoginRequest(BaseModel):
     username: str
     password: str
@@ -267,6 +316,7 @@ async def login(req: LoginRequest):
 class FeedbackRequest(BaseModel):
     message_id: int
     feedback: int # e.g., 1 for thumbs up, -1 for thumbs down
+    comment: Optional[str] = None
 
 @app.post("/api/conversations/feedback")
 def submit_feedback(request: FeedbackRequest, db: Session = Depends(get_db)):
@@ -275,5 +325,63 @@ def submit_feedback(request: FeedbackRequest, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Message not found")
         
     msg.user_feedback = request.feedback
+    if request.comment:
+        msg.feedback_comment = request.comment
+        
     db.commit()
     return {"status": "success", "message_id": msg.id, "feedback": msg.user_feedback}
+
+# --- Client Context Overrides ---
+
+class ContextOverrideRequest(BaseModel):
+    client_id: str
+    term: str
+    sql_logic: str
+    description: Optional[str] = None
+
+@app.post("/api/context-overrides")
+def create_context_override(request: ContextOverrideRequest, db: Session = Depends(get_db)):
+    from database import ClientContextOverride
+    try:
+        new_override = ClientContextOverride(
+            client_id=request.client_id,
+            term=request.term,
+            sql_logic=request.sql_logic,
+            description=request.description
+        )
+        db.add(new_override)
+        db.commit()
+        db.refresh(new_override)
+        return {"status": "success", "id": new_override.id}
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/context-overrides/{client_id}")
+def get_context_overrides(client_id: str, db: Session = Depends(get_db)):
+    from database import ClientContextOverride
+    overrides = db.query(ClientContextOverride).filter(ClientContextOverride.client_id == client_id).order_by(ClientContextOverride.created_at.desc()).all()
+    return [
+        {
+            "id": r.id,
+            "term": r.term,
+            "sql_logic": r.sql_logic,
+            "description": r.description
+        }
+        for r in overrides
+    ]
+
+@app.delete("/api/context-overrides/{override_id}")
+def delete_context_override(override_id: int, db: Session = Depends(get_db)):
+    from database import ClientContextOverride
+    override = db.query(ClientContextOverride).filter(ClientContextOverride.id == override_id).first()
+    if not override:
+        raise HTTPException(status_code=404, detail="Override not found")
+        
+    try:
+        db.delete(override)
+        db.commit()
+        return {"status": "success"}
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=str(e))

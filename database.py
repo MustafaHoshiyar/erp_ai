@@ -61,11 +61,22 @@ class ConversationMessage(Base):
     execution_status = Column(String(50), nullable=True) # "success", "error"
     error_message = Column(Text, nullable=True)
     user_feedback = Column(Integer, nullable=True) # 1 (positive), -1 (negative), etc.
+    feedback_comment = Column(Text, nullable=True) # User's correction context
     tokens_used = Column(Integer, nullable=True)
     embedding = Column(JSON, nullable=True)    # Stores specific float array for semantic search
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     
     conversation = relationship("Conversation", back_populates="messages")
+
+class ClientContextOverride(Base):
+    __tablename__ = "client_context_overrides"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    client_id = Column(String(50), index=True)
+    term = Column(String(100), index=True) # e.g., "Revenue"
+    sql_logic = Column(Text)               # e.g., "SUM(tabSales Invoice.grand_total)"
+    description = Column(Text, nullable=True) # e.g., "Client A defines revenue as invoiced amount"
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
 
 # Re-run create_all in case new tables were added (SQLite safe if tables don't exist)
 Base.metadata.create_all(bind=engine)

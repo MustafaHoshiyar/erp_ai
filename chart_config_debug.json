@@ -1,0 +1,18 @@
+{
+  "5jtb1usens": {
+    "title": "bgfdvg",
+    "chart_type": "Bar",
+    "query": "5jmosf32v0",
+    "data_query": "5jtgciija7",
+    "config": "{\n \"filters\": {\n  \"filters\": [],\n  \"logical_operator\": \"And\"\n },\n \"limit\": 100,\n \"order_by\": [],\n \"x_axis\": {\n  \"dimension\": {}\n },\n \"y_axis\": {\n  \"series\": [\n   {\n    \"measure\": {\n     \"aggregation\": \"\",\n     \"column_name\": \"\",\n     \"data_type\": \"Decimal\",\n     \"measure_name\": \"\"\n    }\n   }\n  ],\n  \"stack\": true\n }\n}",
+    "workbook": "3"
+  },
+  "r6d2382pom": {
+    "title": "top grossing items",
+    "chart_type": "Bar",
+    "query": "r51adm7p9r",
+    "data_query": "r6daaj46l4",
+    "config": "{\n \"filters\": {\n  \"filters\": [],\n  \"logical_operator\": \"And\"\n },\n \"limit\": 100,\n \"order_by\": [],\n \"x_axis\": {\n  \"dimension\": {\n   \"column_name\": \"item_code\",\n   \"data_type\": \"String\",\n   \"dimension_name\": \"item_code\",\n   \"label\": \"item_code\",\n   \"value\": \"item_code\"\n  },\n  \"label_rotation\": 0\n },\n \"y_axis\": {\n  \"series\": [\n   {\n    \"measure\": {\n     \"aggregation\": \"sum\",\n     \"column_name\": \"total_revenue\",\n     \"data_type\": \"Decimal\",\n     \"measure_name\": \"sum_of_total_revenue\"\n    }\n   }\n  ],\n  \"stack\": true\n }\n}",
+    "workbook": "3"
+  }
+}

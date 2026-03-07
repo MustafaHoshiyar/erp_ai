@@ -287,6 +287,38 @@ textarea::placeholder {
     height: 16px;
 }
 
+.feedback-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 0.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    border-radius: 4px;
+}
+
+.feedback-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.feedback-btn.thumbs-up:hover,
+.feedback-btn.thumbs-up.active {
+    color: var(--success-color);
+}
+
+.feedback-btn.thumbs-down:hover,
+.feedback-btn.thumbs-down.active {
+    color: var(--error-color);
+}
+
+.feedback-btn svg {
+    width: 16px;
+    height: 16px;
+}
+
 .row-count {
     background: var(--bg-color-surface);
     color: var(--text-primary);

@@ -197,6 +197,24 @@
                                     <line x1="12" x2="12" y1="15" y2="3" />
                                 </svg>
                             </button>
+                            <button class="feedback-btn thumbs-up" title="Good Response">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round" class="lucide lucide-thumbs-up">
+                                    <path d="M7 10v12" />
+                                    <path
+                                        d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2h0a3.13 3.13 0 0 1 3 3.88Z" />
+                                </svg>
+                            </button>
+                            <button class="feedback-btn thumbs-down" title="Bad Response">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round" class="lucide lucide-thumbs-down">
+                                    <path d="M17 14V2" />
+                                    <path
+                                        d="M9 18.12 10 14H4.17a2 2 0 0 1-1.92-2.56l2.33-8A2 2 0 0 1 6.5 2H20a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-2.76a2 2 0 0 0-1.79 1.11L12 22h0a3.13 3.13 0 0 1-3-3.88Z" />
+                                </svg>
+                            </button>
                             <button class="dashboard-btn" title="Generate Dashboard">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
                                     fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
@@ -204,6 +222,15 @@
                                     <path d="M3 3v18h18" />
                                     <rect width="4" height="7" x="7" y="10" rx="1" />
                                     <rect width="4" height="12" x="15" y="5" rx="1" />
+                                </svg>
+                            </button>
+                            <button class="export-insights-btn" title="Export to Frappe Insights">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <path d="M15 3h6v6" />
+                                    <path d="M10 14 21 3" />
+                                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
                                 </svg>
                             </button>
                             <button class="save-report-btn" title="Save Report & Dashboard">
@@ -254,6 +281,30 @@
         <div class="modal-actions">
             <button id="confirm-modal-cancel" class="btn-secondary">Cancel</button>
             <button id="confirm-modal-submit" class="btn-danger">Delete</button>
+        </div>
+    </div>
+
+    <!-- Insights Export Modal -->
+    <div id="insights-export-modal" class="modal-box hidden">
+        <h3>Export to Frappe Insights</h3>
+        <p>Your query and generated chart will be exported.</p>
+
+        <label for="insights-title-input" class="modal-label">Title</label>
+        <input type="text" id="insights-title-input" class="modal-input" autocomplete="off"
+            placeholder="e.g. Sales by Customer" />
+
+        <label for="insights-dashboard-select" class="modal-label" style="margin-top: 1rem;">Dashboard</label>
+        <select id="insights-dashboard-select" class="modal-input"
+            style="margin-bottom: 0.5rem; width: 100%; border: 1px solid var(--border-color); border-radius: 4px; padding: 0.5rem; background: var(--bg-primary); color: var(--text-primary);">
+            <option value="_new_">-- Create New Dashboard --</option>
+        </select>
+
+        <input type="text" id="insights-new-dashboard-input" class="modal-input" autocomplete="off"
+            placeholder="New Dashboard Name" />
+
+        <div class="modal-actions" style="margin-top: 1.5rem;">
+            <button id="insights-modal-cancel" class="btn-secondary">Cancel</button>
+            <button id="insights-modal-submit" class="btn-primary">Export</button>
         </div>
     </div>
 
