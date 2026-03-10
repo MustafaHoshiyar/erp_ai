@@ -5,6 +5,11 @@ document.addEventListener('DOMContentLoaded', () => {
         return; // Stop rendering and redirect
     }
 
+    let APP_ENV = 'development';
+    fetch('/api/config').then(res => res.json()).then(data => {
+        APP_ENV = data.environment;
+    }).catch(err => console.error("Failed to load config", err));
+
     let chatHistory = [];
     const form = document.getElementById('prompt-form');
     const promptInput = document.getElementById('user-prompt');
@@ -400,6 +405,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const exportInsightsBtn = messageNode.querySelector('.export-insights-btn');
         let currentChart = null;
         let lastChartConfig = null; // Store config for saving
+        let lastXCol = null;
+        let lastYCols = [];
 
         // Setup SQL Copy
         copySqlBtn.addEventListener('click', () => {
@@ -488,6 +495,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     // Attempt to sum numerical columns across the entire dataset
                     if (exportData.length > 0) {
                         const numericCols = Object.keys(exportData[0]).filter(col => {
+                            const lowerCol = col.toLowerCase();
+                            if (lowerCol.includes('phone') || lowerCol.includes('mobile') || lowerCol === 'id' || lowerCol === 'idx' || lowerCol === 'name') return false;
+
                             // Check if the first row value looks like a number
                             const val = exportData[0][col];
                             return typeof val === 'number' || (typeof val === 'string' && !isNaN(parseFloat(val)) && isFinite(val));
@@ -582,6 +592,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             // Guess X-axis key (Labels) by finding a column in exportData[0] whose value matches the first created label.
                             // If we can't find it reliably, we assume the first non-numeric column.
                             let xKey = columns.find(c => typeof exportData[0][c] === 'string' && isNaN(parseFloat(exportData[0][c]))) || columns[0];
+                            lastXCol = xKey;
 
                             // Map the full labels array
                             chartConfigOptions.data.labels = exportData.map(row => {
@@ -600,12 +611,20 @@ document.addEventListener('DOMContentLoaded', () => {
                                     yKey = dataset.label;
                                 } else {
                                     // Fallback: pick the first numeric column we haven't used as X
-                                    const numericCols = columns.filter(col => col !== xKey && !isNaN(parseFloat(exportData[0][col])));
+                                    const numericCols = columns.filter(col => {
+                                        if (col === xKey) return false;
+                                        const lowerCol = col.toLowerCase();
+                                        if (lowerCol.includes('phone') || lowerCol.includes('mobile') || lowerCol === 'id' || lowerCol === 'idx') return false;
+                                        return !isNaN(parseFloat(exportData[0][col]));
+                                    });
                                     yKey = numericCols[Math.min(index, numericCols.length - 1)];
                                 }
 
                                 if (yKey) {
                                     dataset.data = exportData.map(row => parseFloat(row[yKey]) || 0);
+                                    if (!lastYCols.includes(yKey)) {
+                                        lastYCols.push(yKey);
+                                    }
                                 }
                             });
                         } catch (mappingError) {
@@ -709,31 +728,58 @@ document.addEventListener('DOMContentLoaded', () => {
                     const res = await fetch('/api/reports/insights-dashboards');
                     if (res.ok) {
                         const data = await res.json();
-                        data.dashboards.forEach(d => {
-                            const opt = document.createElement('option');
-                            opt.value = d.name;
-                            opt.textContent = d.title;
-                            dashSelect.appendChild(opt);
-                        });
+                        console.log('[Export Modal] Fetched dashboards:', data.dashboards);
+                        if (data.dashboards && data.dashboards.length > 0) {
+                            data.dashboards.forEach(d => {
+                                if (d.name && d.title) {
+                                    const opt = document.createElement('option');
+                                    opt.value = d.name;
+                                    opt.textContent = d.title;
+                                    dashSelect.appendChild(opt);
+                                }
+                            });
+                        }
+                    } else {
+                        console.error('[Export Modal] Dashboard fetch failed:', res.status, res.statusText);
                     }
-                } catch (e) { console.error("Could not fetch dashboards"); }
+                } catch (e) { console.error('[Export Modal] Could not fetch dashboards:', e); }
 
-                dashSelect.addEventListener('change', () => {
+                // Use onchange (not addEventListener) to prevent stacking on repeated opens
+                dashSelect.onchange = () => {
                     if (dashSelect.value === '_new_') {
                         newDashInput.style.display = 'block';
                     } else {
                         newDashInput.style.display = 'none';
                     }
-                });
+                };
 
                 backdrop.classList.remove('hidden');
                 modal.classList.remove('hidden');
+
+                // Enter key submits the modal from any input field
+                const handleKeydown = (e) => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        handleSubmit();
+                    } else if (e.key === 'Escape') {
+                        e.preventDefault();
+                        handleCancel();
+                    }
+                };
+                titleInput.addEventListener('keydown', handleKeydown);
+                newDashInput.addEventListener('keydown', handleKeydown);
 
                 const cleanup = () => {
                     backdrop.classList.add('hidden');
                     modal.classList.add('hidden');
                     cancelBtn.removeEventListener('click', handleCancel);
                     submitBtn.removeEventListener('click', handleSubmit);
+                    titleInput.removeEventListener('keydown', handleKeydown);
+                    newDashInput.removeEventListener('keydown', handleKeydown);
+                    // Reset button state
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = 'Export';
+                    cancelBtn.style.display = '';
                 };
 
                 const handleCancel = () => cleanup();
@@ -748,20 +794,20 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (dashboardName === '_new_') {
                         if (!newDashName) { alert('Please enter a new dashboard name'); return; }
                         dashboardName = newDashName;
-                        // For a new dashboard, the API expects the title, not the ID (since it doesn't exist yet)
-                        // actually frappe_insights.py takes dashboard_name which it searches by title.
                     } else {
-                        // User selected an existing ID, but the backend script filters by title.
-                        // Let's get the title of the selected option
+                        // User selected an existing dashboard — use its title for the backend
                         const selectedOption = dashSelect.options[dashSelect.selectedIndex];
                         dashboardName = selectedOption.textContent;
                     }
 
-                    cleanup();
+                    if (submitBtn.disabled) return; // Prevent double clicks
+
+                    // Show loading spinner INSIDE the modal
+                    submitBtn.disabled = true;
+                    submitBtn.innerHTML = '<div class="spinner" style="width:14px; height:14px; border-width:2px; display:inline-block; vertical-align:middle; margin-right:6px;"></div> Exporting...';
+                    cancelBtn.style.display = 'none';
 
                     const originalBtnContent = exportInsightsBtn.innerHTML;
-                    exportInsightsBtn.innerHTML = '<div class="spinner" style="width:16px; height:16px; border-width:2px; border-color: currentColor; border-right-color: transparent;"></div>';
-                    exportInsightsBtn.disabled = true;
 
                     // Extract chart type
                     let chartType = "Bar";
@@ -782,7 +828,9 @@ document.addEventListener('DOMContentLoaded', () => {
                                 title: title,
                                 sql: result.sql,
                                 chart_type: chartType,
-                                dashboard_name: dashboardName
+                                dashboard_name: dashboardName,
+                                x_col: lastXCol,
+                                y_cols: lastYCols.length > 0 ? lastYCols : null
                             })
                         });
 
@@ -794,17 +842,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
                         // If successful, the API returns {"status": "success", "url": "..."}
                         if (resData.url) {
-                            alert(`Successfully exported to Frappe Insights! It is saved in the "${resData.workbook_name}" workbook.`);
                             window.open(resData.url, '_blank');
-                        } else {
-                            alert("Exported successfully, but no URL was returned.");
                         }
 
                     } catch (e) {
                         alert("Export failed: " + e.message);
-                        exportInsightsBtn.innerHTML = originalBtnContent;
                     } finally {
-                        exportInsightsBtn.disabled = false;
+                        cleanup();
                     }
                 };
 
@@ -848,9 +892,31 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // Try rendering SQL (currently removed from backend, but keeping logic if it returns)
-        if (result.sql) {
+        if (result.sql && APP_ENV !== 'production') {
             sqlOutput.textContent = result.sql;
             sqlSection.classList.remove('hidden');
+
+            const sqlCollapseBtn = messageNode.querySelector('.sql-section .collapse-toggle-btn');
+            const sqlCollapsibleBody = messageNode.querySelector('.sql-section .collapsible-body');
+
+            if (sqlCollapseBtn && sqlCollapsibleBody) {
+                const toggleSqlCollapse = () => {
+                    sqlCollapseBtn.classList.toggle('collapsed');
+                    sqlCollapsibleBody.classList.toggle('collapsed');
+                };
+                sqlCollapseBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    toggleSqlCollapse();
+                });
+                const sqlTitleGroup = messageNode.querySelector('.sql-section .section-title-group');
+                if (sqlTitleGroup) {
+                    sqlTitleGroup.addEventListener('click', (e) => {
+                        if (e.target !== sqlCollapseBtn && !sqlCollapseBtn.contains(e.target)) {
+                            toggleSqlCollapse();
+                        }
+                    });
+                }
+            }
         }
 
         // Render Data Table
@@ -892,9 +958,9 @@ document.addEventListener('DOMContentLoaded', () => {
             dataSection.classList.remove('hidden');
 
             // Wire up collapsible toggle
-            const collapseBtn = messageNode.querySelector('.collapse-toggle-btn');
-            const collapsibleBody = messageNode.querySelector('.collapsible-body');
-            const collapsibleHeader = messageNode.querySelector('.collapsible-header');
+            const collapseBtn = messageNode.querySelector('.data-section .collapse-toggle-btn');
+            const collapsibleBody = messageNode.querySelector('.data-section .collapsible-body');
+            const collapsibleHeader = messageNode.querySelector('.data-section .collapsible-header');
 
             if (collapseBtn && collapsibleBody) {
                 const toggleCollapse = () => {
@@ -906,7 +972,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     toggleCollapse();
                 });
                 // Also allow clicking the title area
-                const titleGroup = messageNode.querySelector('.section-title-group');
+                const titleGroup = messageNode.querySelector('.data-section .section-title-group');
                 if (titleGroup) {
                     titleGroup.addEventListener('click', (e) => {
                         if (e.target !== collapseBtn && !collapseBtn.contains(e.target)) {

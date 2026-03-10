@@ -43,6 +43,8 @@ body {
 /* Layout Container */
 .app-container {
     flex: 1;
+    min-width: 0;
+    /* Bulletproof against flex width blowouts */
     height: 100%;
     display: flex;
     flex-direction: column;
@@ -190,7 +192,8 @@ textarea::placeholder {
 .message {
     width: 100%;
     max-width: 95%;
-    /* Make message stretch for large screen utilization */
+    min-width: 0;
+    /* Make sure message child can shrink regardless of intrinsic content width */
     display: flex;
     gap: 1.5rem;
     padding: 1.5rem 1rem;
@@ -396,6 +399,7 @@ code {
     overflow-x: auto;
     overflow-y: auto;
     max-height: 500px;
+    max-width: 100%;
     border-radius: 8px;
     border: 1px solid var(--border-color);
     background: var(--bg-color-surface);
@@ -1102,7 +1106,7 @@ body:has(.sidebar.collapsed) .open-sidebar-btn {
 .modal-input {
     width: 100%;
     padding: 0.75rem;
-    background: var(--bg-main);
+    background: var(--bg-color-dark);
     border: 1px solid var(--border-color);
     border-radius: 6px;
     color: var(--text-primary);
@@ -1110,6 +1114,13 @@ body:has(.sidebar.collapsed) .open-sidebar-btn {
     margin-bottom: 1.25rem;
     outline: none;
     transition: border-color 0.2s;
+    color-scheme: dark;
+}
+
+select.modal-input option {
+    background: var(--bg-color-dark);
+    color: var(--text-primary);
+    padding: 0.5rem;
 }
 
 .modal-input:focus {
