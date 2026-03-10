@@ -60,6 +60,9 @@ ERPNext Inventory Logic:
 - Use actual_qty for quantity movement.
 - Negative actual_qty indicates outgoing stock.
 - Warehouse-based reports must join `tabWarehouse`.
+- If a user asks for "low stock", "items to reorder", or "items out of stock", NEVER use `projected_qty < 0`. ALWAYS use `actual_qty`. To handle this dynamically:
+  1. If the user specifies a quantity (e.g., "below 50"), use `actual_qty < 50`.
+  2. If the user DOES NOT specify a quantity, you can assume a sensible default threshold for the query (e.g., `actual_qty <= 10`) OR join with the item's `reorder_level` if available.
 
 Aggregation & Metrics Rules:
 - If the user asks "how many" or "total number of", you MUST use the `COUNT(name)` function (e.g. `SELECT COUNT(name) AS total_users FROM tabUser`). Do NOT just return a list of records.

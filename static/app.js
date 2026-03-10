@@ -495,6 +495,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     // Attempt to sum numerical columns across the entire dataset
                     if (exportData.length > 0) {
                         const numericCols = Object.keys(exportData[0]).filter(col => {
+                            const lowerCol = col.toLowerCase();
+                            if (lowerCol.includes('phone') || lowerCol.includes('mobile') || lowerCol === 'id' || lowerCol === 'idx' || lowerCol === 'name') return false;
+
                             // Check if the first row value looks like a number
                             const val = exportData[0][col];
                             return typeof val === 'number' || (typeof val === 'string' && !isNaN(parseFloat(val)) && isFinite(val));
@@ -608,7 +611,12 @@ document.addEventListener('DOMContentLoaded', () => {
                                     yKey = dataset.label;
                                 } else {
                                     // Fallback: pick the first numeric column we haven't used as X
-                                    const numericCols = columns.filter(col => col !== xKey && !isNaN(parseFloat(exportData[0][col])));
+                                    const numericCols = columns.filter(col => {
+                                        if (col === xKey) return false;
+                                        const lowerCol = col.toLowerCase();
+                                        if (lowerCol.includes('phone') || lowerCol.includes('mobile') || lowerCol === 'id' || lowerCol === 'idx') return false;
+                                        return !isNaN(parseFloat(exportData[0][col]));
+                                    });
                                     yKey = numericCols[Math.min(index, numericCols.length - 1)];
                                 }
 

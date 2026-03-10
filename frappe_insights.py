@@ -187,7 +187,9 @@ async def export_chart_and_dashboard_to_insights(title: str, sql: str, chart_typ
             row = rows[0]
             for k, v in row.items():
                 if isinstance(v, (int, float)) and not isinstance(v, bool):
-                    y_cols.append(k)
+                    k_lower = k.lower()
+                    if not any(stop in k_lower for stop in ["mobile", "phone"]) and k_lower not in ["id", "idx", "name"]:
+                        y_cols.append(k)
                 elif x_col is None:
                     x_col = k
                     
