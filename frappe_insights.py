@@ -69,14 +69,16 @@ async def export_query_to_insights(title: str, sql: str):
         "is_script_query": 0,
         "is_builder_query": 0,
         "use_live_connection": 1,
-        "operations": json.dumps([
+        # Native Python list — insights_query_v3.get_valid_dict() converts to JSON string internally
+        # Sending json.dumps() here causes double-encoding which breaks apply_sql field parsing
+        "operations": [
             {
                 "type": "sql",
                 "raw_sql": sql,
                 "name": "Query",
                 "data_source": "Site DB"
             }
-        ])
+        ]
     }
     
     async with httpx.AsyncClient() as client:
@@ -116,13 +118,14 @@ async def get_all_dashboards():
             return res.json().get("data", [])
         return []
 
-async def export_chart_and_dashboard_to_insights(title: str, sql: str, chart_type: str, dashboard_name: str):
+async def export_chart_and_dashboard_to_insights(title: str, sql: str, chart_type: str, dashboard_name: str, x_col: str = None, y_cols: list = None):
     """
-    End-to-end export: 
-    1. Creates Query v3
-    2. Auto-detects columns by running SQL LIMIT 1
-    3. Creates Chart v3 with fully-configured config JSON
-    4. Appends to or creates Dashboard v3 with linked_charts
+    End-to-end export:
+    1. Creates a native SQL Query v3 with type:"sql" operations
+    2. Creates a Chart v3 linked to the query (query only, NO data_query)
+       - The Insights frontend auto-creates its own data_query wrapper
+       - This wrapper correctly references our SQL query (no self-reference)
+    3. Appends to or creates Dashboard v3
     """
     headers = {
         "Authorization": f"token {ERP_API_KEY}:{ERP_API_SECRET}",
@@ -132,24 +135,52 @@ async def export_chart_and_dashboard_to_insights(title: str, sql: str, chart_typ
     
     workbook_name = await get_or_create_workbook()
     
-    # 1. Create Query
+    # Step 1: Create the SQL Query
     query_name = await export_query_to_insights(title, sql)
+    if not query_name:
+        raise Exception("Failed to create query")
     
-    # 2. Introspect SQL columns by running the actual SQL with LIMIT 1
+    print(f"[DEBUG] Created query: {query_name}")
+    
+    # Step 2: Determine chart configuration using AI
+    # We will fetch a small sample of data to help the AI
+    x_col = None
+    y_series = []
+    
+    try:
+        from erp_client import run_query as erp_run_query
+        introspect_sql = sql.rstrip().rstrip(";")
+        sql_lower = introspect_sql.lower()
+        if " limit " not in sql_lower:
+            introspect_sql += " LIMIT 5"
+        
+        result_sample = await erp_run_query(introspect_sql)
+        sample_rows = result_sample.get("message", [])
+        
+        from ai_engine import determine_insights_chart_config
+        ai_config = determine_insights_chart_config(sql, sample_rows)
+        if ai_config:
+            print(f"[DEBUG] AI decided Config: {ai_config}")
+            x_col = ai_config.get("x_col")
+            y_series = ai_config.get("y_series", [])
+            chart_type = ai_config.get("chart_type", chart_type)
+    except Exception as e:
+        print(f"[DEBUG] AI Config Generation failed: {e}")
+        
+    ai_x_col = x_col
+    ai_y_cols = [s.get("column") for s in y_series] if y_series else y_cols
+    
     x_col = None
     y_cols = []
     
     try:
         from erp_client import run_query as erp_run_query
         introspect_sql = sql.rstrip().rstrip(";")
-        # Safely add LIMIT 1 only if not already limited
         sql_lower = introspect_sql.lower()
         if " limit " not in sql_lower:
             introspect_sql += " LIMIT 1"
         
         result = await erp_run_query(introspect_sql)
-        # The erp_client returns raw JSON from the Frappe API
-        # The Frappe response is {"message": [{...row...}]}
         rows = result.get("message", [])
         
         if rows and isinstance(rows, list) and len(rows) > 0:
@@ -160,45 +191,55 @@ async def export_chart_and_dashboard_to_insights(title: str, sql: str, chart_typ
                 elif x_col is None:
                     x_col = k
                     
-        print(f"[DEBUG] Introspection found: x_col={x_col}, y_cols={y_cols}")
+        print(f"[DEBUG] Introspection: x_col={x_col}, y_cols={y_cols}")
     except Exception as e:
         print(f"[DEBUG] Column introspection failed: {e}")
     
-    # If still no columns found, make smart guesses from the SQL itself
+    # Fallback: parse column names from the SQL itself
+    # Use the LAST SELECT...FROM match — for CTE queries (WITH...AS), the first SELECT
+    # is inside the CTE and returns intermediate columns. The LAST SELECT is the
+    # outermost query returning the final result columns.
     if not x_col or not y_cols:
         import re
-        # Try to extract SELECT-ed column names from the SQL
-        select_match = re.search(r"SELECT\s+(.+?)\s+FROM", sql, re.IGNORECASE | re.DOTALL)
-        if select_match:
-            cols_str = select_match.group(1)
+        all_matches = re.findall(r"SELECT\s+(.+?)\s+FROM", sql, re.IGNORECASE | re.DOTALL)
+        if all_matches:
+            # Use the LAST match (outermost query)
+            cols_str = all_matches[-1]
             col_parts = [c.strip() for c in cols_str.split(",")]
             parsed_cols = []
             for part in col_parts:
-                # Handle "expr AS alias" and "expr alias"
                 alias_match = re.search(r"\bAS\s+(\w+)$", part, re.IGNORECASE)
                 if alias_match:
                     parsed_cols.append(alias_match.group(1))
                 else:
-                    # Just use last word
                     words = re.findall(r"[\w]+", part)
                     if words:
                         parsed_cols.append(words[-1])
             
+            print(f"[DEBUG] SQL fallback parsed columns: {parsed_cols}")
+            
             for c in parsed_cols:
                 c_lower = c.lower()
-                if any(num_word in c_lower for num_word in ["count", "sum", "total", "amount", "qty", "quantity", "revenue", "price"]):
+                if any(kw in c_lower for kw in ["count", "sum", "total", "amount", "qty", "quantity", "revenue", "price", "avg", "predicted", "forecast", "sales"]):
                     if c not in y_cols:
                         y_cols.append(c)
                 elif not x_col:
                     x_col = c
     
-    # Absolute last resort defaults
+    # Override with AI provided columns if available
+    if ai_x_col:
+        x_col = ai_x_col
+    if ai_y_cols:
+        y_cols = ai_y_cols
+        
     if not x_col:
         x_col = "name"
     if not y_cols:
         y_cols = ["total"]
+        
+    print(f"[DEBUG] Final Chart Columns to export: x_col={x_col}, y_cols={y_cols}")
     
-    # Map chart type from Chart.js / AI labels to Frappe's supported types
+    # Map chart type
     frappe_chart_type = "Bar"
     ct = chart_type.lower()
     if "line" in ct:
@@ -212,32 +253,47 @@ async def export_chart_and_dashboard_to_insights(title: str, sql: str, chart_typ
     elif "area" in ct:
         frappe_chart_type = "Area"
     
-    # Build y-axis series list — auto-detect aggregation from column name hints
-    y_series = []
-    for y in y_cols:
-        y_lower = y.lower()
-        if "count" in y_lower:
-            agg = "count"
-        elif "avg" in y_lower or "average" in y_lower:
-            agg = "avg"
-        else:
-            agg = "sum"
-            
-        y_series.append({
-            "measure": {
-                "aggregation": agg,
-                "column_name": y,
-                "data_type": "Decimal",
-                "measure_name": f"{agg}_of_{y}"
-            }
-        })
+    # Build Y-axis series with aggregation hints from column names if AI didn't provide series
+    if not y_series:
+        y_series = []
+        for y in y_cols:
+            y_lower = y.lower()
+            if "count" in y_lower:
+                agg = "count"
+            elif "avg" in y_lower or "average" in y_lower:
+                agg = "avg"
+            else:
+                agg = "sum"
+            y_series.append({
+                "measure": {
+                    "aggregation": agg,
+                    "column_name": y,
+                    "data_type": "Decimal",
+                    "measure_name": f"{agg}_of_{y}"
+                }
+            })
+    else:
+        # Reformat AI series to Frappe expected schema
+        formatted_series = []
+        for series in y_series:
+            agg = series.get("aggregation", "sum")
+            col = series.get("column", "total")
+            formatted_series.append({
+                "measure": {
+                    "aggregation": agg,
+                    "column_name": col,
+                    "data_type": "Decimal",
+                    "measure_name": f"{agg}_of_{col}"
+                }
+            })
+        y_series = formatted_series
     
-    # Build the full config object matching Frappe Insights' exact schema
+    # Build chart config with proper X-axis and Y-axis
+    # This is now safe because we do NOT set data_query — the Insights frontend
+    # auto-creates its own data_query wrapper internally, so our SQL query's
+    # operations stay untouched (no self-referencing overwrite).
     chart_config = {
-        "filters": {
-            "filters": [],
-            "logical_operator": "And"
-        },
+        "filters": {"filters": [], "logical_operator": "And"},
         "limit": 100,
         "order_by": [],
         "x_axis": {
@@ -247,8 +303,7 @@ async def export_chart_and_dashboard_to_insights(title: str, sql: str, chart_typ
                 "dimension_name": x_col,
                 "label": x_col,
                 "value": x_col
-            },
-            "label_rotation": 0
+            }
         },
         "y_axis": {
             "series": y_series,
@@ -256,18 +311,18 @@ async def export_chart_and_dashboard_to_insights(title: str, sql: str, chart_typ
         }
     }
     
-    # For Number/KPI charts also set number config
     if frappe_chart_type == "Number":
         chart_config["number"] = {
             "measure": y_series[0]["measure"] if y_series else {}
         }
     
-    # 3. Create Chart
+    # Step 3: Create Chart — set ONLY "query", do NOT set "data_query"
+    # The Insights frontend auto-creates its own data_query wrapper that
+    # correctly sources from our SQL query without self-reference.
     chart_data = {
         "title": title,
         "workbook": workbook_name,
         "query": query_name,
-        "data_query": query_name,
         "chart_type": frappe_chart_type,
         "config": json.dumps(chart_config)
     }
@@ -304,25 +359,32 @@ async def export_chart_and_dashboard_to_insights(title: str, sql: str, chart_typ
                         existing_doc_name = dash["name"]
                         break
     
-    # Grid item for the dashboard — key ORDER matters for VueGridLayout!
-    # Must match exact format of manually-created dashboards:
-    # {"type": "chart", "chart": "...", "w": 6, "h": 4, "x": 0, "y": 0, "i": "..."}
+    # Grid item for the dashboard — send as a native Python list.
+    # Frappe's InsightsDashboardv3.get_valid_dict() converts list to JSON internally.
+    # DO NOT pre-serialize as json.dumps() — it causes double-encoding.
+    # DO NOT manually set linked_charts — Frappe's before_save() calls set_linked_charts()
+    # which reads items and auto-populates linked_charts. Setting it manually conflicts.
+    #
+    # IMPORTANT: The items format MUST match Frappe Insights' internal structure:
+    # - Layout properties (w, h, x, y, i, moved) go inside a "layout" sub-object
+    # - "i" is a sequential integer (1, 2, 3...), NOT the chart name
+    # - "id" is a short random string identifier
+    # - "moved" must be set to false
+    import random, string
+    random_id = ''.join(random.choices(string.ascii_lowercase + string.digits, k=8))
+    
     new_item = {
-        "type": "chart",
         "chart": created_chart_name,
-        "w": 6,
-        "h": 4,
-        "x": 0,
-        "y": 0,
-        "i": created_chart_name
-    }
-    # The linked_charts child row MUST include full Frappe child table doctype metadata
-    # otherwise Frappe silently drops the row on save
-    linked_chart_entry = {
-        "chart": created_chart_name,
-        "doctype": "Insights Dashboard Chart v3",
-        "parenttype": "Insights Dashboard v3",
-        "parentfield": "linked_charts"
+        "layout": {
+            "i": 1,
+            "id": random_id,
+            "moved": False,
+            "w": 10,
+            "h": 6,
+            "x": 0,
+            "y": 0
+        },
+        "type": "chart"
     }
     dash_doc_name = None
     
@@ -340,40 +402,31 @@ async def export_chart_and_dashboard_to_insights(title: str, sql: str, chart_typ
                 except Exception:
                     items = []
                 
-                max_y = max([item.get("y", 0) + item.get("h", 4) for item in items], default=0)
-                new_item["y"] = max_y
+                # Calculate next sequential "i" and place below existing items
+                max_i = max([item.get("layout", {}).get("i", 0) for item in items], default=0)
+                max_y = max([item.get("layout", {}).get("y", 0) + item.get("layout", {}).get("h", 6) for item in items], default=0)
+                new_item["layout"]["i"] = max_i + 1
+                new_item["layout"]["y"] = max_y
                 items.append(new_item)
-                
-                existing_linked = full_doc.get("linked_charts", [])
-                existing_linked.append(linked_chart_entry)
-                
-                # Serialize items as compact JSON string — this is how Frappe natively stores it
-                items_json = json.dumps(items, separators=(',', ':'))
                 
                 u_res = await client.put(
                     f"{ERP_URL}/api/resource/Insights Dashboard v3/{existing_doc_name}",
                     headers=headers,
-                    json={
-                        "items": items_json,
-                        "linked_charts": existing_linked
-                    }
+                    json={"items": items}   # Native list — Frappe sets linked_charts in before_save
                 )
                 if u_res.status_code != 200:
                     raise Exception(f"Failed to update Dashboard: {u_res.text}")
             
             dash_doc_name = existing_doc_name
         else:
-            d_data = {
-                "title": dashboard_name,
-                "workbook": workbook_name,
-                # Compact JSON string — matches Frappe's native dashboard items storage format
-                "items": json.dumps([new_item], separators=(',', ':')),
-                "linked_charts": [linked_chart_entry]
-            }
             d_res = await client.post(
                 f"{ERP_URL}/api/resource/Insights Dashboard v3",
                 headers=headers,
-                json=d_data
+                json={
+                    "title": dashboard_name,
+                    "workbook": workbook_name,
+                    "items": [new_item]    # Native list — Frappe sets linked_charts in before_save
+                }
             )
             if d_res.status_code != 200:
                 raise Exception(f"Failed to create new Dashboard: {d_res.text}")

@@ -23,6 +23,13 @@ token_stats = {
 def home():
     return {"message": "ERP AI Backend is running"}
     
+@app.get("/api/config")
+def get_config():
+    import os
+    from dotenv import load_dotenv
+    load_dotenv()
+    return {"environment": os.getenv("ENVIRONMENT", "development")}
+    
 from typing import List, Optional, Dict, Any
 from pydantic import BaseModel
 
@@ -163,6 +170,15 @@ def save_report(request: SaveReportRequest, background_tasks: BackgroundTasks, d
         db.rollback()
         raise HTTPException(status_code=500, detail=str(e))
 
+@app.get("/api/reports/insights-dashboards")
+async def get_insights_dashboards():
+    from frappe_insights import get_all_dashboards
+    try:
+        dashboards = await get_all_dashboards()
+        return {"status": "success", "dashboards": dashboards}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 @app.get("/api/reports/{client_id}")
 def get_saved_reports(client_id: str, db: Session = Depends(get_db)):
     reports = db.query(SavedReport).filter(SavedReport.client_id == client_id).order_by(SavedReport.created_at.desc()).all()
@@ -252,6 +268,8 @@ class ExportInsightsRequest(BaseModel):
     sql: str
     chart_type: str = "Bar"
     dashboard_name: str = "ERP AI Dashboard"
+    x_col: Optional[str] = None
+    y_cols: Optional[List[str]] = None
 
 @app.post("/api/reports/export-insights")
 async def export_to_insights(request: ExportInsightsRequest):
@@ -263,18 +281,13 @@ async def export_to_insights(request: ExportInsightsRequest):
             title=request.title, 
             sql=request.sql, 
             chart_type=request.chart_type, 
-            dashboard_name=request.dashboard_name
+            dashboard_name=request.dashboard_name,
+            x_col=request.x_col,
+            y_cols=request.y_cols
         )
         return result
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-
-@app.get("/api/reports/insights-dashboards")
-async def get_insights_dashboards():
-    from frappe_insights import get_all_dashboards
-    try:
-        dashboards = await get_all_dashboards()
-        return {"status": "success", "dashboards": dashboards}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 

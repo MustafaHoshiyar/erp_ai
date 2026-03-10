@@ -185,7 +185,9 @@ Your output MUST be a single raw JSON object with the following structure:
 
 KPI INSTRUCTIONS:
 - Generate up to 4 Key Performance Indicators (KPIs) that summarize the data.
-- **CRITICAL**: Use the `dataset_summary` provided in the user prompt to populate the KPI values (e.g. Total Rows, Sums of key numerical columns). Do NOT base the KPIs solely on the small `Data Sample`.
+- **CRITICAL INTELLIGENCE**: Do NOT create KPIs that sum or aggregate identifiers, phone numbers, mobile numbers, index columns, or status flags (e.g. 'mobile', 'phone', 'id', 'name', 'idx'). Only aggregate meaningful business metrics (e.g. amounts, quantities, totals, revenues, counts).
+- **CRITICAL**: Use the `dataset_summary` provided in the user prompt to populate the KPI values (e.g. Total Rows, Sums of key numerical columns). However, ignore meaningless sums provided in `dataset_summary` (like the sum of mobile numbers). Do NOT base the KPIs solely on the small `Data Sample`.
+- If the only numeric columns are identifiers/phone numbers, just return a single KPI for "Total Count" or "Total Rows".
 - `value` should be formatted nicely (e.g., "99.4k", "140.7", "$12.5M").
 - `trend_percentage` is optional (an estimated trend based on the data context, e.g., "24.5"). Omit if not applicable.
 - `trend_direction` must be "up", "down", or "neutral".
@@ -193,6 +195,10 @@ KPI INSTRUCTIONS:
 CHART INSTRUCTIONS:
 Choose the best chart type (e.g., 'bar', 'line', 'pie', 'doughnut') that represents the data.
 Usually, there is one categorical column (for labels) and one or more numerical columns (for datasets).
+
+CRITICAL CHART INTELLIGENCE:
+- Do NOT use identifiers, phone numbers, mobile numbers, index columns, or status flags as the numerical values in your dataset (e.g., do NOT plot phone numbers on the Y-axis). These are NOT numeric metrics.
+- If the table contains records (like Leads or Users) and the only numeric-looking columns are phone numbers or IDs, you MUST NOT plot the phone number values. Instead, try to count occurrences of a categorical column (like 'status' or 'country') to create a meaningful distribution chart.
 
 CRITICAL SCALING INSTRUCTION:
 If there are multiple numerical datasets and their values have vastly different scales (for example, "Total Orders" ranges from 1-100, while "Total Sales" ranges from 1,000-10,000+), you MUST configure multiple Y-axes (e.g., `y` and `y1`) in the `options.scales` configuration and assign each dataset to the appropriate `yAxisID`.
@@ -226,3 +232,69 @@ Do NOT include explanations, markdown formatting, or comments.
     
     # Fallback to direct output if no markdown
     return raw_output.strip()
+
+def determine_insights_chart_config(sql: str, data_sample: list):
+    """
+    Uses AI to determine the best X and Y axes for a Frappe Insights Chart
+    based on the SQL query and a sample of the resulting data.
+    """
+    system_prompt = """
+You are an expert data analyst configuring a chart for Frappe Insights v3.
+The user has executed a SQL query and we have a small sample of the resulting data rows.
+Your job is to determine the absolute best way to visualize this data in a Frappe Insights Chart.
+
+Frappe Insights Charts require:
+1. One strict categorical column for the X-axis (e.g., status, owner, country, date, item_group).
+2. One or more numerical measures for the Y-axis.
+
+CRITICAL RULES:
+- If the tabular data contains ONLY categorical columns or identifiers (like 'name', 'lead_owner', 'customer_name', 'phone_number'), you MUST NOT plot these directly. Instead, compute an aggregation (like "count") over one of the categorical columns to show a distribution (e.g. Count of leads by territory).
+- If the table contains real numeric metrics (like 'total_revenue', 'grand_total', 'amount', 'qty', 'stock_value', 'sales'), you should plot these metrics and use aggregations like "sum" or "avg".
+- Do NOT use phone numbers, document IDs, or timestamps as numerical Y-axis measures.
+- Use the best logical `chart_type` based on the data ("Bar", "Line", "Pie", "Donut", "Number"). E.g. time-series data => "Line". Category distribution => "Bar" or "Donut".
+
+Return ONLY a raw JSON object with this exact structure:
+{
+    "chart_type": "Bar",
+    "x_col": "lead_owner",
+    "y_series": [
+        {"column": "lead_owner", "aggregation": "count"}
+    ]
+}
+
+Another Example for Sales Data:
+{
+    "chart_type": "Line",
+    "x_col": "transaction_date",
+    "y_series": [
+        {"column": "grand_total", "aggregation": "sum"}
+    ]
+}
+
+Return strictly the JSON object. No markdown, no explanations.
+"""
+    
+    user_prompt = f"SQL Query:\n{sql}\n\nData Sample (first few rows):\n{data_sample}"
+
+    try:
+        response = client.chat.completions.create(
+            model=AI_MODEL,
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_prompt}
+            ],
+            temperature=0
+        )
+
+        raw_output = response.choices[0].message.content.strip()
+        
+        # Try to extract JSON from a markdown block if present
+        match = re.search(r"```json(.*?)```", raw_output, re.IGNORECASE | re.DOTALL)
+        if match:
+            raw_output = match.group(1).strip()
+            
+        import json
+        return json.loads(raw_output)
+    except Exception as e:
+        print(f"[DEBUG] AI Insights Chart Config failed: {e}")
+        return None

@@ -160,18 +160,31 @@
             </div>
             <div class="message-content w-full">
                 <section class="sql-section hidden">
-                    <div class="section-header">
-                        <h2>Generated SQL</h2>
-                        <button class="icon-btn copy-btn" title="Copy SQL">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
-                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                stroke-linejoin="round" class="lucide lucide-copy">
-                                <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
-                                <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
-                            </svg>
-                        </button>
+                    <div class="section-header collapsible-header">
+                        <div class="section-title-group">
+                            <button class="collapse-toggle-btn sql-collapse-btn collapsed" title="Collapse/Expand SQL">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round" class="chevron-icon">
+                                    <polyline points="6 9 12 15 18 9"></polyline>
+                                </svg>
+                            </button>
+                            <span class="section-title">Generated SQL</span>
+                        </div>
+                        <div class="header-actions">
+                            <button class="icon-btn copy-btn" title="Copy SQL">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round" class="lucide lucide-copy">
+                                    <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
+                                    <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
+                                </svg>
+                            </button>
+                        </div>
                     </div>
-                    <pre><code class="sql-output"></code></pre>
+                    <div class="collapsible-body sql-collapsible-body collapsed">
+                        <pre><code class="sql-output"></code></pre>
+                    </div>
                 </section>
 
                 <section class="data-section hidden">
@@ -294,8 +307,7 @@
             placeholder="e.g. Sales by Customer" />
 
         <label for="insights-dashboard-select" class="modal-label" style="margin-top: 1rem;">Dashboard</label>
-        <select id="insights-dashboard-select" class="modal-input"
-            style="margin-bottom: 0.5rem; width: 100%; border: 1px solid var(--border-color); border-radius: 4px; padding: 0.5rem; background: var(--bg-primary); color: var(--text-primary);">
+        <select id="insights-dashboard-select" class="modal-input" style="margin-bottom: 0.5rem;">
             <option value="_new_">-- Create New Dashboard --</option>
         </select>
 

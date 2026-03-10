@@ -16,8 +16,8 @@ def validate_sql(sql: str):
     if "LIMIT" not in upper_sql:
         sql = sql.strip()
         if sql.endswith(";"):
-            sql = sql[:-1] + " LIMIT 600;"
+            sql = sql[:-1] + " LIMIT 1000;"
         else:
-            sql += " LIMIT 600"
+            sql += " LIMIT 1000"
 
     return sql
