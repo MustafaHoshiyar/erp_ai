@@ -13,9 +13,22 @@ def migrate():
 
     # Get existing columns in conversation_messages
     cursor.execute("PRAGMA table_info(conversation_messages)")
-    columns = [row[1] for row in cursor.fetchall()]
+    conv_msg_columns = [row[1] for row in cursor.fetchall()]
 
-    if "feedback_comment" not in columns:
+    # Get existing columns in conversations
+    cursor.execute("PRAGMA table_info(conversations)")
+    conv_columns = [row[1] for row in cursor.fetchall()]
+
+    if "app_name" not in conv_columns:
+        print("Adding 'app_name' column to 'conversations' table...")
+        try:
+            cursor.execute("ALTER TABLE conversations ADD COLUMN app_name TEXT")
+            conn.commit()
+            print("Successfully added 'app_name' column.")
+        except Exception as e:
+            print(f"Error adding app_name to conversations: {e}")
+
+    if "feedback_comment" not in conv_msg_columns:
         print("Adding 'feedback_comment' column to 'conversation_messages' table...")
         try:
             cursor.execute("ALTER TABLE conversation_messages ADD COLUMN feedback_comment TEXT")
@@ -33,7 +46,7 @@ def migrate():
     }
     
     for col, dtype in missing_cols.items():
-        if col not in columns:
+        if col not in conv_msg_columns:
             print(f"Adding '{col}' column to 'conversation_messages' table...")
             try:
                 cursor.execute(f"ALTER TABLE conversation_messages ADD COLUMN {col} {dtype}")

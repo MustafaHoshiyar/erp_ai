@@ -37,6 +37,7 @@ class PromptRequest(BaseModel):
     prompt: str
     history: Optional[List[Dict[str, str]]] = None
     client_id: Optional[str] = "DEMO_CLIENT_123"
+    app_name: Optional[str] = None
     conversation_id: Optional[int] = None
 
 @app.post("/generate-report")
@@ -60,7 +61,13 @@ async def generate_report(request: PromptRequest, background_tasks: BackgroundTa
     # Handle Conversation DB Logging
     conversation_id = request.conversation_id
     if not conversation_id:
-        new_conv = Conversation(client_id=request.client_id)
+        # Auto-fetch app_name if missing
+        app_name = request.app_name
+        if not app_name:
+            from erp_client import get_app_name
+            app_name = await get_app_name()
+            
+        new_conv = Conversation(client_id=request.client_id, app_name=app_name)
         db.add(new_conv)
         db.commit()
         db.refresh(new_conv)
@@ -343,6 +350,37 @@ def submit_feedback(request: FeedbackRequest, db: Session = Depends(get_db)):
         
     db.commit()
     return {"status": "success", "message_id": msg.id, "feedback": msg.user_feedback}
+
+
+# --- MOCK MOTHERBRAIN ENDPOINT (For Local Development Only) ---
+class MotherbrainTelemetryPayload(BaseModel):
+    telemetry_data: List[Dict[str, Any]]
+
+@app.post("/api/motherbrain/ingest")
+def mock_motherbrain_ingest(payload: MotherbrainTelemetryPayload):
+    """
+    This endpoint simulates the Central Motherbrain server receiving data.
+    In real life, this would be a completely separate application/server.
+    """
+    import json
+    import os
+    print("\n" + "="*50)
+    print("📡 [MOTHERBRAIN] Received Telemetry Data:")
+    print(f"Total Records: {len(payload.telemetry_data)}")
+    
+    import datetime
+    # Save the log in the directory
+    logs_dir = os.path.join(os.path.dirname(__file__), "telemetry_logs")
+    os.makedirs(logs_dir, exist_ok=True)
+    filename = os.path.join(logs_dir, f"motherbrain_mock_log_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.json")
+    
+    with open(filename, "w") as f:
+        json.dump(payload.telemetry_data, f, indent=4)
+        
+    print(f"Saved payload to {filename} for inspection.")
+    print("="*50 + "\n")
+    
+    return {"status": "success", "message": "Motherbrain received data", "records_processed": len(payload.telemetry_data)}
 
 # --- Client Context Overrides ---
 

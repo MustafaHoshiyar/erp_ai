@@ -1,0 +1,42 @@
+[
+    {
+        "id": "q1",
+        "prompt": "how many users do we have in total?",
+        "expected_sql_contains": [
+            "SELECT COUNT",
+            "tabUser"
+        ]
+    },
+    {
+        "id": "q2",
+        "prompt": "what is the grand total of all sales invoices?",
+        "expected_sql_contains": [
+            "SUM",
+            "tabSales Invoice",
+            "grand_total"
+        ]
+    },
+    {
+        "id": "q3",
+        "prompt": "list the names of all employees that are currently Active",
+        "expected_sql_contains": [
+            "tabEmployee",
+            "status"
+        ]
+    },
+    {
+        "id": "q4",
+        "prompt": "what was the gross profit for the month of august?",
+        "expected_sql_contains": [
+            "tabSales Invoice",
+            "tabStock Ledger Entry"
+        ]
+    },
+    {
+        "id": "q5",
+        "prompt": "Predict total revenue for the next 6 months",
+        "expected_sql_contains": [
+            "FORECAST:"
+        ]
+    }
+]

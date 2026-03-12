@@ -1,0 +1,112 @@
+[
+    {
+        "message_id": 126,
+        "client_id": "Administrator",
+        "timestamp": "2026-03-09T10:40:20",
+        "user_prompt": "remove the company name and email id from the table , add status to 3rd column",
+        "anonymized_sql": "SELECT \n    `name`, \n    `lead_name`, \n    `status`, \n    `mobile_no`, \n    `source`, \n    `territory`, \n    `lead_owner`\nFROM \n    `tabLead`\nWHERE \n    `status` = ? LIMIT ?;",
+        "execution_status": "success",
+        "error_message": null,
+        "user_feedback": -1,
+        "feedback_comment": null
+    },
+    {
+        "message_id": 112,
+        "client_id": "Administrator",
+        "timestamp": "2026-03-09T08:28:30",
+        "user_prompt": "Predict sales for the next 3 months",
+        "anonymized_sql": "SELECT \n    DATE_FORMAT(`si`.`posting_date`, ?) AS `Month`,\n    SUM(`si`.`grand_total`) AS `Sales`\nFROM \n    `tabSales Invoice` AS `si`\nWHERE \n    `si`.`docstatus` = ?\nGROUP BY \n    `Month`\nORDER BY \n    `Month` DESC\nLIMIT ?;\n\n/* FORECAST: Month, Sales, ? */",
+        "execution_status": "error",
+        "error_message": "No module named 'pandas'",
+        "user_feedback": null,
+        "feedback_comment": null
+    },
+    {
+        "message_id": 99,
+        "client_id": "Administrator",
+        "timestamp": "2026-03-09T05:36:55",
+        "user_prompt": "hello",
+        "anonymized_sql": "",
+        "execution_status": "error",
+        "error_message": "No SQL generated",
+        "user_feedback": null,
+        "feedback_comment": null
+    },
+    {
+        "message_id": 81,
+        "client_id": "Administrator",
+        "timestamp": "2026-03-07T09:36:36",
+        "user_prompt": "how many total users are there",
+        "anonymized_sql": "",
+        "execution_status": "error",
+        "error_message": "No SQL generated",
+        "user_feedback": null,
+        "feedback_comment": null
+    },
+    {
+        "message_id": 80,
+        "client_id": "Administrator",
+        "timestamp": "2026-03-07T09:36:19",
+        "user_prompt": "show me the total number of users",
+        "anonymized_sql": "",
+        "execution_status": "error",
+        "error_message": "No SQL generated",
+        "user_feedback": null,
+        "feedback_comment": null
+    },
+    {
+        "message_id": 79,
+        "client_id": "Administrator",
+        "timestamp": "2026-03-07T09:35:03",
+        "user_prompt": "show me the total number of users",
+        "anonymized_sql": "",
+        "execution_status": "error",
+        "error_message": "No SQL generated",
+        "user_feedback": null,
+        "feedback_comment": null
+    },
+    {
+        "message_id": 78,
+        "client_id": "Administrator",
+        "timestamp": "2026-03-07T09:34:00",
+        "user_prompt": "show me the total number of users",
+        "anonymized_sql": "",
+        "execution_status": "error",
+        "error_message": "No SQL generated",
+        "user_feedback": null,
+        "feedback_comment": null
+    },
+    {
+        "message_id": 77,
+        "client_id": "Administrator",
+        "timestamp": "2026-03-07T09:33:38",
+        "user_prompt": "show me the total number of users",
+        "anonymized_sql": "",
+        "execution_status": "error",
+        "error_message": "No SQL generated",
+        "user_feedback": null,
+        "feedback_comment": null
+    },
+    {
+        "message_id": 75,
+        "client_id": "Administrator",
+        "timestamp": "2026-03-07T09:31:39",
+        "user_prompt": "hello",
+        "anonymized_sql": "",
+        "execution_status": "error",
+        "error_message": "No SQL generated",
+        "user_feedback": null,
+        "feedback_comment": null
+    },
+    {
+        "message_id": 72,
+        "client_id": "Administrator",
+        "timestamp": "2026-03-07T08:00:37",
+        "user_prompt": "hey what is your name",
+        "anonymized_sql": "",
+        "execution_status": "error",
+        "error_message": "No SQL generated",
+        "user_feedback": null,
+        "feedback_comment": null
+    }
+]
