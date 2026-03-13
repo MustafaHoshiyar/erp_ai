@@ -141,5 +141,21 @@
 # Purchase Flow: Supplier → Purchase Order → Purchase Receipt → Purchase Invoice → Payment Entry
 # Stock: All stock movements tracked in `tabStock Ledger Entry` via voucher_type + voucher_no
 # Accounting: All financial transactions tracked in `tabGL Entry` via voucher_type + voucher_no
+# Maintenance: Standard ERPNext schedules are in `tabMaintenance Schedule`, visits in `tabMaintenance Visit`.
+# Client-specific rule: for prompts about maintenance that is "scheduled", "upcoming", "next week", or date-windowed maintenance schedules,
+# prefer `tabMaintenance` when fields like `scheduled_date` or `customer_id` are needed.
 # Child tables always join via: child.parent = parent.name
 # Stock Ledger to Invoice: sle.voucher_no = si.name AND sle.item_code = sii.item_code
+# Maintenance Schedule to Visit: mv.maintenance_schedule = ms.name
+
+## ============================================================
+## MODULE: MAINTENANCE
+## ============================================================
+
+`tabMaintenance Schedule`: name (PK), customer (Link→Customer), transaction_date (Date), company (Link), status (Select), period (Select), start_date (Date), end_date (Date)
+`tabMaintenance Schedule Item`: name (PK), parent (Link→Maintenance Schedule), item_code (Link→Item), start_date (Date), periodicity (Select) | CHILD OF: `tabMaintenance Schedule`
+
+`tabMaintenance Visit`: name (PK), customer (Link→Customer), maintenance_schedule (Link→Maintenance Schedule), posting_date (Date), posting_time (Time), company (Link), maintenance_type (Select), status (Select), completion_status (Select)
+`tabMaintenance Visit Table`: name (PK), parent (Link→Maintenance Visit), item_code (Link→Item), item_name (Data), qty (Float), rate (Currency), amount (Currency) | CHILD OF: `tabMaintenance Visit`
+
+`tabMaintenance`: name (PK), customer_id (Link→Customer), scheduled_date (Date), transaction_date (Date), status (Select)

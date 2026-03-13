@@ -62,11 +62,10 @@ def _fetch_custom_doctypes():
                         "fieldname": f.get("fieldname"),
                         "fieldtype": f.get("fieldtype"),
                         "label": f.get("label"),
-                        "options": f.get("options")  # For Link fields, this is the linked doctype
+                        "options": f.get("options")
                     }
                     fields.append(field_info)
 
-                    # Track child table links
                     if f.get("fieldtype") == "Table":
                         child_tables.append({
                             "child_doctype": f.get("options"),
@@ -138,7 +137,6 @@ def get_local_schema():
         with open(LOCAL_SCHEMA_CACHE, "r", encoding="utf-8") as f:
             schema = json.load(f)
 
-        # Check TTL
         fetched_at = schema.get("fetched_at", 0)
         if (time.time() - fetched_at) < CACHE_TTL_SECONDS:
             return schema
@@ -159,7 +157,6 @@ def format_local_schema_for_prompt(schema: dict) -> str:
         ""
     ]
 
-    # Custom DocTypes
     if schema.get("custom_doctypes"):
         lines.append("## CUSTOM DOCTYPES:")
         for dt in schema["custom_doctypes"]:
@@ -169,20 +166,17 @@ def format_local_schema_for_prompt(schema: dict) -> str:
                 ftype = f.get("fieldtype", "")
                 fname = f.get("fieldname", "")
                 if ftype in ("Table", "Link"):
-                    field_strs.append(f"{fname} ({ftype}→{f.get('options', '')})")
+                    field_strs.append(f"{fname} ({ftype}->{f.get('options', '')})")
                 elif ftype not in ("HTML", "Button", "Heading"):
                     field_strs.append(f"{fname} ({ftype})")
             lines.append(f"{table_name}: {', '.join(field_strs)}")
 
-            # Child tables
             for ct in dt.get("child_tables", []):
-                lines.append(f"  ↳ Child: `tab{ct['child_doctype']}` (via field: {ct['fieldname']})")
+                lines.append(f"  Child: `tab{ct['child_doctype']}` (via field: {ct['fieldname']})")
         lines.append("")
 
-    # Custom Fields on standard tables
     if schema.get("custom_fields"):
         lines.append("## CUSTOM FIELDS ON STANDARD TABLES:")
-        # Group by doctype
         by_dt = {}
         for cf in schema["custom_fields"]:
             dt_name = cf.get("dt", "Unknown")
@@ -196,7 +190,7 @@ def format_local_schema_for_prompt(schema: dict) -> str:
                 ftype = f.get("fieldtype", "")
                 fname = f.get("fieldname", "")
                 if ftype in ("Table", "Link"):
-                    field_strs.append(f"{fname} ({ftype}→{f.get('options', '')})")
+                    field_strs.append(f"{fname} ({ftype}->{f.get('options', '')})")
                 elif ftype not in ("Section Break", "Column Break", "Tab Break", "HTML", "Button", "Heading"):
                     field_strs.append(f"{fname} ({ftype})")
             if field_strs:

@@ -12,11 +12,10 @@ from memory_manager import backfill_embeddings_in_background
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
-# In-memory session token usage tracker
 token_stats = {
     "total_tokens": 0,
     "request_count": 0,
-    "history": []  # Last N requests with token counts
+    "history": []
 }
 
 @app.get("/")
@@ -42,11 +41,12 @@ class PromptRequest(BaseModel):
 
 @app.post("/generate-report")
 async def generate_report(request: PromptRequest, background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
-    result = generate_sql(request.prompt, request.history, request.client_id)
+    from erp_client import get_default_currency_info
+    currency_info = await get_default_currency_info()
+    result = generate_sql(request.prompt, request.history, request.client_id, currency=currency_info["code"], currency_symbol=currency_info["symbol"])
     
     tokens_used = result.get("tokens_used", 0)
     
-    # Track token usage
     if tokens_used:
         token_stats["total_tokens"] += tokens_used
         token_stats["request_count"] += 1
@@ -54,14 +54,11 @@ async def generate_report(request: PromptRequest, background_tasks: BackgroundTa
             "tokens": tokens_used,
             "prompt": request.prompt[:80]
         })
-        # Keep only last 50 entries
         if len(token_stats["history"]) > 50:
             token_stats["history"] = token_stats["history"][-50:]
 
-    # Handle Conversation DB Logging
     conversation_id = request.conversation_id
     if not conversation_id:
-        # Auto-fetch app_name if missing
         app_name = request.app_name
         if not app_name:
             from erp_client import get_app_name
@@ -83,7 +80,6 @@ async def generate_report(request: PromptRequest, background_tasks: BackgroundTa
     db.commit()
     db.refresh(msg)
 
-    # If no SQL was generated, just return the conversational message
     if not result.get("sql"):
         msg.execution_status = "error"
         msg.error_message = "No SQL generated"
@@ -97,15 +93,11 @@ async def generate_report(request: PromptRequest, background_tasks: BackgroundTa
             "tokens_used": tokens_used
         }
 
-    validated_sql = validate_sql(result["sql"])
-    
     try:
+        validated_sql = validate_sql(result["sql"])
         data = await run_query(validated_sql)
-        
-        # Check if the AI requested a Python forecast
+
         if result.get("needs_forecast"):
-            # Try to parse the forecast parameters from the message:
-            # e.g., FORECAST: Month, Sales, 6
             import re
             from forecaster import generate_forecast
             match = re.search(r"FORECAST:\s*(.+?),\s*(.+?),\s*(\d+)", result.get("message", ""))
@@ -123,7 +115,16 @@ async def generate_report(request: PromptRequest, background_tasks: BackgroundTa
         msg.execution_status = "error"
         msg.error_message = str(e)
         db.commit()
-        raise HTTPException(status_code=500, detail=str(e))
+        failed_sql = locals().get("validated_sql") or result.get("sql")
+        return {
+            "conversation_id": conversation_id,
+            "message_id": msg.id,
+            "sql": failed_sql,
+            "data": None,
+            "message": result.get("message"),
+            "error": str(e),
+            "tokens_used": tokens_used
+        }
 
     return {
         "conversation_id": conversation_id,
@@ -142,14 +143,14 @@ class ChartConfigRequest(BaseModel):
 @app.post("/api/generate_chart_config")
 async def api_generate_chart_config(request: ChartConfigRequest):
     try:
-        config_str = generate_chart_config(request.columns, request.data_sample, request.dataset_summary)
+        from erp_client import get_default_currency_info
+        currency_info = await get_default_currency_info()
+        config_str = generate_chart_config(request.columns, request.data_sample, request.dataset_summary, currency=currency_info["code"], currency_symbol=currency_info["symbol"])
         import json
         config_json = json.loads(config_str)
         return config_json
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-
-# --- Saved Reports Endpoints ---
 
 class SaveReportRequest(BaseModel):
     client_id: str
@@ -189,7 +190,6 @@ async def get_insights_dashboards():
 @app.get("/api/reports/{client_id}")
 def get_saved_reports(client_id: str, db: Session = Depends(get_db)):
     reports = db.query(SavedReport).filter(SavedReport.client_id == client_id).order_by(SavedReport.created_at.desc()).all()
-    # Format for JSON serialization
     return [
         {
             "id": r.id,
@@ -238,7 +238,6 @@ async def execute_saved_report(report_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Report not found")
         
     try:
-        # Re-validate just in case, though it should be safe since it was saved
         validated_sql = validate_sql(report.sql_query)
         data = await run_query(validated_sql)
         
@@ -253,18 +252,21 @@ async def execute_saved_report(report_id: int, db: Session = Depends(get_db)):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error executing report: {str(e)}")
 
+@app.get("/api/currency-info")
+async def get_currency_info():
+    from erp_client import get_default_currency_info
+    return await get_default_currency_info()
+
 @app.get("/api/token-stats")
 def get_token_stats():
-    """Returns cumulative session token usage statistics."""
     return {
         "total_tokens": token_stats["total_tokens"],
         "request_count": token_stats["request_count"],
-        "history": token_stats["history"][-10:]  # Last 10 for the frontend
+        "history": token_stats["history"][-10:]
     }
 
 @app.post("/api/token-stats/reset")
 def reset_token_stats():
-    """Resets the session token usage counter."""
     token_stats["total_tokens"] = 0
     token_stats["request_count"] = 0
     token_stats["history"] = []
@@ -282,19 +284,16 @@ class ExportInsightsRequest(BaseModel):
 async def export_to_insights(request: ExportInsightsRequest):
     from frappe_insights import export_chart_and_dashboard_to_insights
     try:
-        # Validate SQL just in case
         validate_sql(request.sql)
         result = await export_chart_and_dashboard_to_insights(
-            title=request.title, 
-            sql=request.sql, 
-            chart_type=request.chart_type, 
+            title=request.title,
+            sql=request.sql,
+            chart_type=request.chart_type,
             dashboard_name=request.dashboard_name,
             x_col=request.x_col,
             y_cols=request.y_cols
         )
         return result
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -309,16 +308,13 @@ async def login(req: LoginRequest):
         import httpx
         
         async with httpx.AsyncClient() as client:
-            # Frappe API uses usr and pwd for authentication
             resp = await client.post(
                 f"{ERP_URL}/api/method/login",
                 json={"usr": req.username, "pwd": req.password}
             )
             data = resp.json()
             
-            # Frappe success check
             if resp.status_code == 200 and data.get("message") == "Logged In":
-                # On success, return a demo token for the middleware boundary to let them in
                 return {
                     "token": data.get("full_name", req.username) + "-auth-token",
                     "email": req.username
@@ -335,7 +331,7 @@ async def login(req: LoginRequest):
 
 class FeedbackRequest(BaseModel):
     message_id: int
-    feedback: int # e.g., 1 for thumbs up, -1 for thumbs down
+    feedback: int
     comment: Optional[str] = None
 
 @app.post("/api/conversations/feedback")
@@ -352,16 +348,11 @@ def submit_feedback(request: FeedbackRequest, db: Session = Depends(get_db)):
     return {"status": "success", "message_id": msg.id, "feedback": msg.user_feedback}
 
 
-# --- MOCK MOTHERBRAIN ENDPOINT (For Local Development Only) ---
 class MotherbrainTelemetryPayload(BaseModel):
     telemetry_data: List[Dict[str, Any]]
 
 @app.post("/api/motherbrain/ingest")
 def mock_motherbrain_ingest(payload: MotherbrainTelemetryPayload):
-    """
-    This endpoint simulates the Central Motherbrain server receiving data.
-    In real life, this would be a completely separate application/server.
-    """
     import json
     import os
     print("\n" + "="*50)
@@ -369,7 +360,6 @@ def mock_motherbrain_ingest(payload: MotherbrainTelemetryPayload):
     print(f"Total Records: {len(payload.telemetry_data)}")
     
     import datetime
-    # Save the log in the directory
     logs_dir = os.path.join(os.path.dirname(__file__), "telemetry_logs")
     os.makedirs(logs_dir, exist_ok=True)
     filename = os.path.join(logs_dir, f"motherbrain_mock_log_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.json")
@@ -381,8 +371,6 @@ def mock_motherbrain_ingest(payload: MotherbrainTelemetryPayload):
     print("="*50 + "\n")
     
     return {"status": "success", "message": "Motherbrain received data", "records_processed": len(payload.telemetry_data)}
-
-# --- Client Context Overrides ---
 
 class ContextOverrideRequest(BaseModel):
     client_id: str

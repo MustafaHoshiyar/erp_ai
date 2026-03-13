@@ -73,7 +73,6 @@ def get_relevant_schema_context(client_id: str, new_prompt: str, top_k: int = 3)
             override_lines.append("")
             override_text = "\n".join(override_lines) + "\n"
 
-
         reports = db.query(SavedReport).filter(SavedReport.client_id == client_id).all()
         
         success_msgs = db.query(ConversationMessage).join(Conversation).filter(
@@ -83,7 +82,7 @@ def get_relevant_schema_context(client_id: str, new_prompt: str, top_k: int = 3)
         success_msgs = [m for m in success_msgs if m.user_feedback != -1]
         
         all_past_queries = list(reports) + success_msgs
-            
+        
         if not all_past_queries:
             return override_text
 
@@ -98,7 +97,6 @@ def get_relevant_schema_context(client_id: str, new_prompt: str, top_k: int = 3)
                 scored_records.append((sim, record))
                 
         scored_records.sort(key=lambda x: x[0], reverse=True)
-        # Threshold for semantic similarity, e.g., > 0.4
         best_matches = [r for score, r in scored_records if score > 0.4][:top_k]
         
         if not best_matches:

@@ -6,11 +6,16 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     let APP_ENV = 'development';
+    let chatHistory = [];
+    let CURRENCY_SYMBOL = '$'; // Fallback
+
     fetch('/api/config').then(res => res.json()).then(data => {
         APP_ENV = data.environment;
     }).catch(err => console.error("Failed to load config", err));
 
-    let chatHistory = [];
+    fetch('/api/currency-info').then(res => res.json()).then(data => {
+        CURRENCY_SYMBOL = data.symbol || '$';
+    }).catch(err => console.error("Failed to load currency info", err));
     const form = document.getElementById('prompt-form');
     const promptInput = document.getElementById('user-prompt');
     const generateBtn = document.getElementById('generate-btn');
@@ -130,7 +135,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // New Chat button - reset to initial state
     const newChatBtn = document.getElementById('new-chat-btn');
     newChatBtn.addEventListener('click', () => {
-        // Clear chat history
         chatHistory = [];
 
         // Clear all messages from results area
@@ -184,7 +188,7 @@ document.addEventListener('DOMContentLoaded', () => {
             reports.forEach(report => {
                 const item = document.createElement('div');
                 item.className = 'saved-report-item';
-                item.style.position = 'relative'; // For absolute positioning of delete bn
+                item.style.position = 'relative';
                 item.innerHTML = `
                     <button class="delete-report-btn" title="Delete Report" data-id="${report.id}">&times;</button>
                     <h4>${report.name}</h4>
@@ -200,7 +204,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     executeSavedReport(report);
                 });
 
-                // Add delete button logic
                 const deleteBtn = item.querySelector('.delete-report-btn');
                 deleteBtn.addEventListener('click', async (e) => {
                     e.stopPropagation();
@@ -231,7 +234,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function executeSavedReport(report) {
-        // UI Transition: Move prompt bar to bottom
         if (promptArea.classList.contains('prompt-centered')) {
             promptArea.classList.remove('prompt-centered');
             welcomeHeader.classList.add('hidden');
@@ -251,10 +253,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!response.ok) throw new Error("Failed to execute saved report.");
 
             const result = await response.json();
-
-            // Format to match what populateAiMessage expects
             populateAiMessage(aiMessageNode, result, report.chart_config);
-
         } catch (err) {
             showAiError(aiMessageNode, err.message);
         }
@@ -312,19 +311,30 @@ document.addEventListener('DOMContentLoaded', () => {
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ prompt: promptText, history: chatHistory, client_id: CLIENT_ID })
+                body: JSON.stringify({
+                    prompt: promptText,
+                    history: chatHistory,
+                    client_id: CLIENT_ID
+                })
             });
+
+            let result = {};
+            try {
+                result = await response.json();
+            } catch (err) { }
 
             if (!response.ok) {
                 let errorDetail = response.statusText;
-                try {
-                    const errorJson = await response.json();
-                    errorDetail = errorJson.detail || errorDetail;
-                } catch (err) { }
+                errorDetail = result.detail || result.error || errorDetail;
+
+                if (result.sql || result.message) {
+                    result.error = result.error || `Server Error: ${errorDetail}`;
+                    populateAiMessage(aiMessageNode, result);
+                    return;
+                }
+
                 throw new Error(`Server Error: ${errorDetail}`);
             }
-
-            const result = await response.json();
 
             // Store interaction in history for future prompts
             chatHistory.push({ role: 'user', content: promptText });
@@ -336,6 +346,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // 4. Fill AI Response Block with Data
             populateAiMessage(aiMessageNode, result);
+            if (result.error) {
+                showAiError(aiMessageNode, result.error);
+            }
 
             // 5. Update token usage stats
             if (result.tokens_used) {
@@ -692,9 +705,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     saveReportBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--success-color)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>';
                     setTimeout(() => saveReportBtn.innerHTML = originalBtnContent, 2000);
 
-                    // Refresh sidebar to show newly saved report
                     loadSavedReports();
-                    alert(e.message);
+                } catch (err) {
+                    alert("Error: " + err.message);
                     saveReportBtn.innerHTML = originalBtnContent;
                 } finally {
                     saveReportBtn.disabled = false;
@@ -949,11 +962,77 @@ document.addEventListener('DOMContentLoaded', () => {
                 tr.appendChild(tdSr);
                 headers.forEach(header => {
                     const td = document.createElement('td');
-                    td.textContent = row[header] !== null && row[header] !== undefined ? row[header] : '—';
+                    const val = row[header];
+
+                    if (val !== null && val !== undefined && typeof val === 'number') {
+                        // Format numeric columns that look like amounts
+                        const lowerHeader = header.toLowerCase();
+                        if (lowerHeader.includes('amount') || lowerHeader.includes('total') || lowerHeader.includes('price') || lowerHeader.includes('rate') || lowerHeader.includes('cost') || lowerHeader.includes('sum')) {
+                            td.textContent = `${val.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${CURRENCY_SYMBOL}`;
+                            td.style.textAlign = 'right';
+                        } else {
+                            td.textContent = val;
+                        }
+                    } else if (val !== null && val !== undefined && !isNaN(parseFloat(val)) && isFinite(val) && typeof val === 'string' && val.trim() !== '') {
+                        // Handle numeric strings just in case
+                        const lowerHeader = header.toLowerCase();
+                        if (lowerHeader.includes('amount') || lowerHeader.includes('total') || lowerHeader.includes('price') || lowerHeader.includes('rate') || lowerHeader.includes('cost') || lowerHeader.includes('sum')) {
+                            const num = parseFloat(val);
+                            td.textContent = `${num.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${CURRENCY_SYMBOL}`;
+                            td.style.textAlign = 'right';
+                        } else {
+                            td.textContent = val;
+                        }
+                    } else {
+                        td.textContent = val !== null && val !== undefined ? val : '—';
+                    }
                     tr.appendChild(td);
                 });
                 tbody.appendChild(tr);
             });
+
+            if (false && data.length > 1) {
+                const tfoot = document.createElement('tfoot');
+                const trFoot = document.createElement('tr');
+                trFoot.className = 'total-row';
+
+                // Sr column in footer
+                const tdSr = document.createElement('td');
+                tdSr.textContent = 'Total';
+                tdSr.style.fontWeight = 'bold';
+                trFoot.appendChild(tdSr);
+
+                headers.forEach(header => {
+                    const td = document.createElement('td');
+                    const lowerHeader = header.toLowerCase();
+                    const isNumeric = lowerHeader.includes('amount') || lowerHeader.includes('total') || lowerHeader.includes('price') || lowerHeader.includes('rate') || lowerHeader.includes('cost') || lowerHeader.includes('sum');
+
+                    if (isNumeric) {
+                        let colSum = 0;
+                        let hasData = false;
+                        data.forEach(row => {
+                            const val = parseFloat(row[header]);
+                            if (!isNaN(val)) {
+                                colSum += val;
+                                hasData = true;
+                            }
+                        });
+
+                        if (hasData) {
+                            td.textContent = `${colSum.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${CURRENCY_SYMBOL}`;
+                            td.style.textAlign = 'right';
+                            td.style.fontWeight = 'bold';
+                        } else {
+                            td.textContent = '—';
+                        }
+                    } else {
+                        td.textContent = '';
+                    }
+                    trFoot.appendChild(td);
+                });
+                tfoot.appendChild(trFoot);
+                table.appendChild(tfoot);
+            }
 
             dataSection.classList.remove('hidden');
 
@@ -1044,6 +1123,11 @@ document.addEventListener('DOMContentLoaded', () => {
     function showAiError(messageNode, errorMessage) {
         const placeholder = messageNode.querySelector('.placeholder-text');
         if (placeholder) placeholder.remove();
+
+        const avatarSvg = messageNode.querySelector('.ai-avatar svg');
+        if (avatarSvg) {
+            avatarSvg.classList.remove('thinking-animation');
+        }
 
         const toast = messageNode.querySelector('.error-toast');
         toast.textContent = errorMessage;

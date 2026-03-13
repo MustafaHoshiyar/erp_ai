@@ -6,11 +6,10 @@ from dotenv import load_dotenv
 from schema_fetcher import get_local_schema
 
 load_dotenv()
-ROUTER_MODEL = "gpt-4o-mini" # Fast, cheap model for Pass 1
+ROUTER_MODEL = "gpt-4o-mini"
 openai_api_key = os.getenv("OPENAI_API_KEY")
 client = OpenAI(api_key=openai_api_key) if openai_api_key else None
 
-# In-memory cache for the generated schema index string
 _SCHEMA_INDEX_CACHE = {
     "global_length": 0,
     "local_length": 0,
@@ -27,27 +26,26 @@ def build_schema_index(global_schema: str, local_schema: dict) -> str:
     local_schema_len = len(str(local_schema)) if local_schema else 0
     global_schema_len = len(global_schema)
     
-    # Return cached index if schemas haven't changed size
-    if (global_schema_len == _SCHEMA_INDEX_CACHE["global_length"] and 
-        local_schema_len == _SCHEMA_INDEX_CACHE["local_length"] and 
-        _SCHEMA_INDEX_CACHE["index_string"]):
+    if (
+        global_schema_len == _SCHEMA_INDEX_CACHE["global_length"] and
+        local_schema_len == _SCHEMA_INDEX_CACHE["local_length"] and
+        _SCHEMA_INDEX_CACHE["index_string"]
+    ):
         return _SCHEMA_INDEX_CACHE["index_string"]
     
     lines = ["Available Database Tables:"]
     
-    # Process global schema lines
     for line in global_schema.split("\n"):
         line = line.strip()
         if line.startswith("`tab"):
             lines.append(line)
             
-    # Process local schema
     if local_schema.get("custom_doctypes"):
         lines.append("\nCustom Client Tables:")
         for dt in local_schema["custom_doctypes"]:
             table_name = f"`tab{dt['name']}`"
             field_strs = []
-            for f in dt.get("fields", [])[:5]: # just the first few fields for index
+            for f in dt.get("fields", [])[:5]:
                 ftype = f.get("fieldtype", "")
                 fname = f.get("fieldname", "")
                 if ftype not in ("HTML", "Button", "Heading"):
@@ -56,7 +54,6 @@ def build_schema_index(global_schema: str, local_schema: dict) -> str:
             
     index_str = "\n".join(lines)
     
-    # Update cache
     _SCHEMA_INDEX_CACHE["global_length"] = global_schema_len
     _SCHEMA_INDEX_CACHE["local_length"] = local_schema_len
     _SCHEMA_INDEX_CACHE["index_string"] = index_str
@@ -67,8 +64,15 @@ def identify_required_tables(user_prompt: str, schema_index: str) -> tuple[list[
     """
     Pass 1: Asks a fast LLM to identify the exact tables needed to answer the prompt.
     """
+    prompt_lower = user_prompt.lower()
+    if (
+        "maintenance" in prompt_lower and
+        any(term in prompt_lower for term in ["scheduled", "schedule", "next week", "upcoming", "this week"])
+    ):
+        return ["tabMaintenance"], 0
+
     if not client:
-        return []
+        return [], 0
         
     system_prompt = f"""
 You are a database routing assistant for ERPNext.
@@ -91,10 +95,9 @@ Do not include any other text or markdown block formatting.
         
         raw_output = response.choices[0].message.content.strip()
         
-        # Remove markdown if it wrapped it in ```json ... ```
         match = re.search(r"```(?:json)?\s*(.*?)\s*```", raw_output, re.IGNORECASE | re.DOTALL)
         if match:
-             raw_output = match.group(1).strip()
+            raw_output = match.group(1).strip()
              
         tables = json.loads(raw_output)
         tokens_used = response.usage.total_tokens if hasattr(response, "usage") and response.usage else 0
@@ -110,12 +113,10 @@ def filter_schema(global_schema: str, local_schema_text: str, required_tables: l
     Extracts only the definitions for the required tables from the full schemas.
     """
     if not required_tables:
-        # If router failed or returned empty, fallback to full schema
         return global_schema + "\n\n" + local_schema_text
         
     filtered_schema = ["### FILTERED DATABASE SCHEMA ###"]
     
-    # Also include the relationships/rules block at the bottom of global_schema
     rules_block = []
     in_rules = False
     
@@ -132,7 +133,6 @@ def filter_schema(global_schema: str, local_schema_text: str, required_tables: l
             if table_name in required_tables:
                 filtered_schema.append(line)
                 
-    # Filter local schema text
     if local_schema_text:
         filtered_schema.append("\n### CUSTOM CLIENT SCHEMA ###")
         for line in local_schema_text.split("\n"):
@@ -140,8 +140,7 @@ def filter_schema(global_schema: str, local_schema_text: str, required_tables: l
                 table_name = line.split(":", 1)[0].replace("`", "").strip()
                 if table_name in required_tables:
                     filtered_schema.append(line)
-            elif "added:" in line: # Custom fields on standard tables
-                # "`tabSales Invoice` added: custom_field (Data)"
+            elif "added:" in line:
                 match_dt = re.search(r"`(tab.*?)`", line)
                 if match_dt and match_dt.group(1) in required_tables:
                     filtered_schema.append(line)
@@ -159,13 +158,8 @@ def get_optimized_schema_context(user_prompt: str, global_schema: str, local_sch
     
     local_schema_text = format_local_schema_for_prompt(local_schema) if local_schema else ""
     
-    # 1. Build Index
     schema_index = build_schema_index(global_schema, local_schema)
-    
-    # 2. Identify Tables (Pass 1)
     required_tables, pass1_tokens = identify_required_tables(user_prompt, schema_index)
-    
-    # 3. Filter Schema
     filtered_schema = filter_schema(global_schema, local_schema_text, required_tables)
     
     return filtered_schema, pass1_tokens
