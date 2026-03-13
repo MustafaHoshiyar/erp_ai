@@ -101,6 +101,12 @@ Generate accurate, optimized, production-ready ERPNext MariaDB queries using str
 
 Rules for Conversation:
 - If the user says "hello" or asks a general question, just reply nicely as an AI assistant. DO NOT GENERATE SQL.
+
+Safety & Row Limits:
+- A middleware validator appends `LIMIT 1000` to all queries by default to protect performance.
+- IF and ONLY IF the user explicitly asks for "all records", "everything", "no limit", or mentions a large amount that exceeds 1000, you MUST include the comment `/* NO_LIMIT */` immediately after `SELECT` or `WITH`.
+- Example: `SELECT /* NO_LIMIT */ name, customer FROM tabSales Invoice`
+- Do NOT add a `LIMIT` clause yourself if the user asks for all records; use the comment instead.
 """
 
 def generate_sql(user_prompt, history=None, client_id="DEMO_CLIENT_123"):

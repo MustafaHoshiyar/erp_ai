@@ -47,6 +47,7 @@ class Conversation(Base):
     
     id = Column(Integer, primary_key=True, index=True)
     client_id = Column(String(50), index=True)
+    app_name = Column(String(100), index=True, nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     
     messages = relationship("ConversationMessage", back_populates="conversation", cascade="all, delete-orphan")
@@ -64,6 +65,7 @@ class ConversationMessage(Base):
     feedback_comment = Column(Text, nullable=True) # User's correction context
     tokens_used = Column(Integer, nullable=True)
     embedding = Column(JSON, nullable=True)    # Stores specific float array for semantic search
+    synced_to_motherbrain = Column(Boolean, default=False, index=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     
     conversation = relationship("Conversation", back_populates="messages")
