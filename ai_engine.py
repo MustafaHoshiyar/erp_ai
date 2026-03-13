@@ -82,7 +82,7 @@ Performance & Syntax Rules:
     2. You MUST include the exact string "FORECAST: <date_col>, <target_col>, <periods>" anywhere in your markdown response outside the SQL block. 
        Example: FORECAST: Month, Sales, 6
   - The Python backend will catch this flag, execute your historical SQL, and run a statistical forecast model (Holt-Winters) on the results automatically.
-- Format the totals and amount columns with 2 decimal places.
+- Format the totals and amount columns with 2 decimal places and ensure they are presented in a way that respects currency formatting (e.g., use FORMAT(column, 2) in SQL).
 - Always group correctly when using aggregates.
 - Avoid SELECT *. Return specific columns.
 
