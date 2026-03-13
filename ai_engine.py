@@ -9,7 +9,7 @@ from schema_fetcher import get_local_schema, format_local_schema_for_prompt
 load_dotenv()
 
 AI_PROVIDER = os.getenv("AI_PROVIDER", "openai").lower()
-AI_MODEL    = os.getenv("AI_MODEL", "gpt-4o")
+AI_MODEL = os.getenv("AI_MODEL", "gpt-4o")
 
 if AI_PROVIDER == "groq":
     client = Groq(api_key=os.getenv("GROQ_API_KEY"))
@@ -20,7 +20,6 @@ else:
 
 print(f"[AI Engine] Using provider: {AI_PROVIDER}, model: {AI_MODEL}")
 
-# Load global schema once at startup
 _GLOBAL_SCHEMA_PATH = os.path.join(os.path.dirname(__file__), "schemas", "global_schema.txt")
 try:
     with open(_GLOBAL_SCHEMA_PATH, "r", encoding="utf-8") as f:
@@ -77,12 +76,12 @@ Performance & Syntax Rules:
 - NEVER wrap indexed columns in functions in WHERE clause.
 - For TIME-SERIES FORECASTING or PREDICTIONS:
   - Do NOT attempt to calculate the forecast in SQL using recursive CTEs.
-  - INSTEAD: 
+  - INSTEAD:
     1. Write a simple SQL query to extract the historical data grouped by month (e.g. `SELECT DATE_FORMAT(posting_date, '%Y-%m') AS 'Month', SUM(grand_total) AS 'Sales' FROM ... GROUP BY Month`).
-    2. You MUST include the exact string "FORECAST: <date_col>, <target_col>, <periods>" anywhere in your markdown response outside the SQL block. 
+    2. You MUST include the exact string "FORECAST: <date_col>, <target_col>, <periods>" anywhere in your markdown response outside the SQL block.
        Example: FORECAST: Month, Sales, 6
   - The Python backend will catch this flag, execute your historical SQL, and run a statistical forecast model (Holt-Winters) on the results automatically.
-- Format the totals and amount columns with 2 decimal places and ensure they are presented in a way that respects currency formatting (e.g., use FORMAT(column, 2) in SQL).
+- For any amount, total, or currency fields, return the RAW numeric values. Do NOT use FORMAT() or CONCAT() to add currency symbols in the SQL.
 - Always group correctly when using aggregates.
 - Avoid SELECT *. Return specific columns.
 
@@ -97,7 +96,7 @@ Output Rules:
 - SQL must start directly with SELECT or WITH.
 
 Your goal:
-Generate accurate, optimized, production-ready ERPNext MariaDB queries using strict Frappe framework schema conventions.
+Generate accurate, optimized, production-ready ERPNext MariaDB queries (currency: {currency}) using strict Frappe framework schema conventions.
 
 Rules for Conversation:
 - If the user says "hello" or asks a general question, just reply nicely as an AI assistant. DO NOT GENERATE SQL.
@@ -107,16 +106,18 @@ Safety & Row Limits:
 - IF and ONLY IF the user explicitly asks for "all records", "everything", "no limit", or mentions a large amount that exceeds 1000, you MUST include the comment `/* NO_LIMIT */` immediately after `SELECT` or `WITH`.
 - Example: `SELECT /* NO_LIMIT */ name, customer FROM tabSales Invoice`
 - Do NOT add a `LIMIT` clause yourself if the user asks for all records; use the comment instead.
+
+Client-Specific Hard Rule:
+- For maintenance prompts about records that are "scheduled", "upcoming", "next week", "this week", or date-windowed future maintenance, prefer `tabMaintenance` over `tabMaintenance Schedule`.
+- In this client, the correct fields are `tabMaintenance`.`customer_id` and `tabMaintenance`.`scheduled_date`.
+- Do NOT use `tabMaintenance Schedule`.`start_date` for those prompts unless the user explicitly asks for Maintenance Schedule.
 """
 
-def generate_sql(user_prompt, history=None, client_id="DEMO_CLIENT_123"):
-    # Fetch relevant historical schema context (Memory Layer)
+def generate_sql(user_prompt, history=None, client_id="DEMO_CLIENT_123", currency="USD", currency_symbol="$"):
     memory_context = get_relevant_schema_context(client_id, user_prompt)
     
-    # Build the dynamic system prompt with all 3 layers
-    dynamic_system_prompt = SYSTEM_PROMPT
+    dynamic_system_prompt = SYSTEM_PROMPT.format(currency=currency)
     
-    # Schema Routing (Pass 1 - Token Optimization)
     from schema_router import get_optimized_schema_context
     local_schema = None
     try:
@@ -127,7 +128,6 @@ def generate_sql(user_prompt, history=None, client_id="DEMO_CLIENT_123"):
     filtered_schema, pass1_tokens = get_optimized_schema_context(user_prompt, GLOBAL_SCHEMA, local_schema)
     dynamic_system_prompt += f"\n\n{filtered_schema}"
     
-    # Layer 3: Memory (previously successful queries)
     if memory_context:
         dynamic_system_prompt += f"\n\n{memory_context}"
 
@@ -148,31 +148,26 @@ def generate_sql(user_prompt, history=None, client_id="DEMO_CLIENT_123"):
     tokens_used = response.usage.total_tokens if hasattr(response, "usage") and response.usage else 0
     tokens_used += pass1_tokens
 
-    # Check for Python Forecaster Command
     needs_forecast = False
     if "FORECAST:" in raw_output:
         needs_forecast = True
         
-    # Try to extract SQL from a markdown block
     match = re.search(r"```sql(.*?)```", raw_output, re.IGNORECASE | re.DOTALL)
     if match:
         return {"sql": match.group(1).strip(), "message": raw_output, "tokens_used": tokens_used, "needs_forecast": needs_forecast}
 
-    # Fallback to older matching if it didn't use the markdown block
     match = re.search(r"(SELECT .*?;)", raw_output, re.IGNORECASE | re.DOTALL)
     if match:
         return {"sql": match.group(1).strip(), "message": raw_output, "tokens_used": tokens_used, "needs_forecast": needs_forecast}
 
-    # Fallback if no semicolon
     match = re.search(r"(SELECT .*?$)", raw_output, re.IGNORECASE | re.DOTALL)
     if match:
         return {"sql": match.group(1).strip(), "message": raw_output, "tokens_used": tokens_used, "needs_forecast": needs_forecast}
 
-    # Conversational reply, no SQL
     return {"sql": None, "message": raw_output, "tokens_used": tokens_used, "needs_forecast": False}
 
 
-def generate_chart_config(columns, data_sample, dataset_summary=None):
+def generate_chart_config(columns, data_sample, dataset_summary=None, currency="USD", currency_symbol="$"):
     system_prompt = """
 You are an expert data visualization and dashboard assistant.
 Given a list of column names, their inferred data types, a small JSON sample of the data, and an overall dataset summary (total rows and sums of numerical columns), your task is to generate a comprehensive JSON dashboard configuration.
@@ -197,7 +192,7 @@ KPI INSTRUCTIONS:
 - **CRITICAL INTELLIGENCE**: Do NOT create KPIs that sum or aggregate identifiers, phone numbers, mobile numbers, index columns, or status flags (e.g. 'mobile', 'phone', 'id', 'name', 'idx'). Only aggregate meaningful business metrics (e.g. amounts, quantities, totals, revenues, counts).
 - **CRITICAL**: Use the `dataset_summary` provided in the user prompt to populate the KPI values (e.g. Total Rows, Sums of key numerical columns). However, ignore meaningless sums provided in `dataset_summary` (like the sum of mobile numbers). Do NOT base the KPIs solely on the small `Data Sample`.
 - If the only numeric columns are identifiers/phone numbers, just return a single KPI for "Total Count" or "Total Rows".
-- `value` should be formatted nicely (e.g., "99.4k", "140.7", "$12.5M").
+- `value` should be formatted nicely including the currency symbol '{currency_symbol}' (e.g., "{currency_symbol} 99.4k", "140.7 {currency_symbol}", "12.5M {currency_symbol}").
 - `trend_percentage` is optional (an estimated trend based on the data context, e.g., "24.5"). Omit if not applicable.
 - `trend_direction` must be "up", "down", or "neutral".
 
@@ -219,6 +214,7 @@ Return ONLY the raw JSON object, starting with `{` and ending with `}`.
 Do NOT include explanations, markdown formatting, or comments.
 """
     
+    formatted_system_prompt = system_prompt.format(currency_symbol=currency_symbol)
     user_prompt = f"Columns: {columns}\nData Sample: {data_sample}"
     if dataset_summary:
         user_prompt += f"\nDataset Summary (Real Totals for KPIs): {dataset_summary}"
@@ -226,7 +222,7 @@ Do NOT include explanations, markdown formatting, or comments.
     response = client.chat.completions.create(
         model=AI_MODEL,
         messages=[
-            {"role": "system", "content": system_prompt},
+            {"role": "system", "content": formatted_system_prompt},
             {"role": "user", "content": user_prompt}
         ],
         temperature=0
@@ -234,12 +230,10 @@ Do NOT include explanations, markdown formatting, or comments.
 
     raw_output = response.choices[0].message.content.strip()
 
-    # Try to extract JSON from a markdown block
     match = re.search(r"```json(.*?)```", raw_output, re.IGNORECASE | re.DOTALL)
     if match:
         return match.group(1).strip()
     
-    # Fallback to direct output if no markdown
     return raw_output.strip()
 
 def determine_insights_chart_config(sql: str, data_sample: list):
@@ -297,7 +291,6 @@ Return strictly the JSON object. No markdown, no explanations.
 
         raw_output = response.choices[0].message.content.strip()
         
-        # Try to extract JSON from a markdown block if present
         match = re.search(r"```json(.*?)```", raw_output, re.IGNORECASE | re.DOTALL)
         if match:
             raw_output = match.group(1).strip()
