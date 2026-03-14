@@ -6,3 +6,4 @@ __pycache__/
 *.pyc
 .pytest_cache/
 erp_ai_memory.db
+.docx

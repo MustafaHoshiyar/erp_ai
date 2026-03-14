@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
+from fastapi.responses import RedirectResponse
 from pydantic import BaseModel
 from ai_engine import generate_sql, generate_chart_config
 from sql_validator import validate_sql
@@ -20,7 +21,11 @@ token_stats = {
 
 @app.get("/")
 def home():
-    return {"message": "ERP AI Backend is running"}
+    return RedirectResponse(url="/static/login.html", status_code=302)
+
+@app.get("/health")
+def health():
+    return {"status": "ok", "service": "erp_ai"}
     
 @app.get("/api/config")
 def get_config():
