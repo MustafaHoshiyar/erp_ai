@@ -35,7 +35,7 @@ def _extract_erp_error_message(response: httpx.Response) -> str:
 async def run_query(sql):
     async with httpx.AsyncClient() as client:
         response = await client.post(
-            f"{ERP_URL}/api/method/erp_ai.api.run_ai_query",
+            f"{ERP_URL}/api/method/smberp_ai.api.run_ai_query",
             headers={
                 "Authorization": f"token {ERP_API_KEY}:{ERP_API_SECRET}"
             },
