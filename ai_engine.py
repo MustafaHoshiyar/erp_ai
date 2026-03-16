@@ -74,12 +74,13 @@ Performance & Syntax Rules:
 - Use DATE_FORMAT(CURDATE(), '%Y-%m-01') for current month filtering.
 - Use DATE_SUB(CURDATE(), INTERVAL X DAY) for rolling ranges.
 - NEVER wrap indexed columns in functions in WHERE clause.
-- For TIME-SERIES FORECASTING or PREDICTIONS:
+- For TIME-SERIES FORECASTING, PREDICTIONS, or PROJECTIONS:
   - Do NOT attempt to calculate the forecast in SQL using recursive CTEs.
   - INSTEAD:
-    1. Write a simple SQL query to extract the historical data grouped by month (e.g. `SELECT DATE_FORMAT(posting_date, '%Y-%m') AS 'Month', SUM(grand_total) AS 'Sales' FROM ... GROUP BY Month`).
-    2. You MUST include the exact string "FORECAST: <date_col>, <target_col>, <periods>" anywhere in your markdown response outside the SQL block.
-       Example: FORECAST: Month, Sales, 6
+    1. Write a simple SQL query to extract the historical data grouped by a time period (e.g. Month, Week, Day).
+    2. Group by the time period and SUM/AVG the target metric (e.g. `SELECT DATE_FORMAT(posting_date, '%Y-%m') AS 'Month', SUM(grand_total) AS 'Total' FROM ... GROUP BY Month`).
+    3. You MUST include the exact string "FORECAST: <date_col>, <target_col>, <periods>" anywhere in your markdown answer/comment. Use 6 as the default periods if the user doesn't specify.
+       Example: FORECAST: Month, Total, 6
   - The Python backend will catch this flag, execute your historical SQL, and run a statistical forecast model (Holt-Winters) on the results automatically.
 - For any amount, total, or currency fields, return the RAW numeric values. Do NOT use FORMAT() or CONCAT() to add currency symbols in the SQL.
 - Always group correctly when using aggregates.
@@ -173,19 +174,19 @@ You are an expert data visualization and dashboard assistant.
 Given a list of column names, their inferred data types, a small JSON sample of the data, and an overall dataset summary (total rows and sums of numerical columns), your task is to generate a comprehensive JSON dashboard configuration.
 
 Your output MUST be a single raw JSON object with the following structure:
-{
+{{
   "kpis": [
-    {
+    {{
       "label": "Total Orders",
       "value": "66",
       "trend_percentage": "24.53",
       "trend_direction": "up"
-    }
+    }}
   ],
-  "chart": {
+  "chart": {{
      // Valid Chart.js configuration object here
-  }
-}
+  }}
+}}
 
 KPI INSTRUCTIONS:
 - Generate up to 4 Key Performance Indicators (KPIs) that summarize the data.
@@ -210,7 +211,14 @@ If there are multiple numerical datasets and their values have vastly different 
 CRITICAL DATE ISSUES:
 Do NOT use `type: 'time'` for x-axis or y-axis scales. The frontend does not have a date adapter loaded. Treat dates as simple categorical strings (i.e. use the default `type: 'category'` or omit `type` for the x-axis).
 
-Return ONLY the raw JSON object, starting with `{` and ending with `}`.
+FORECAST VISUALIZATION (SPECIAL CASE):
+If the data contains a column named 'Type' with values 'Actual' and 'Forecast', you MUST:
+1. Use 'line' as the chart type.
+2. Ensure the 'Actual' data and 'Forecast' data are plotted correctly.
+3. For the 'Forecast' series, you should ideally use a different color or style (like a dashed line) if the Chart.js version supports it via `borderDash: [5, 5]`.
+4. If the data is provided in a single list with 'Type' column, you may need to map it to two separate datasets or one continuous dataset with segment styling.
+
+Return ONLY the raw JSON object, starting with `{{` and ending with `}}`.
 Do NOT include explanations, markdown formatting, or comments.
 """
     

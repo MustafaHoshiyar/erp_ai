@@ -7,10 +7,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let APP_ENV = 'development';
     let chatHistory = [];
+    let currentConversationId = null;
     let CURRENCY_SYMBOL = '$'; // Fallback
 
     fetch('/api/config').then(res => res.json()).then(data => {
         APP_ENV = data.environment;
+        const insightsLink = document.getElementById('menu-insights-link');
+        if (insightsLink && data.insights_url) {
+            insightsLink.href = data.insights_url;
+        }
     }).catch(err => console.error("Failed to load config", err));
 
     fetch('/api/currency-info').then(res => res.json()).then(data => {
@@ -33,7 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const sidebarOverlay = document.getElementById('sidebar-overlay');
     const openSidebarBtn = document.getElementById('open-sidebar-btn');
     const closeSidebarBtn = document.getElementById('close-sidebar-btn');
-    const savedReportsList = document.getElementById('saved-reports-list');
+    const sidebarV2Container = document.getElementById('history-list');
 
     // Dynamic Client ID based on logged in user
     const CLIENT_ID = localStorage.getItem('user_email') || "DEMO_CLIENT_123";
@@ -121,9 +126,9 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             sidebar.classList.toggle('open');
             sidebarOverlay.classList.toggle('active');
-            // Load reports if opening on mobile
-            if (sidebar.classList.contains('open') && savedReportsList.children.length === 0) {
-                loadSavedReports();
+            // Load history if opening on mobile
+            if (sidebar.classList.contains('open') && sidebarV2Container.children.length === 0) {
+                loadConversationHistory();
             }
         }
     }
@@ -136,6 +141,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const newChatBtn = document.getElementById('new-chat-btn');
     newChatBtn.addEventListener('click', () => {
         chatHistory = [];
+        currentConversationId = null;
+
+        // Highlight logic
+        document.querySelectorAll('.history-item').forEach(i => i.classList.remove('active'));
 
         // Clear all messages from results area
         resultsArea.innerHTML = '';
@@ -170,54 +179,61 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Initial load for desktop where sidebar is visible
-    loadSavedReports();
+    loadConversationHistory();
     fetchTokenStats();  // Load token stats on startup
 
-    async function loadSavedReports() {
-        savedReportsList.innerHTML = '<div class="text-muted" style="padding: 1rem;">Loading...</div>';
+    async function loadConversationHistory() {
+        sidebarV2Container.innerHTML = '<div class="text-muted" style="padding: 1rem;">Loading...</div>';
         try {
-            const res = await fetch(`/api/reports/${CLIENT_ID}`);
-            const reports = await res.json();
+            const res = await fetch(`/api/conversations/${CLIENT_ID}`);
+            const threads = await res.json();
 
-            savedReportsList.innerHTML = '';
-            if (reports.length === 0) {
-                savedReportsList.innerHTML = '<div class="text-muted" style="padding: 1rem;">No saved reports yet.</div>';
+            sidebarV2Container.innerHTML = '';
+            if (threads.length === 0) {
+                sidebarV2Container.innerHTML = '<div class="text-muted" style="padding: 1rem; font-size: 0.85rem;">No history yet.</div>';
                 return;
             }
 
-            reports.forEach(report => {
+            threads.forEach(thread => {
                 const item = document.createElement('div');
-                item.className = 'saved-report-item';
-                item.style.position = 'relative';
+                item.className = 'history-item';
+                item.dataset.id = thread.id;
+                if (currentConversationId === thread.id) {
+                    item.classList.add('active');
+                }
+
                 item.innerHTML = `
-                    <button class="delete-report-btn" title="Delete Report" data-id="${report.id}">&times;</button>
-                    <h4>${report.name}</h4>
-                    <p>${report.original_prompt}</p>
-                    <div class="date">${new Date(report.created_at).toLocaleDateString()}</div>
+                    <div class="history-item-title">${thread.title}</div>
+                    <button class="delete-history-btn" title="Delete thread">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+                    </button>
                 `;
 
                 item.addEventListener('click', (e) => {
-                    if (e.target.classList.contains('delete-report-btn')) return;
+                    if (e.target.closest('.delete-history-btn')) return;
                     if (window.innerWidth <= 768) {
                         toggleSidebar();
                     }
-                    executeSavedReport(report);
+                    loadConversation(thread.id);
                 });
 
-                const deleteBtn = item.querySelector('.delete-report-btn');
+                const deleteBtn = item.querySelector('.delete-history-btn');
                 deleteBtn.addEventListener('click', async (e) => {
                     e.stopPropagation();
-                    const confirmed = await showCustomConfirm(`Are you sure you want to delete "${report.name}"?`, "Delete Report");
+                    const confirmed = await showCustomConfirm(`Delete this entire conversation?`, "Delete History");
                     if (confirmed) {
                         try {
-                            const delRes = await fetch(`/api/reports/${report.id}`, { method: 'DELETE' });
+                            const delRes = await fetch(`/api/conversations/${thread.id}`, { method: 'DELETE' });
                             if (delRes.ok) {
                                 item.remove();
-                                if (savedReportsList.children.length === 0) {
-                                    savedReportsList.innerHTML = '<div class="text-muted" style="padding: 1rem;">No saved reports yet.</div>';
+                                if (currentConversationId === thread.id) {
+                                    newChatBtn.click();
+                                }
+                                if (sidebarV2Container.children.length === 0) {
+                                    sidebarV2Container.innerHTML = '<div class="text-muted" style="padding: 1rem; font-size: 0.85rem;">No history yet.</div>';
                                 }
                             } else {
-                                alert("Failed to delete report.");
+                                alert("Failed to delete.");
                             }
                         } catch (err) {
                             alert("Error: " + err.message);
@@ -225,37 +241,74 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 });
 
-                savedReportsList.appendChild(item);
+                sidebarV2Container.appendChild(item);
             });
         } catch (err) {
             console.error(err);
-            savedReportsList.innerHTML = '<div class="text-error" style="padding: 1rem;">Failed to load saved reports.</div>';
+            sidebarV2Container.innerHTML = '<div class="text-error" style="padding: 1rem;">Failed to load.</div>';
         }
     }
 
-    async function executeSavedReport(report) {
-        if (promptArea.classList.contains('prompt-centered')) {
-            promptArea.classList.remove('prompt-centered');
-            welcomeHeader.classList.add('hidden');
-        }
+    async function loadConversation(id) {
+        currentConversationId = id;
+        chatHistory = [];
+        resultsArea.innerHTML = '';
+        promptArea.classList.remove('prompt-centered');
+        welcomeHeader.classList.add('hidden');
 
-        addUserMessage(`[Loaded Saved Report] ${report.name}: ${report.original_prompt}`);
-
-        const aiMessageNode = createAiMessagePlaceholder();
-        resultsArea.appendChild(aiMessageNode);
-        scrollToBottom();
+        // Update active highlight
+        document.querySelectorAll('.history-item').forEach(i => i.classList.remove('active'));
+        const activeItem = sidebarV2Container.querySelector(`.history-item[data-id="${id}"]`);
+        if (activeItem) activeItem.classList.add('active');
 
         try {
-            const response = await fetch(`/api/reports/execute/${report.id}`, {
-                method: 'POST'
-            });
+            const res = await fetch(`/api/conversations/${id}/messages`);
+            const messages = await res.json();
 
-            if (!response.ok) throw new Error("Failed to execute saved report.");
+            for (const msg of messages) {
+                addUserMessage(msg.user_prompt);
+                const aiNode = createAiMessagePlaceholder();
+                resultsArea.appendChild(aiNode);
 
-            const result = await response.json();
-            populateAiMessage(aiMessageNode, result, report.chart_config);
+                // If there's SQL, we need to re-execute it to get the data
+                if (msg.generated_sql && msg.execution_status === 'success') {
+                    try {
+                        const execRes = await fetch('/api/execute-sql', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ sql: msg.generated_sql })
+                        });
+                        const dataRes = await execRes.json();
+                        populateAiMessage(aiNode, {
+                            message_id: msg.id,
+                            sql: msg.generated_sql,
+                            data: dataRes.data,
+                            message: "Restored from history"
+                        });
+                    } catch (e) {
+                        showAiError(aiNode, "Failed to restore data: " + e.message);
+                    }
+                } else {
+                    populateAiMessage(aiNode, {
+                        message_id: msg.id,
+                        sql: msg.generated_sql,
+                        message: msg.error_message || "No data available."
+                    });
+                    if (msg.execution_status === 'error') {
+                        showAiError(aiNode, msg.error_message);
+                    }
+                }
+
+                // Update internal chat history for LLM context
+                chatHistory.push({ role: 'user', content: msg.user_prompt });
+                if (msg.generated_sql) {
+                    chatHistory.push({ role: 'assistant', content: "```sql\n" + msg.generated_sql + "\n```" });
+                }
+            }
+            scrollToBottom();
         } catch (err) {
-            showAiError(aiMessageNode, err.message);
+            console.error(err);
+            alert("Failed to load conversation messages.");
         }
     }
 
@@ -314,7 +367,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 body: JSON.stringify({
                     prompt: promptText,
                     history: chatHistory,
-                    client_id: CLIENT_ID
+                    client_id: CLIENT_ID,
+                    conversation_id: currentConversationId
                 })
             });
 
@@ -348,6 +402,12 @@ document.addEventListener('DOMContentLoaded', () => {
             populateAiMessage(aiMessageNode, result);
             if (result.error) {
                 showAiError(aiMessageNode, result.error);
+            }
+
+            // Update conversation ID if this was a new chat
+            if (!currentConversationId && result.conversation_id) {
+                currentConversationId = result.conversation_id;
+                loadConversationHistory(); // Refresh sidebar to show the new thread
             }
 
             // 5. Update token usage stats
@@ -1189,9 +1249,27 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    const logoutBtn = document.getElementById('logout-btn');
-    if (logoutBtn) {
-        logoutBtn.addEventListener('click', () => {
+    // Sidebar Menu Logic
+    const menuBtn = document.getElementById('sidebar-menu-btn');
+    const menuDropdown = document.getElementById('sidebar-menu-dropdown');
+    const menuLogoutBtn = document.getElementById('menu-logout-btn');
+
+    if (menuBtn && menuDropdown) {
+        menuBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            menuDropdown.classList.toggle('hidden');
+        });
+
+        // Close menu when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!menuDropdown.classList.contains('hidden') && !menuDropdown.contains(e.target) && e.target !== menuBtn) {
+                menuDropdown.classList.add('hidden');
+            }
+        });
+    }
+
+    if (menuLogoutBtn) {
+        menuLogoutBtn.addEventListener('click', () => {
             localStorage.removeItem('auth_token');
             localStorage.removeItem('user_email');
             window.location.href = 'login.html';
