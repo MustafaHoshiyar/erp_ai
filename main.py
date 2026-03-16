@@ -32,7 +32,11 @@ def get_config():
     import os
     from dotenv import load_dotenv
     load_dotenv()
-    return {"environment": os.getenv("ENVIRONMENT", "development")}
+    erp_url = os.getenv("ERP_URL", "").rstrip("/")
+    return {
+        "environment": os.getenv("ENVIRONMENT", "development"),
+        "insights_url": f"{erp_url}/insights/dashboards"
+    }
     
 from typing import List, Optional, Dict, Any
 from pydantic import BaseModel
@@ -414,6 +418,71 @@ def get_context_overrides(client_id: str, db: Session = Depends(get_db)):
         }
         for r in overrides
     ]
+
+# --- Conversation History Endpoints ---
+
+@app.get("/api/conversations/{client_id}")
+def get_conversations(client_id: str, db: Session = Depends(get_db)):
+    """Fetch all conversation heads for a specific client."""
+    convs = db.query(Conversation).filter(Conversation.client_id == client_id).order_by(Conversation.created_at.desc()).all()
+    
+    results = []
+    for c in convs:
+        # Get the first message to use as a title/snippet
+        first_msg = db.query(ConversationMessage).filter(ConversationMessage.conversation_id == c.id).order_by(ConversationMessage.created_at.asc()).first()
+        results.append({
+            "id": c.id,
+            "app_name": c.app_name,
+            "title": first_msg.user_prompt if first_msg else "New Conversation",
+            "created_at": c.created_at.isoformat() if c.created_at else None
+        })
+    return results
+
+@app.get("/api/conversations/{conversation_id}/messages")
+def get_conversation_messages(conversation_id: int, db: Session = Depends(get_db)):
+    """Fetch all messages for a specific conversation thread."""
+    messages = db.query(ConversationMessage).filter(ConversationMessage.conversation_id == conversation_id).order_by(ConversationMessage.created_at.asc()).all()
+    return [
+        {
+            "id": m.id,
+            "user_prompt": m.user_prompt,
+            "generated_sql": m.generated_sql,
+            "execution_status": m.execution_status,
+            "error_message": m.error_message,
+            "user_feedback": m.user_feedback,
+            "feedback_comment": m.feedback_comment,
+            "created_at": m.created_at.isoformat() if m.created_at else None
+        }
+        for m in messages
+    ]
+
+@app.delete("/api/conversations/{conversation_id}")
+def delete_conversation(conversation_id: int, db: Session = Depends(get_db)):
+    """Delete an entire conversation thread."""
+    conv = db.query(Conversation).filter(Conversation.id == conversation_id).first()
+    if not conv:
+        raise HTTPException(status_code=404, detail="Conversation not found")
+    
+    try:
+        db.delete(conv)
+        db.commit()
+        return {"status": "success"}
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=str(e))
+
+class ExecuteSqlRequest(BaseModel):
+    sql: str
+
+@app.post("/api/execute-sql")
+async def api_execute_sql(request: ExecuteSqlRequest):
+    """Securely re-execute a historical SQL query."""
+    try:
+        validated_sql = validate_sql(request.sql)
+        data = await run_query(validated_sql)
+        return {"status": "success", "data": data}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 @app.delete("/api/context-overrides/{override_id}")
 def delete_context_override(override_id: int, db: Session = Depends(get_db)):
