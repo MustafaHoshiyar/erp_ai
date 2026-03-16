@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import RedirectResponse
 from pydantic import BaseModel
-from ai_engine import generate_sql, generate_chart_config
+from ai_engine import generate_sql, generate_chart_config, classify_prompt_intent, build_non_report_response
 from sql_validator import validate_sql
 from erp_client import run_query
 from database import SessionLocal, SavedReport, get_db, Conversation, ConversationMessage
@@ -50,21 +50,8 @@ class PromptRequest(BaseModel):
 
 @app.post("/generate-report")
 async def generate_report(request: PromptRequest, background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
-    from erp_client import get_default_currency_info
-    currency_info = await get_default_currency_info()
-    result = generate_sql(request.prompt, request.history, request.client_id, currency=currency_info["code"], currency_symbol=currency_info["symbol"])
-    
-    tokens_used = result.get("tokens_used", 0)
-    
-    if tokens_used:
-        token_stats["total_tokens"] += tokens_used
-        token_stats["request_count"] += 1
-        token_stats["history"].append({
-            "tokens": tokens_used,
-            "prompt": request.prompt[:80]
-        })
-        if len(token_stats["history"]) > 50:
-            token_stats["history"] = token_stats["history"][-50:]
+    intent_meta = classify_prompt_intent(request.prompt, request.history)
+    detected_intent = intent_meta.get("intent", "report")
 
     conversation_id = request.conversation_id
     if not conversation_id:
@@ -82,9 +69,45 @@ async def generate_report(request: PromptRequest, background_tasks: BackgroundTa
     msg = ConversationMessage(
         conversation_id=conversation_id,
         user_prompt=request.prompt,
-        generated_sql=result.get("sql"),
-        tokens_used=tokens_used
+        detected_intent=detected_intent
     )
+
+    if detected_intent in {"chat", "clarification_needed", "unsupported"}:
+        msg.assistant_response = build_non_report_response(request.prompt, detected_intent)
+        msg.execution_status = "skipped"
+        db.add(msg)
+        db.commit()
+        db.refresh(msg)
+
+        return {
+            "conversation_id": conversation_id,
+            "message_id": msg.id,
+            "intent": detected_intent,
+            "sql": None,
+            "data": None,
+            "message": msg.assistant_response,
+            "tokens_used": 0
+        }
+
+    from erp_client import get_default_currency_info
+    currency_info = await get_default_currency_info()
+    result = generate_sql(request.prompt, request.history, request.client_id, currency=currency_info["code"], currency_symbol=currency_info["symbol"])
+    tokens_used = result.get("tokens_used", 0)
+
+    if tokens_used:
+        token_stats["total_tokens"] += tokens_used
+        token_stats["request_count"] += 1
+        token_stats["history"].append({
+            "tokens": tokens_used,
+            "prompt": request.prompt[:80]
+        })
+        if len(token_stats["history"]) > 50:
+            token_stats["history"] = token_stats["history"][-50:]
+
+    msg.generated_sql = result.get("sql")
+    msg.assistant_response = result.get("message")
+    msg.tokens_used = tokens_used
+    msg.detected_intent = result.get("detected_intent", detected_intent)
     db.add(msg)
     db.commit()
     db.refresh(msg)
@@ -96,6 +119,7 @@ async def generate_report(request: PromptRequest, background_tasks: BackgroundTa
         return {
             "conversation_id": conversation_id,
             "message_id": msg.id,
+            "intent": msg.detected_intent,
             "sql": None,
             "data": None,
             "message": result.get("message"),
@@ -128,6 +152,7 @@ async def generate_report(request: PromptRequest, background_tasks: BackgroundTa
         return {
             "conversation_id": conversation_id,
             "message_id": msg.id,
+            "intent": msg.detected_intent,
             "sql": failed_sql,
             "data": None,
             "message": result.get("message"),
@@ -138,6 +163,7 @@ async def generate_report(request: PromptRequest, background_tasks: BackgroundTa
     return {
         "conversation_id": conversation_id,
         "message_id": msg.id,
+        "intent": msg.detected_intent,
         "sql": validated_sql,
         "data": data,
         "message": result.get("message"),
@@ -446,6 +472,8 @@ def get_conversation_messages(conversation_id: int, db: Session = Depends(get_db
         {
             "id": m.id,
             "user_prompt": m.user_prompt,
+            "detected_intent": m.detected_intent,
+            "assistant_response": m.assistant_response,
             "generated_sql": m.generated_sql,
             "execution_status": m.execution_status,
             "error_message": m.error_message,

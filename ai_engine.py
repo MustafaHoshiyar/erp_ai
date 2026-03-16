@@ -29,6 +29,82 @@ except FileNotFoundError:
     GLOBAL_SCHEMA = ""
     print("[AI Engine] WARNING: global_schema.txt not found. AI will operate without global schema.")
 
+_FORECAST_TERMS = (
+    "forecast",
+    "predict",
+    "projection",
+    "projected",
+    "estimate future",
+    "next month",
+    "next quarter",
+    "next year",
+)
+
+_CHAT_PATTERNS = (
+    r"^\s*(hi|hello|hey|good morning|good afternoon|good evening)\b.*$",
+    r"^\s*(thanks|thank you|ok|okay|cool|great)\b.*$",
+    r"^\s*(who are you|what('?s| is) your name|how are you|what can you do)\??\s*$",
+)
+
+_UNSUPPORTED_TERMS = (
+    "write an email",
+    "draft an email",
+    "write a poem",
+    "tell me a joke",
+    "translate this",
+    "generate image",
+    "create image",
+)
+
+_REPORT_HINT_TERMS = (
+    "report",
+    "dashboard",
+    "chart",
+    "sales",
+    "invoice",
+    "purchase",
+    "customer",
+    "supplier",
+    "employee",
+    "user",
+    "stock",
+    "warehouse",
+    "profit",
+    "revenue",
+    "expense",
+    "maintenance",
+    "payment",
+    "order",
+    "quotation",
+    "lead",
+    "opportunity",
+    "count",
+    "total",
+    "sum",
+    "show",
+    "list",
+)
+
+_FOLLOW_UP_EDIT_TERMS = (
+    "remove",
+    "add",
+    "change",
+    "replace",
+    "move",
+    "sort",
+    "filter",
+    "keep",
+    "hide",
+)
+
+_ORDINAL_COLUMN_PATTERN = re.compile(
+    r"\b(first|second|third|fourth|fifth|sixth|seventh|eighth|ninth|tenth|last|\d+(?:st|nd|rd|th))\s+(column|field)\b"
+)
+
+_VAGUE_FOLLOW_UP_PATTERN = re.compile(
+    r"\b(change|replace|modify|update)\s+(it|this|that|the column|column|the field|field)\b"
+)
+
 SYSTEM_PROMPT = """
 You are a senior ERPNext database engineer and MariaDB expert.
 
@@ -114,6 +190,87 @@ Client-Specific Hard Rule:
 - Do NOT use `tabMaintenance Schedule`.`start_date` for those prompts unless the user explicitly asks for Maintenance Schedule.
 """
 
+
+def _history_contains_sql(history) -> bool:
+    if not history:
+        return False
+    for item in reversed(history):
+        content = str(item.get("content", ""))
+        if "```sql" in content.lower() or content.strip().upper().startswith(("SELECT ", "WITH ")):
+            return True
+    return False
+
+
+def _needs_follow_up_clarification(prompt_lower, history) -> bool:
+    has_sql_history = _history_contains_sql(history)
+    has_follow_up_edit = any(term in prompt_lower for term in _FOLLOW_UP_EDIT_TERMS)
+
+    if not has_follow_up_edit:
+        return False
+
+    if not has_sql_history:
+        return not any(term in prompt_lower for term in _REPORT_HINT_TERMS)
+
+    if _ORDINAL_COLUMN_PATTERN.search(prompt_lower):
+        has_explicit_replacement = any(
+            cue in prompt_lower for cue in (" to ", " with ", " instead of ", " named ", " called ", " by ")
+        )
+        if not has_explicit_replacement:
+            return True
+
+    if _VAGUE_FOLLOW_UP_PATTERN.search(prompt_lower):
+        return True
+
+    short_follow_up = len(prompt_lower.split()) <= 5
+    if short_follow_up and any(token in prompt_lower for token in ("column", "field", "it", "this", "that")):
+        if " by " in prompt_lower:
+            return False
+        return True
+
+    return False
+
+
+def classify_prompt_intent(user_prompt, history=None):
+    prompt = (user_prompt or "").strip()
+    prompt_lower = prompt.lower()
+
+    if not prompt:
+        return {"intent": "clarification_needed"}
+
+    if any(term in prompt_lower for term in _FORECAST_TERMS):
+        return {"intent": "forecast"}
+
+    if any(re.match(pattern, prompt_lower) for pattern in _CHAT_PATTERNS):
+        return {"intent": "chat"}
+
+    if any(term in prompt_lower for term in _UNSUPPORTED_TERMS) and not any(term in prompt_lower for term in _REPORT_HINT_TERMS):
+        return {"intent": "unsupported"}
+
+    if _needs_follow_up_clarification(prompt_lower, history):
+        return {"intent": "clarification_needed"}
+
+    return {"intent": "report"}
+
+
+def build_non_report_response(user_prompt, intent):
+    prompt_lower = (user_prompt or "").strip().lower()
+
+    if intent == "chat":
+        if "your name" in prompt_lower or "who are you" in prompt_lower:
+            return "I am your ERP AI reporting assistant. I can help build ERPNext reports, dashboards, and forecasting queries."
+        if "how are you" in prompt_lower:
+            return "I am ready to help. Ask me for an ERPNext report, dashboard, KPI, or forecast."
+        if "thank" in prompt_lower:
+            return "You're welcome. Ask me for any ERPNext report or dashboard when you're ready."
+        return "Hello. I can help you build ERPNext reports, dashboards, KPIs, and forecasting queries."
+
+    if intent == "clarification_needed":
+        if _ORDINAL_COLUMN_PATTERN.search(prompt_lower):
+            return "I need one detail before I change that report. Which column do you want there instead, and are you counting the visible Sr column when you say the third column?"
+        return "I can help with ERPNext reporting, but I need a bit more context. Tell me which report or dataset you want to change, or describe the result you want."
+
+    return "I am focused on ERPNext reporting and analytics. Ask me for a report, KPI, dashboard, trend, comparison, or forecast from your ERP data."
+
 def generate_sql(user_prompt, history=None, client_id="DEMO_CLIENT_123", currency="USD", currency_symbol="$"):
     memory_context = get_relevant_schema_context(client_id, user_prompt)
     
@@ -155,17 +312,17 @@ def generate_sql(user_prompt, history=None, client_id="DEMO_CLIENT_123", currenc
         
     match = re.search(r"```sql(.*?)```", raw_output, re.IGNORECASE | re.DOTALL)
     if match:
-        return {"sql": match.group(1).strip(), "message": raw_output, "tokens_used": tokens_used, "needs_forecast": needs_forecast}
+        return {"sql": match.group(1).strip(), "message": raw_output, "tokens_used": tokens_used, "needs_forecast": needs_forecast, "detected_intent": "forecast" if needs_forecast else "report"}
 
     match = re.search(r"(SELECT .*?;)", raw_output, re.IGNORECASE | re.DOTALL)
     if match:
-        return {"sql": match.group(1).strip(), "message": raw_output, "tokens_used": tokens_used, "needs_forecast": needs_forecast}
+        return {"sql": match.group(1).strip(), "message": raw_output, "tokens_used": tokens_used, "needs_forecast": needs_forecast, "detected_intent": "forecast" if needs_forecast else "report"}
 
     match = re.search(r"(SELECT .*?$)", raw_output, re.IGNORECASE | re.DOTALL)
     if match:
-        return {"sql": match.group(1).strip(), "message": raw_output, "tokens_used": tokens_used, "needs_forecast": needs_forecast}
+        return {"sql": match.group(1).strip(), "message": raw_output, "tokens_used": tokens_used, "needs_forecast": needs_forecast, "detected_intent": "forecast" if needs_forecast else "report"}
 
-    return {"sql": None, "message": raw_output, "tokens_used": tokens_used, "needs_forecast": False}
+    return {"sql": None, "message": raw_output, "tokens_used": tokens_used, "needs_forecast": False, "detected_intent": "report"}
 
 
 def generate_chart_config(columns, data_sample, dataset_summary=None, currency="USD", currency_symbol="$"):

@@ -58,6 +58,8 @@ class ConversationMessage(Base):
     id = Column(Integer, primary_key=True, index=True)
     conversation_id = Column(Integer, ForeignKey("conversations.id"), index=True)
     user_prompt = Column(Text, nullable=False)
+    detected_intent = Column(String(50), nullable=True)
+    assistant_response = Column(Text, nullable=True)
     generated_sql = Column(Text, nullable=True)
     execution_status = Column(String(50), nullable=True) # "success", "error"
     error_message = Column(Text, nullable=True)
