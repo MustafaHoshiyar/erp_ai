@@ -2,7 +2,13 @@ from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import RedirectResponse
 from pydantic import BaseModel
-from ai_engine import generate_sql, generate_chart_config
+from ai_engine import (
+    generate_sql,
+    generate_chart_config,
+    classify_prompt_intent,
+    build_non_report_response,
+    normalize_sql_with_live_schema,
+)
 from sql_validator import validate_sql
 from erp_client import run_query
 from database import SessionLocal, SavedReport, get_db, Conversation, ConversationMessage
@@ -50,21 +56,8 @@ class PromptRequest(BaseModel):
 
 @app.post("/generate-report")
 async def generate_report(request: PromptRequest, background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
-    from erp_client import get_default_currency_info
-    currency_info = await get_default_currency_info()
-    result = generate_sql(request.prompt, request.history, request.client_id, currency=currency_info["code"], currency_symbol=currency_info["symbol"])
-    
-    tokens_used = result.get("tokens_used", 0)
-    
-    if tokens_used:
-        token_stats["total_tokens"] += tokens_used
-        token_stats["request_count"] += 1
-        token_stats["history"].append({
-            "tokens": tokens_used,
-            "prompt": request.prompt[:80]
-        })
-        if len(token_stats["history"]) > 50:
-            token_stats["history"] = token_stats["history"][-50:]
+    intent_meta = classify_prompt_intent(request.prompt, request.history)
+    detected_intent = intent_meta.get("intent", "report")
 
     conversation_id = request.conversation_id
     if not conversation_id:
@@ -82,20 +75,68 @@ async def generate_report(request: PromptRequest, background_tasks: BackgroundTa
     msg = ConversationMessage(
         conversation_id=conversation_id,
         user_prompt=request.prompt,
-        generated_sql=result.get("sql"),
-        tokens_used=tokens_used
+        detected_intent=detected_intent
     )
+
+    if detected_intent in {"chat", "clarification_needed", "unsupported"}:
+        msg.assistant_response = build_non_report_response(request.prompt, detected_intent)
+        msg.execution_status = "skipped"
+        db.add(msg)
+        db.commit()
+        db.refresh(msg)
+
+        return {
+            "conversation_id": conversation_id,
+            "message_id": msg.id,
+            "intent": detected_intent,
+            "sql": None,
+            "data": None,
+            "message": msg.assistant_response,
+            "tokens_used": 0
+        }
+
+    from erp_client import get_default_currency_info
+    currency_info = await get_default_currency_info()
+    result = generate_sql(request.prompt, request.history, request.client_id, currency=currency_info["code"], currency_symbol=currency_info["symbol"])
+    if result.get("sql"):
+        original_sql = result["sql"]
+        normalized_sql = normalize_sql_with_live_schema(original_sql)
+        if normalized_sql != original_sql:
+            result["sql"] = normalized_sql
+            if (result.get("message") or "").strip() == original_sql.strip():
+                result["message"] = normalized_sql
+    tokens_used = result.get("tokens_used", 0)
+
+    if tokens_used:
+        token_stats["total_tokens"] += tokens_used
+        token_stats["request_count"] += 1
+        token_stats["history"].append({
+            "tokens": tokens_used,
+            "prompt": request.prompt[:80]
+        })
+        if len(token_stats["history"]) > 50:
+            token_stats["history"] = token_stats["history"][-50:]
+
+    msg.generated_sql = result.get("sql")
+    msg.assistant_response = result.get("message")
+    msg.tokens_used = tokens_used
+    msg.detected_intent = result.get("detected_intent", detected_intent)
     db.add(msg)
     db.commit()
     db.refresh(msg)
 
     if not result.get("sql"):
-        msg.execution_status = "error"
-        msg.error_message = "No SQL generated"
+        if msg.detected_intent in {"chat", "clarification_needed", "unsupported"}:
+            msg.execution_status = "skipped"
+            msg.error_message = None
+        else:
+            msg.execution_status = "error"
+            msg.error_message = "No SQL generated"
         db.commit()
         return {
             "conversation_id": conversation_id,
             "message_id": msg.id,
+            "intent": msg.detected_intent,
             "sql": None,
             "data": None,
             "message": result.get("message"),
@@ -128,6 +169,7 @@ async def generate_report(request: PromptRequest, background_tasks: BackgroundTa
         return {
             "conversation_id": conversation_id,
             "message_id": msg.id,
+            "intent": msg.detected_intent,
             "sql": failed_sql,
             "data": None,
             "message": result.get("message"),
@@ -138,6 +180,7 @@ async def generate_report(request: PromptRequest, background_tasks: BackgroundTa
     return {
         "conversation_id": conversation_id,
         "message_id": msg.id,
+        "intent": msg.detected_intent,
         "sql": validated_sql,
         "data": data,
         "message": result.get("message"),
@@ -228,14 +271,16 @@ def delete_saved_report(report_id: int, db: Session = Depends(get_db)):
 @app.post("/api/schema/refresh")
 @app.get("/api/schema/refresh")
 def refresh_schema():
-    """Manually triggers a fresh fetch of the client's custom schema from ERPNext."""
+    """Manually triggers a fresh fetch of the client's live schema from ERPNext."""
     from schema_fetcher import fetch_and_cache_local_schema
     try:
         schema = fetch_and_cache_local_schema()
         return {
             "status": "success",
+            "available_doctypes": len(schema.get("available_doctypes", [])),
             "custom_doctypes": len(schema.get("custom_doctypes", [])),
-            "custom_fields": len(schema.get("custom_fields", []))
+            "custom_fields": len(schema.get("custom_fields", [])),
+            "doctype_details": len(schema.get("doctype_details", {})),
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Schema refresh failed: {str(e)}")
@@ -446,6 +491,8 @@ def get_conversation_messages(conversation_id: int, db: Session = Depends(get_db
         {
             "id": m.id,
             "user_prompt": m.user_prompt,
+            "detected_intent": m.detected_intent,
+            "assistant_response": m.assistant_response,
             "generated_sql": m.generated_sql,
             "execution_status": m.execution_status,
             "error_message": m.error_message,

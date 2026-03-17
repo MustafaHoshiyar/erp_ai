@@ -81,6 +81,9 @@ async def get_app_name():
     return urlparse(ERP_URL).netloc or "ERP AI"
 
 _CURRENCY_CACHE = None
+_CURRENCY_DECIMAL_MAP = {
+    "KWD": 3,
+}
 
 async def get_default_currency_info():
     """Fetches the Default Currency code and symbol from ERPNext (with caching)."""
@@ -103,6 +106,7 @@ async def get_default_currency_info():
                 companies = data.get("data", [])
                 if companies and companies[0].get("default_currency"):
                     currency_code = companies[0].get("default_currency")
+                    decimal_places = _CURRENCY_DECIMAL_MAP.get(currency_code, 2)
                     
                     sym_res = await client.get(
                         f"{ERP_URL}/api/resource/Currency/{currency_code}",
@@ -122,13 +126,18 @@ async def get_default_currency_info():
                             
                         _CURRENCY_CACHE = {
                             "code": currency_code,
-                            "symbol": symbol
+                            "symbol": symbol,
+                            "decimal_places": decimal_places
                         }
                         return _CURRENCY_CACHE
                     
-                    _CURRENCY_CACHE = {"code": currency_code, "symbol": currency_code}
+                    _CURRENCY_CACHE = {
+                        "code": currency_code,
+                        "symbol": currency_code,
+                        "decimal_places": decimal_places
+                    }
                     return _CURRENCY_CACHE
     except Exception as e:
         print(f"[ERPClient] Failed to fetch currency info: {e}")
     
-    return {"code": "USD", "symbol": "$"}
+    return {"code": "USD", "symbol": "$", "decimal_places": 2}

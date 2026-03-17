@@ -41,6 +41,8 @@ def migrate():
 
     # Check for other columns if they might be missing too (from recent phases)
     missing_cols = {
+        "detected_intent": "TEXT",
+        "assistant_response": "TEXT",
         "tokens_used": "INTEGER",
         "embedding": "JSON"
     }

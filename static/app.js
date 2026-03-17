@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let chatHistory = [];
     let currentConversationId = null;
     let CURRENCY_SYMBOL = '$'; // Fallback
+    let CURRENCY_DECIMALS = 2;
 
     fetch('/api/config').then(res => res.json()).then(data => {
         APP_ENV = data.environment;
@@ -20,6 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     fetch('/api/currency-info').then(res => res.json()).then(data => {
         CURRENCY_SYMBOL = data.symbol || '$';
+        CURRENCY_DECIMALS = Number.isInteger(data.decimal_places) ? data.decimal_places : 2;
     }).catch(err => console.error("Failed to load currency info", err));
     const form = document.getElementById('prompt-form');
     const promptInput = document.getElementById('user-prompt');
@@ -57,6 +59,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const promptModalInput = document.getElementById('prompt-modal-input');
     const promptModalCancel = document.getElementById('prompt-modal-cancel');
     const promptModalSubmit = document.getElementById('prompt-modal-submit');
+
+    function formatCurrencyValue(value) {
+        return `${value.toLocaleString(undefined, {
+            minimumFractionDigits: CURRENCY_DECIMALS,
+            maximumFractionDigits: CURRENCY_DECIMALS
+        })} ${CURRENCY_SYMBOL}`;
+    }
 
     const customConfirmModal = document.getElementById('custom-confirm-modal');
     const confirmModalTitle = document.getElementById('confirm-modal-title');
@@ -292,7 +301,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     populateAiMessage(aiNode, {
                         message_id: msg.id,
                         sql: msg.generated_sql,
-                        message: msg.error_message || "No data available."
+                        message: msg.assistant_response || msg.error_message || "No data available."
                     });
                     if (msg.execution_status === 'error') {
                         showAiError(aiNode, msg.error_message);
@@ -303,6 +312,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 chatHistory.push({ role: 'user', content: msg.user_prompt });
                 if (msg.generated_sql) {
                     chatHistory.push({ role: 'assistant', content: "```sql\n" + msg.generated_sql + "\n```" });
+                } else if (msg.assistant_response) {
+                    chatHistory.push({ role: 'assistant', content: msg.assistant_response });
                 }
             }
             scrollToBottom();
@@ -1028,7 +1039,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         // Format numeric columns that look like amounts
                         const lowerHeader = header.toLowerCase();
                         if (lowerHeader.includes('amount') || lowerHeader.includes('total') || lowerHeader.includes('price') || lowerHeader.includes('rate') || lowerHeader.includes('cost') || lowerHeader.includes('sum')) {
-                            td.textContent = `${val.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${CURRENCY_SYMBOL}`;
+                            td.textContent = formatCurrencyValue(val);
                             td.style.textAlign = 'right';
                         } else {
                             td.textContent = val;
@@ -1038,7 +1049,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         const lowerHeader = header.toLowerCase();
                         if (lowerHeader.includes('amount') || lowerHeader.includes('total') || lowerHeader.includes('price') || lowerHeader.includes('rate') || lowerHeader.includes('cost') || lowerHeader.includes('sum')) {
                             const num = parseFloat(val);
-                            td.textContent = `${num.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${CURRENCY_SYMBOL}`;
+                            td.textContent = formatCurrencyValue(num);
                             td.style.textAlign = 'right';
                         } else {
                             td.textContent = val;
@@ -1079,7 +1090,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         });
 
                         if (hasData) {
-                            td.textContent = `${colSum.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${CURRENCY_SYMBOL}`;
+                            td.textContent = formatCurrencyValue(colSum);
                             td.style.textAlign = 'right';
                             td.style.fontWeight = 'bold';
                         } else {

@@ -1,0 +1,140 @@
+[
+  {
+    "id": "workbook-006",
+    "prompt": "Show items whose current stock quantity is below their reorder level",
+    "source": "workbook",
+    "notes": "reorder_schema_mismatch",
+    "expected_sql_contains": [
+      "tabItem Reorder",
+      "warehouse"
+    ],
+    "expected_sql_not_contains": [
+      "FORMAT(",
+      "tabItem`.`reorder_level"
+    ]
+  },
+  {
+    "id": "workbook-009",
+    "prompt": "Identify items whose current stock will be exhausted within the next 30 days based on average daily sales",
+    "source": "workbook",
+    "notes": "stock_runout_filtering",
+    "expected_sql_contains": [
+      "actual_qty",
+      "> 0"
+    ]
+  },
+  {
+    "id": "workbook-010",
+    "prompt": "Predict which items will run out of stock in the next 30 days using average sales of the past 3 months.",
+    "source": "workbook",
+    "notes": "stock_runout_filtering",
+    "expected_sql_contains": [
+      "actual_qty",
+      "> 0"
+    ]
+  },
+  {
+    "id": "workbook-011",
+    "prompt": "Show items that need replenishment soon because their stock will not last 30 days.",
+    "source": "workbook",
+    "notes": "stock_runout_filtering",
+    "expected_sql_contains": [
+      "actual_qty",
+      "> 0"
+    ]
+  },
+  {
+    "id": "workbook-015",
+    "prompt": "List the top 10 performing products based on total sales revenue.",
+    "source": "workbook",
+    "notes": "numeric_sorting_formatting",
+    "expected_sql_contains": [
+      "SUM("
+    ],
+    "expected_sql_not_contains": [
+      "FORMAT("
+    ]
+  },
+  {
+    "id": "workbook-016",
+    "prompt": "Which products generated the highest revenue this year?",
+    "source": "workbook",
+    "notes": "numeric_sorting_formatting",
+    "expected_sql_contains": [
+      "SUM("
+    ],
+    "expected_sql_not_contains": [
+      "FORMAT("
+    ]
+  },
+  {
+    "id": "workbook-018",
+    "prompt": "Show the top 5 salespersons based on number of sales orders created.",
+    "source": "workbook",
+    "notes": "salesperson_field_selection",
+    "expected_sql_not_contains": [
+      "sales_partner"
+    ]
+  },
+  {
+    "id": "workbook-019",
+    "prompt": "Which salesperson generated the highest sales order value?",
+    "source": "workbook",
+    "notes": "salesperson_field_selection",
+    "expected_sql_not_contains": [
+      "sales_partner"
+    ]
+  },
+  {
+    "id": "workbook-020",
+    "prompt": "Rank salespersons based on total sales revenue from their orders.",
+    "source": "workbook",
+    "notes": "numeric_sorting_formatting",
+    "expected_sql_contains": [
+      "SUM("
+    ],
+    "expected_sql_not_contains": [
+      "FORMAT("
+    ]
+  },
+  {
+    "id": "workbook-021",
+    "prompt": "Show the top salespersons based on total payment received.",
+    "source": "workbook",
+    "notes": "payment_entry_semantics",
+    "expected_sql_contains": [
+      "docstatus = 1"
+    ],
+    "expected_sql_not_contains": [
+      "status = 'Completed'",
+      "FORMAT("
+    ]
+  },
+  {
+    "id": "workbook-022",
+    "prompt": "Rank salespersons based on the total payment amount collected from customers this year.",
+    "source": "workbook",
+    "notes": "payment_entry_semantics",
+    "expected_sql_contains": [
+      "docstatus = 1"
+    ],
+    "expected_sql_not_contains": [
+      "status = 'Completed'",
+      "FORMAT("
+    ]
+  },
+  {
+    "id": "workbook-023",
+    "prompt": "Compare sales vs purchases month-wise for the current year.",
+    "source": "workbook",
+    "notes": "many_to_many_time_join",
+    "expected_sql_contains": [
+      "WITH",
+      "tabSales Invoice",
+      "tabPurchase Invoice"
+    ],
+    "expected_sql_not_contains": [
+      "DATE_FORMAT(si.posting_date, '%Y-%m') = DATE_FORMAT(pi.posting_date, '%Y-%m')"
+    ]
+  }
+]

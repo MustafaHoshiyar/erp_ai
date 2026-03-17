@@ -49,38 +49,32 @@ def run_sync():
     db = SessionLocal()
     
     try:
-        # Fetch unsynced failures or negative feedback
-        # A robust system would track `synced = True` flag on the message.
-        # For Phase 1, we'll fetch the last 100 errors to bulk upload.
-        from sqlalchemy import or_
-        
-        failed_messages = db.query(ConversationMessage).join(Conversation).filter(
+        # Fetch unsynced telemetry in batches so Motherbrain can distinguish
+        # healthy executions, clarifications, feedback, and real failures.
+        pending_messages = db.query(ConversationMessage).join(Conversation).filter(
             ConversationMessage.synced_to_motherbrain == False,
-            or_(
-                ConversationMessage.execution_status == "error",
-                ConversationMessage.user_feedback == -1
-            )
-        ).order_by(ConversationMessage.created_at.desc()).limit(10).all()
+        ).order_by(ConversationMessage.created_at.desc()).limit(25).all()
 
-        if not failed_messages:
-            print("No new failed queries to sync.")
+        if not pending_messages:
+            print("No new telemetry to sync.")
             return
 
         payload = []
-        for msg in failed_messages:
-            client_id = msg.conversation.client_id
-            
-            # Here we would normally fetch the *exact* schema chunk the AI used.
-            # For now, we note the generic structure.
-            relevant_schema = "Schema context logged in full DB (Phase 2 extension)"
-            
+        for msg in pending_messages:
+            conversation = msg.conversation
             payload.append({
                 "message_id": msg.id,
-                "client_id": client_id, # Can be hashed/anonymized further
+                "client_id": conversation.client_id, # Can be hashed/anonymized further
+                "app_name": conversation.app_name,
                 "timestamp": msg.created_at.isoformat() if msg.created_at else None,
-                "user_prompt": msg.user_prompt, # Prompts usually don't have PII, but you could add a warning.
+                "user_prompt": msg.user_prompt,
+                "detected_intent": msg.detected_intent,
+                "assistant_response": msg.assistant_response,
                 "anonymized_sql": anonymize_sql(msg.generated_sql),
                 "execution_status": msg.execution_status,
+                "sql_generated": bool(msg.generated_sql),
+                "execution_attempted": msg.execution_status in {"success", "error"},
+                "is_true_failure": msg.execution_status == "error",
                 "error_message": msg.error_message,
                 "user_feedback": msg.user_feedback,
                 "feedback_comment": msg.feedback_comment
@@ -98,9 +92,9 @@ def run_sync():
             response = requests.post(MOTHERBRAIN_URL, json={"telemetry_data": payload}, headers=headers, timeout=10)
             
             if response.status_code == 200:
-                print(f"Successfully synced {len(payload)} failures to Motherbrain: {response.json()}")
+                print(f"Successfully synced {len(payload)} telemetry events to Motherbrain: {response.json()}")
                 # Mark as synced in the DB
-                for msg in failed_messages:
+                for msg in pending_messages:
                     msg.synced_to_motherbrain = True
                 db.commit()
                 print("Database updated: marked records as synced.")
