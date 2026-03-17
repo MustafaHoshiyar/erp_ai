@@ -2,7 +2,13 @@ from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import RedirectResponse
 from pydantic import BaseModel
-from ai_engine import generate_sql, generate_chart_config, classify_prompt_intent, build_non_report_response
+from ai_engine import (
+    generate_sql,
+    generate_chart_config,
+    classify_prompt_intent,
+    build_non_report_response,
+    normalize_sql_with_live_schema,
+)
 from sql_validator import validate_sql
 from erp_client import run_query
 from database import SessionLocal, SavedReport, get_db, Conversation, ConversationMessage
@@ -92,6 +98,13 @@ async def generate_report(request: PromptRequest, background_tasks: BackgroundTa
     from erp_client import get_default_currency_info
     currency_info = await get_default_currency_info()
     result = generate_sql(request.prompt, request.history, request.client_id, currency=currency_info["code"], currency_symbol=currency_info["symbol"])
+    if result.get("sql"):
+        original_sql = result["sql"]
+        normalized_sql = normalize_sql_with_live_schema(original_sql)
+        if normalized_sql != original_sql:
+            result["sql"] = normalized_sql
+            if (result.get("message") or "").strip() == original_sql.strip():
+                result["message"] = normalized_sql
     tokens_used = result.get("tokens_used", 0)
 
     if tokens_used:
@@ -113,8 +126,12 @@ async def generate_report(request: PromptRequest, background_tasks: BackgroundTa
     db.refresh(msg)
 
     if not result.get("sql"):
-        msg.execution_status = "error"
-        msg.error_message = "No SQL generated"
+        if msg.detected_intent in {"chat", "clarification_needed", "unsupported"}:
+            msg.execution_status = "skipped"
+            msg.error_message = None
+        else:
+            msg.execution_status = "error"
+            msg.error_message = "No SQL generated"
         db.commit()
         return {
             "conversation_id": conversation_id,
@@ -254,14 +271,16 @@ def delete_saved_report(report_id: int, db: Session = Depends(get_db)):
 @app.post("/api/schema/refresh")
 @app.get("/api/schema/refresh")
 def refresh_schema():
-    """Manually triggers a fresh fetch of the client's custom schema from ERPNext."""
+    """Manually triggers a fresh fetch of the client's live schema from ERPNext."""
     from schema_fetcher import fetch_and_cache_local_schema
     try:
         schema = fetch_and_cache_local_schema()
         return {
             "status": "success",
+            "available_doctypes": len(schema.get("available_doctypes", [])),
             "custom_doctypes": len(schema.get("custom_doctypes", [])),
-            "custom_fields": len(schema.get("custom_fields", []))
+            "custom_fields": len(schema.get("custom_fields", [])),
+            "doctype_details": len(schema.get("doctype_details", {})),
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Schema refresh failed: {str(e)}")

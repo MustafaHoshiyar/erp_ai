@@ -87,3 +87,91 @@ Treat clarifying questions as a core part of the improvement cycle so the assist
 - The phased roadmap and eval dataset should include clarification behavior explicitly.
 - Future metrics should track clarification-question rate and clarification accuracy.
 - We should tune the assistant to ask clarifying questions only when the ambiguity is material, not for routine prompts.
+
+## DEC-005 - Shared Multi-Tenant ERP AI
+
+- Date: 2026-03-16
+- Status: accepted
+- Scope: `shared`
+
+### Decision
+
+Use one shared `erp_ai` runtime for multiple clients and keep tenant-specific conversations, memory, overrides, telemetry, and evaluations isolated by client rather than deploying one full ERP AI instance per client.
+
+### Reason
+
+- Separate deployments per client create avoidable operational overhead.
+- A shared runtime is easier to improve, monitor, and maintain alongside one centralized Motherbrain Admin.
+- The current codebase already uses `client_id` in several flows, which makes a multi-tenant direction practical.
+
+### Consequences
+
+- Tenant isolation must be treated as a hard system rule across memory, telemetry, schema context, and review workflows.
+- Motherbrain should ingest full tenant-scoped telemetry and avoid mixing client-specific learnings into shared logic by default.
+- Evaluation and remediation flows should use the original `client_id` when replaying or reviewing prompts.
+
+## DEC-006 - Real-World Failures Become Regression Inputs
+
+- Date: 2026-03-17
+- Status: accepted
+- Scope: `erp_ai`
+
+### Decision
+
+Use the coworker workbook and the legacy `erp_ai_memory.db` as curated evaluation sources for Phase 1, and translate repeated failure patterns into explicit SQL-generation guardrails plus repeatable regression cases.
+
+### Reason
+
+- The workbook captures real prompts where the system looked correct syntactically but still misunderstood ERPNext business semantics.
+- The legacy database gives us production-like prompt history, failure rates, and feedback signals that are more representative than hand-written toy tests.
+- Fixes driven by real prompts are more likely to improve the product meaningfully than prompt-engineering guesses alone.
+
+### Consequences
+
+- The evaluator now needs to support richer expectations like forbidden SQL patterns, clarification behavior, and non-SQL replies.
+- We should keep generating structured eval artifacts from future testing rounds instead of relying on one-off spreadsheets.
+- Prompt-generation rules should be updated only when the underlying failure pattern is clear enough to justify a reusable guardrail.
+
+## DEC-007 - Ground SQL Generation In Live Tenant Schema
+
+- Date: 2026-03-17
+- Status: accepted
+- Scope: `erp_ai`
+
+### Decision
+
+Upgrade the schema cache from a custom-only snapshot to a live tenant schema inventory, fetch detailed metadata for routed DocTypes on demand, and block SQL that references tables not present in the connected ERP.
+
+### Reason
+
+- The model can still generate plausible but ungrounded ERPNext tables if it only sees a static global schema plus custom-field fragments.
+- Real reliability requires knowing which DocTypes and relationships exist in the connected ERP before executing SQL.
+- It is safer to ask for clarification on an unknown table than to execute misleading SQL that appears valid.
+
+### Consequences
+
+- Schema refresh now needs to cache live available DocTypes as well as custom schema.
+- The router should prefer real tenant DocTypes and inject detailed field metadata for the routed tables.
+- If generated SQL references unavailable tables, the app should return a clarification-style response instead of storing a false execution failure.
+
+## DEC-008 - Use A Schema Relation Planner Before SQL
+
+- Date: 2026-03-17
+- Status: accepted
+- Scope: `erp_ai`
+
+### Decision
+
+Build a relation-planning layer from live DocType metadata so ERP AI can inject discovered join paths, child-table relations, and shared link hints into the SQL-generation prompt before writing SQL.
+
+### Reason
+
+- Knowing that a table exists is not enough; the assistant also needs to understand how routed tables connect in this tenant.
+- ERPNext often stores business logic through child tables and Link fields, which can be inferred from metadata more reliably than from prompt heuristics alone.
+- A discovered relation plan reduces the chance of valid-looking but logically wrong joins.
+
+### Consequences
+
+- The routing path now includes a schema graph and a tenant-specific relation plan in addition to the filtered schema.
+- Future repair and validation steps can reuse the same graph instead of re-deriving join logic from scratch.
+- Multi-tenant quality will still depend on making the schema cache and ERP connection fully client-scoped in a later phase.

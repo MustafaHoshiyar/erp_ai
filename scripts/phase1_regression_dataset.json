@@ -1,0 +1,113 @@
+[
+  {
+    "id": "phase1-clarification-001",
+    "prompt": "change the third column",
+    "history": [
+      {
+        "role": "assistant",
+        "content": "```sql\nSELECT `name`, `customer`, `customer_name` FROM `tabSales Invoice`\n```"
+      }
+    ],
+    "expected_intent": "clarification_needed",
+    "expects_sql": false,
+    "expected_response_contains": [
+      "WHICH COLUMN",
+      "SR COLUMN"
+    ]
+  },
+  {
+    "id": "phase1-reorder-001",
+    "prompt": "Show items whose current stock quantity is below their reorder level",
+    "expected_intent": "report",
+    "expected_sql_contains": [
+      "TABITEM REORDER",
+      "TABBIN",
+      "WAREHOUSE"
+    ],
+    "expected_sql_not_contains": [
+      "FORMAT(",
+      "TABITEM`.`REORDER_LEVEL"
+    ]
+  },
+  {
+    "id": "phase1-stockout-001",
+    "prompt": "Identify items whose current stock will be exhausted within the next 30 days based on average daily sales",
+    "expected_intent": "report",
+    "expected_sql_contains": [
+      "TABBIN",
+      "ACTUAL_QTY",
+      "> 0"
+    ],
+    "expected_sql_not_contains": [
+      "FORMAT("
+    ]
+  },
+  {
+    "id": "phase1-revenue-001",
+    "prompt": "List the top 10 performing products based on total sales revenue.",
+    "expected_intent": "report",
+    "expected_sql_contains": [
+      "TABSALES INVOICE ITEM",
+      "SUM(",
+      "ORDER BY"
+    ],
+    "expected_sql_not_contains": [
+      "FORMAT("
+    ]
+  },
+  {
+    "id": "phase1-salesperson-001",
+    "prompt": "Show the top 5 salespersons based on number of sales orders created.",
+    "expected_intent": "report",
+    "expected_sql_contains": [
+      "TABSALES ORDER",
+      "COUNT("
+    ],
+    "expected_sql_not_contains": [
+      "SALES_PARTNER"
+    ]
+  },
+  {
+    "id": "phase1-payment-001",
+    "prompt": "Show the top salespersons based on total payment received.",
+    "expected_intent": "report",
+    "expected_sql_contains": [
+      "TABPAYMENT ENTRY",
+      "PAYMENT_TYPE",
+      "DOCSTATUS = 1"
+    ],
+    "expected_sql_not_contains": [
+      "STATUS = 'COMPLETED'",
+      "FORMAT("
+    ]
+  },
+  {
+    "id": "phase1-payment-002",
+    "prompt": "Rank users based on the total amount of customer payments they recorded in ERPNext this year. Use Payment Entry records where payment_type is 'Receive' and docstatus = 1. Group results by the owner of the payment entry and sum paid_amount.",
+    "expected_intent": "report",
+    "expected_sql_contains": [
+      "TABPAYMENT ENTRY",
+      "OWNER",
+      "PAID_AMOUNT",
+      "DOCSTATUS = 1"
+    ],
+    "expected_sql_not_contains": [
+      "STATUS = 'COMPLETED'",
+      "FORMAT("
+    ]
+  },
+  {
+    "id": "phase1-compare-001",
+    "prompt": "Compare sales vs purchases month-wise for the current year.",
+    "expected_intent": "report",
+    "expected_sql_contains": [
+      "TABSALES INVOICE",
+      "TABPURCHASE INVOICE",
+      "DATE_FORMAT",
+      "WITH"
+    ],
+    "expected_sql_not_contains": [
+      "DATE_FORMAT(SI.POSTING_DATE, '%Y-%M') = DATE_FORMAT(PI.POSTING_DATE, '%Y-%M')"
+    ]
+  }
+]
