@@ -326,3 +326,36 @@
   - The roadmap now covers client configuration, per-client ERP runtime selection, per-client schema infrastructure, tenant-bound learning, and multi-tenant Motherbrain workflows in implementation order.
 - Follow-up:
   - Start Phase 2 implementation with the `erp_ai` client configuration model and per-client ERP connection refactor.
+
+## 2026-03-20 - Batch 017
+
+- Phase: Phase 2 Implementation
+- Scope: `shared`
+- Files changed:
+  - `database.py`
+  - `migrate_db.py`
+  - `runtime_config.py`
+  - `erp_client.py`
+  - `schema_fetcher.py`
+  - `schema_router.py`
+  - `ai_engine.py`
+  - `main.py`
+  - `c:\laragon\www\motherbrain_admin\backend\database.py`
+  - `c:\laragon\www\motherbrain_admin\backend\main.py`
+  - `c:\laragon\www\motherbrain_admin\backend\ai_analyzer.py`
+  - `c:\laragon\www\motherbrain_admin\frontend\src\App.jsx`
+  - `docs/DECISIONS.md`
+  - `docs/WORKLOG.md`
+- Summary:
+  - Started Phase 2 by adding per-client runtime configuration in `erp_ai`, switching schema cache paths to client-specific files, threading `client_id` through ERP runtime calls, and updating Motherbrain to ingest and display the richer Phase 1 telemetry fields like model, routed tables, and latency.
+- Reason:
+  - The product was tenant-aware in memory and telemetry but still had single-tenant runtime assumptions in ERP connectivity and schema caching, and Motherbrain still did not fully reflect the new telemetry captured in Phase 1.
+- Validation:
+  - `python -m py_compile database.py runtime_config.py erp_client.py schema_fetcher.py schema_router.py ai_engine.py main.py migrate_db.py scripts/telemetry_sync.py` passed in `erp_ai`.
+  - `python migrate_db.py` ensured the new `client_configs` table exists.
+  - `python -m py_compile c:\laragon\www\motherbrain_admin\backend\database.py c:\laragon\www\motherbrain_admin\backend\main.py c:\laragon\www\motherbrain_admin\backend\ai_analyzer.py` passed.
+  - `npm run build` passed in `c:\laragon\www\motherbrain_admin\frontend`.
+  - Sanity checks confirmed environment fallback still works and schema cache paths are now generated per client.
+- Follow-up:
+  - Add Motherbrain-side client configuration management or proxy endpoints if we want to administer tenant ERP connections from the admin panel.
+  - Continue Phase 2 by removing the remaining single-tenant runtime assumptions, especially in auxiliary integrations like Insights/export flows and any global-URL utility paths.

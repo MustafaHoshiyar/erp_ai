@@ -1,12 +1,7 @@
-import os
 import httpx
-from dotenv import load_dotenv
+from urllib.parse import urlparse
 
-load_dotenv()
-
-ERP_URL = os.getenv("ERP_URL")
-ERP_API_KEY = os.getenv("ERP_API_KEY")
-ERP_API_SECRET = os.getenv("ERP_API_SECRET")
+from runtime_config import get_client_runtime_config
 
 
 def _extract_erp_error_message(response: httpx.Response) -> str:
@@ -32,15 +27,19 @@ def _extract_erp_error_message(response: httpx.Response) -> str:
     text = response.text.strip()
     return text or response.reason_phrase or f"HTTP {response.status_code}"
 
-async def run_query(sql):
+
+def _get_headers(config: dict):
+    return {"Authorization": f"token {config['api_key']}:{config['api_secret']}"}
+
+
+async def run_query(sql, client_id="DEMO_CLIENT_123"):
+    config = get_client_runtime_config(client_id)
     async with httpx.AsyncClient() as client:
         response = await client.post(
-            f"{ERP_URL}/api/method/smberp_ai.api.run_ai_query",
-            headers={
-                "Authorization": f"token {ERP_API_KEY}:{ERP_API_SECRET}"
-            },
+            f"{config['erp_url']}/api/method/smberp_ai.api.run_ai_query",
+            headers=_get_headers(config),
             json={"sql": sql},
-            timeout=30.0
+            timeout=30.0,
         )
 
         if response.is_error:
@@ -59,47 +58,49 @@ async def run_query(sql):
 
         return data
 
-async def get_app_name():
+
+async def get_app_name(client_id="DEMO_CLIENT_123"):
     """Fetches the App Name from ERPNext System Settings."""
+    config = get_client_runtime_config(client_id)
+    if config.get("app_name_override"):
+        return config["app_name_override"]
+
     try:
         async with httpx.AsyncClient() as client:
             response = await client.get(
-                f"{ERP_URL}/api/resource/System Settings",
-                headers={
-                    "Authorization": f"token {ERP_API_KEY}:{ERP_API_SECRET}"
-                },
+                f"{config['erp_url']}/api/resource/System Settings",
+                headers=_get_headers(config),
                 params={"fields": '["app_name"]'},
-                timeout=10.0
+                timeout=10.0,
             )
             if response.status_code == 200:
                 data = response.json()
                 return data.get("data", {}).get("app_name")
     except Exception as e:
-        print(f"[ERPClient] Failed to fetch app_name: {e}")
-    
-    from urllib.parse import urlparse
-    return urlparse(ERP_URL).netloc or "ERP AI"
+        print(f"[ERPClient] Failed to fetch app_name for {client_id}: {e}")
 
-_CURRENCY_CACHE = None
+    return urlparse(config["erp_url"]).netloc or "ERP AI"
+
+
+_CURRENCY_CACHE = {}
 _CURRENCY_DECIMAL_MAP = {
     "KWD": 3,
 }
 
-async def get_default_currency_info():
-    """Fetches the Default Currency code and symbol from ERPNext (with caching)."""
-    global _CURRENCY_CACHE
-    if _CURRENCY_CACHE:
-        return _CURRENCY_CACHE
-        
+
+async def get_default_currency_info(client_id="DEMO_CLIENT_123"):
+    """Fetches the Default Currency code and symbol from ERPNext (with per-client caching)."""
+    if client_id in _CURRENCY_CACHE:
+        return _CURRENCY_CACHE[client_id]
+
+    config = get_client_runtime_config(client_id)
     try:
         async with httpx.AsyncClient() as client:
             response = await client.get(
-                f"{ERP_URL}/api/resource/Company",
-                headers={
-                    "Authorization": f"token {ERP_API_KEY}:{ERP_API_SECRET}"
-                },
+                f"{config['erp_url']}/api/resource/Company",
+                headers=_get_headers(config),
                 params={"fields": '["default_currency"]'},
-                timeout=10.0
+                timeout=10.0,
             )
             if response.status_code == 200:
                 data = response.json()
@@ -107,37 +108,31 @@ async def get_default_currency_info():
                 if companies and companies[0].get("default_currency"):
                     currency_code = companies[0].get("default_currency")
                     decimal_places = _CURRENCY_DECIMAL_MAP.get(currency_code, 2)
-                    
+
                     sym_res = await client.get(
-                        f"{ERP_URL}/api/resource/Currency/{currency_code}",
-                        headers={
-                            "Authorization": f"token {ERP_API_KEY}:{ERP_API_SECRET}"
-                        },
+                        f"{config['erp_url']}/api/resource/Currency/{currency_code}",
+                        headers=_get_headers(config),
                         params={"fields": '["symbol"]'},
-                        timeout=10.0
+                        timeout=10.0,
                     )
                     if sym_res.status_code == 200:
                         sym_data = sym_res.json()
                         symbol = sym_data.get("data", {}).get("symbol") or currency_code
-                        if symbol:
-                            symbol = symbol.strip().split()[0]
-                        else:
-                            symbol = currency_code
-                            
-                        _CURRENCY_CACHE = {
+                        symbol = symbol.strip().split()[0] if symbol else currency_code
+                        _CURRENCY_CACHE[client_id] = {
                             "code": currency_code,
                             "symbol": symbol,
-                            "decimal_places": decimal_places
+                            "decimal_places": decimal_places,
                         }
-                        return _CURRENCY_CACHE
-                    
-                    _CURRENCY_CACHE = {
+                        return _CURRENCY_CACHE[client_id]
+
+                    _CURRENCY_CACHE[client_id] = {
                         "code": currency_code,
                         "symbol": currency_code,
-                        "decimal_places": decimal_places
+                        "decimal_places": decimal_places,
                     }
-                    return _CURRENCY_CACHE
+                    return _CURRENCY_CACHE[client_id]
     except Exception as e:
-        print(f"[ERPClient] Failed to fetch currency info: {e}")
-    
+        print(f"[ERPClient] Failed to fetch currency info for {client_id}: {e}")
+
     return {"code": "USD", "symbol": "$", "decimal_places": 2}

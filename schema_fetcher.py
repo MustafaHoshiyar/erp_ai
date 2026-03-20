@@ -13,34 +13,35 @@ from urllib.parse import quote
 
 import httpx
 from dotenv import load_dotenv
+from runtime_config import get_client_runtime_config, sanitize_client_cache_key
 
 load_dotenv()
 
-ERP_URL = os.getenv("ERP_URL")
-ERP_API_KEY = os.getenv("ERP_API_KEY")
-ERP_API_SECRET = os.getenv("ERP_API_SECRET")
-
 CACHE_DIR = os.path.join(os.path.dirname(__file__), "schemas")
-LOCAL_SCHEMA_CACHE = os.path.join(CACHE_DIR, "local_schema_cache.json")
 CACHE_TTL_SECONDS = 86400  # 24 Hours
 _LAYOUT_FIELD_TYPES = {"Section Break", "Column Break", "Tab Break", "HTML", "Button", "Heading"}
 
 
-def _get_headers():
-    return {"Authorization": f"token {ERP_API_KEY}:{ERP_API_SECRET}"}
+def _get_cache_path(client_id: str):
+    return os.path.join(CACHE_DIR, f"local_schema_cache_{sanitize_client_cache_key(client_id)}.json")
 
 
-def _load_cached_schema():
-    if not os.path.exists(LOCAL_SCHEMA_CACHE):
+def _get_headers(config: dict):
+    return {"Authorization": f"token {config['api_key']}:{config['api_secret']}"}
+
+
+def _load_cached_schema(client_id: str):
+    cache_path = _get_cache_path(client_id)
+    if not os.path.exists(cache_path):
         return None
 
-    with open(LOCAL_SCHEMA_CACHE, "r", encoding="utf-8") as f:
+    with open(cache_path, "r", encoding="utf-8") as f:
         return json.load(f)
 
 
-def _write_schema_cache(schema):
+def _write_schema_cache(schema, client_id: str):
     os.makedirs(CACHE_DIR, exist_ok=True)
-    with open(LOCAL_SCHEMA_CACHE, "w", encoding="utf-8") as f:
+    with open(_get_cache_path(client_id), "w", encoding="utf-8") as f:
         json.dump(schema, f, indent=2, ensure_ascii=False)
 
 
@@ -77,12 +78,12 @@ def _normalize_doctype_detail(dt_data):
     }
 
 
-def _fetch_available_doctypes():
+def _fetch_available_doctypes(config):
     try:
         with httpx.Client(timeout=30) as client:
             res = client.get(
-                f"{ERP_URL}/api/resource/DocType",
-                headers=_get_headers(),
+                f"{config['erp_url']}/api/resource/DocType",
+                headers=_get_headers(config),
                 params={
                     "fields": json.dumps(["name", "module", "custom", "istable"]),
                     "limit_page_length": 0,
@@ -95,23 +96,23 @@ def _fetch_available_doctypes():
         return []
 
 
-def _fetch_doctype_detail(client, doctype_name):
+def _fetch_doctype_detail(client, doctype_name, config):
     encoded_name = quote(doctype_name, safe="")
     response = client.get(
-        f"{ERP_URL}/api/resource/DocType/{encoded_name}",
-        headers=_get_headers(),
+        f"{config['erp_url']}/api/resource/DocType/{encoded_name}",
+        headers=_get_headers(config),
     )
     response.raise_for_status()
     return _normalize_doctype_detail(response.json().get("data", {}))
 
 
-def _fetch_custom_doctypes():
+def _fetch_custom_doctypes(config):
     """Fetch all custom DocTypes from the client's ERPNext with full metadata."""
     try:
         with httpx.Client(timeout=30) as client:
             res = client.get(
-                f"{ERP_URL}/api/resource/DocType",
-                headers=_get_headers(),
+                f"{config['erp_url']}/api/resource/DocType",
+                headers=_get_headers(config),
                 params={
                     "filters": json.dumps([["custom", "=", 1]]),
                     "fields": json.dumps(["name", "module", "custom", "istable"]),
@@ -120,19 +121,19 @@ def _fetch_custom_doctypes():
             )
             res.raise_for_status()
             doctypes = res.json().get("data", [])
-            return [_fetch_doctype_detail(client, dt["name"]) for dt in doctypes]
+            return [_fetch_doctype_detail(client, dt["name"], config) for dt in doctypes]
     except Exception as e:
         print(f"[SchemaFetcher] Error fetching custom doctypes: {e}")
         return []
 
 
-def _fetch_custom_fields():
+def _fetch_custom_fields(config):
     """Fetch all Custom Fields added to standard DocTypes."""
     try:
         with httpx.Client(timeout=30) as client:
             res = client.get(
-                f"{ERP_URL}/api/resource/Custom Field",
-                headers=_get_headers(),
+                f"{config['erp_url']}/api/resource/Custom Field",
+                headers=_get_headers(config),
                 params={
                     "fields": json.dumps(["name", "dt", "fieldname", "fieldtype", "label", "options"]),
                     "limit_page_length": 0,
@@ -157,13 +158,14 @@ def _doctype_to_table(doctype_name):
     return doctype_name if doctype_name.startswith("tab") else f"tab{doctype_name}"
 
 
-def fetch_and_cache_local_schema():
+def fetch_and_cache_local_schema(client_id="DEMO_CLIENT_123"):
     """Fetches live schema metadata from ERPNext and caches it locally."""
-    print("[SchemaFetcher] Fetching local schema from ERPNext...")
+    config = get_client_runtime_config(client_id)
+    print(f"[SchemaFetcher] Fetching local schema from ERPNext for {client_id}...")
 
-    available_doctypes = _fetch_available_doctypes()
-    custom_doctypes = _fetch_custom_doctypes()
-    custom_fields = _fetch_custom_fields()
+    available_doctypes = _fetch_available_doctypes(config)
+    custom_doctypes = _fetch_custom_doctypes(config)
+    custom_fields = _fetch_custom_fields(config)
     doctype_details = {dt["name"]: dt for dt in custom_doctypes if dt.get("name")}
 
     schema = {
@@ -175,7 +177,7 @@ def fetch_and_cache_local_schema():
         "doctype_details": doctype_details,
     }
 
-    _write_schema_cache(schema)
+    _write_schema_cache(schema, client_id)
     print(
         "[SchemaFetcher] Cached "
         f"{len(available_doctypes)} available doctypes, "
@@ -185,9 +187,9 @@ def fetch_and_cache_local_schema():
     return schema
 
 
-def get_local_schema():
+def get_local_schema(client_id="DEMO_CLIENT_123"):
     """Returns the cached schema. Refreshes if stale or missing new required sections."""
-    schema = _load_cached_schema()
+    schema = _load_cached_schema(client_id)
     if schema:
         fetched_at = schema.get("fetched_at", 0)
         has_required_sections = all(
@@ -198,15 +200,15 @@ def get_local_schema():
 
         print("[SchemaFetcher] Cache is stale or missing live schema sections, refreshing...")
 
-    return fetch_and_cache_local_schema()
+    return fetch_and_cache_local_schema(client_id)
 
 
-def ensure_doctype_details(required_tables, schema=None):
+def ensure_doctype_details(required_tables, schema=None, client_id="DEMO_CLIENT_123"):
     """
     Ensures we have detailed field metadata for the routed live DocTypes.
     Returns the updated schema dict.
     """
-    schema = schema or get_local_schema()
+    schema = schema or get_local_schema(client_id)
     doctype_details = schema.setdefault("doctype_details", {})
     available_doctypes = {row.get("name") for row in schema.get("available_doctypes", []) if row.get("name")}
 
@@ -220,15 +222,16 @@ def ensure_doctype_details(required_tables, schema=None):
         return schema
 
     try:
+        config = get_client_runtime_config(client_id)
         with httpx.Client(timeout=30) as client:
             for doctype_name in required_doctypes:
-                doctype_details[doctype_name] = _fetch_doctype_detail(client, doctype_name)
+                doctype_details[doctype_name] = _fetch_doctype_detail(client, doctype_name, config)
     except Exception as e:
         print(f"[SchemaFetcher] Error fetching routed doctype details: {e}")
         return schema
 
     schema["doctype_details"] = doctype_details
-    _write_schema_cache(schema)
+    _write_schema_cache(schema, client_id)
     return schema
 
 

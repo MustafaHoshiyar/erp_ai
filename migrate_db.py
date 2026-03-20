@@ -62,6 +62,21 @@ def migrate():
             except Exception as e:
                 print(f"Error adding {col}: {e}")
 
+    print("Ensuring 'client_configs' table exists...")
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS client_configs (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            client_id TEXT NOT NULL UNIQUE,
+            erp_url TEXT NOT NULL,
+            api_key TEXT NOT NULL,
+            api_secret TEXT NOT NULL,
+            app_name_override TEXT,
+            is_active BOOLEAN NOT NULL DEFAULT 1,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        )
+    """)
+    conn.commit()
+
     conn.close()
     print("Migration check complete.")
 

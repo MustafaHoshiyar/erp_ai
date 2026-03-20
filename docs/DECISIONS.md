@@ -219,3 +219,25 @@ Make true multi-tenant runtime architecture the first priority of Phase 2 for bo
 - Phase 2 implementation should begin with client configuration, tenant-specific ERP runtime selection, and per-client schema infrastructure.
 - Motherbrain should continue to be the shared admin surface, but its actions and insights must remain explicitly tenant-scoped by default.
 - Later Phase 2 work like retries, smoother execution, and more autonomous learning should wait until the runtime is properly tenant-safe.
+
+## DEC-011 - Phase 2 Begins With Per-Client Runtime Configuration
+
+- Date: 2026-03-20
+- Status: accepted
+- Scope: `shared`
+
+### Decision
+
+Start the Phase 2 implementation by introducing a `client_configs` runtime model in `erp_ai`, moving ERP connectivity and schema caching to client-aware lookup paths, and updating Motherbrain to surface the richer telemetry fields produced in Phase 1.
+
+### Reason
+
+- Runtime multi-tenancy cannot happen until `erp_ai` can resolve ERP URL, credentials, and schema cache from `client_id` instead of only environment globals.
+- The Motherbrain side should reflect the new telemetry immediately so Phase 1 gains are visible while Phase 2 work is underway.
+- This is the smallest safe vertical slice that advances both the shared runtime architecture and the central admin panel together.
+
+### Consequences
+
+- Existing tenants can still fall back to environment-based ERP config until explicit client config rows are added.
+- Schema cache files are now expected to become client-specific artifacts instead of one shared cache.
+- Motherbrain dashboards and diagnostics can now include model, routed-table, and latency context when triaging incidents.

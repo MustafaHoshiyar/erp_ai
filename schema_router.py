@@ -167,14 +167,14 @@ def filter_schema(
     return "\n".join(filtered_schema)
 
 
-def get_optimized_schema_context(user_prompt: str, global_schema: str, local_schema: dict) -> tuple[str, int, list[str]]:
+def get_optimized_schema_context(user_prompt: str, global_schema: str, local_schema: dict, client_id: str = "DEMO_CLIENT_123") -> tuple[str, int, list[str]]:
     """
     Returns the filtered schema string and the tokens used by the routing pass.
     """
     schema_index = build_schema_index(global_schema, local_schema)
     required_tables, pass1_tokens = identify_required_tables(user_prompt, schema_index)
 
-    updated_schema = ensure_doctype_details(required_tables, local_schema) if local_schema else local_schema
+    updated_schema = ensure_doctype_details(required_tables, local_schema, client_id=client_id) if local_schema else local_schema
     local_schema_text = format_local_schema_for_prompt(updated_schema) if updated_schema else ""
     live_doctype_text = (
         format_live_doctype_details_for_prompt(updated_schema, required_tables) if updated_schema else ""

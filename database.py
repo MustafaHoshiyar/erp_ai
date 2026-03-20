@@ -87,6 +87,18 @@ class ClientContextOverride(Base):
     description = Column(Text, nullable=True) # e.g., "Client A defines revenue as invoiced amount"
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
+class ClientConfig(Base):
+    __tablename__ = "client_configs"
+
+    id = Column(Integer, primary_key=True, index=True)
+    client_id = Column(String(50), unique=True, index=True, nullable=False)
+    erp_url = Column(String(500), nullable=False)
+    api_key = Column(String(255), nullable=False)
+    api_secret = Column(String(255), nullable=False)
+    app_name_override = Column(String(100), nullable=True)
+    is_active = Column(Boolean, default=True, nullable=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
 # Re-run create_all in case new tables were added (SQLite safe if tables don't exist)
 Base.metadata.create_all(bind=engine)
 

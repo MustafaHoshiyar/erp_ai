@@ -12,7 +12,7 @@ from ai_engine import (
 )
 from sql_validator import validate_sql
 from erp_client import run_query
-from database import SessionLocal, SavedReport, get_db, Conversation, ConversationMessage
+from database import SessionLocal, SavedReport, get_db, Conversation, ConversationMessage, ClientConfig
 from sqlalchemy.orm import Session
 from fastapi import Depends, HTTPException, BackgroundTasks
 from memory_manager import backfill_embeddings_in_background
@@ -66,7 +66,7 @@ async def generate_report(request: PromptRequest, background_tasks: BackgroundTa
         app_name = request.app_name
         if not app_name:
             from erp_client import get_app_name
-            app_name = await get_app_name()
+            app_name = await get_app_name(request.client_id)
             
         new_conv = Conversation(client_id=request.client_id, app_name=app_name)
         db.add(new_conv)
@@ -98,13 +98,13 @@ async def generate_report(request: PromptRequest, background_tasks: BackgroundTa
         }
 
     from erp_client import get_default_currency_info
-    currency_info = await get_default_currency_info()
+    currency_info = await get_default_currency_info(request.client_id)
     generation_started_at = time.perf_counter()
     result = generate_sql(request.prompt, request.history, request.client_id, currency=currency_info["code"], currency_symbol=currency_info["symbol"])
     generation_ms = round((time.perf_counter() - generation_started_at) * 1000)
     if result.get("sql"):
         original_sql = result["sql"]
-        normalized_sql = normalize_sql_with_live_schema(original_sql)
+        normalized_sql = normalize_sql_with_live_schema(original_sql, client_id=request.client_id)
         if normalized_sql != original_sql:
             result["sql"] = normalized_sql
             if (result.get("message") or "").strip() == original_sql.strip():
@@ -155,7 +155,7 @@ async def generate_report(request: PromptRequest, background_tasks: BackgroundTa
     try:
         execution_started_at = time.perf_counter()
         validated_sql = validate_sql(result["sql"])
-        data = await run_query(validated_sql)
+        data = await run_query(validated_sql, client_id=request.client_id)
         msg.execution_ms = round((time.perf_counter() - execution_started_at) * 1000)
 
         if result.get("needs_forecast"):
@@ -205,12 +205,13 @@ class ChartConfigRequest(BaseModel):
     columns: List[str]
     data_sample: List[Dict[str, Any]]
     dataset_summary: Optional[Dict[str, Any]] = None
+    client_id: Optional[str] = "DEMO_CLIENT_123"
 
 @app.post("/api/generate_chart_config")
 async def api_generate_chart_config(request: ChartConfigRequest):
     try:
         from erp_client import get_default_currency_info
-        currency_info = await get_default_currency_info()
+        currency_info = await get_default_currency_info(request.client_id)
         config_str = generate_chart_config(request.columns, request.data_sample, request.dataset_summary, currency=currency_info["code"], currency_symbol=currency_info["symbol"])
         import json
         config_json = json.loads(config_str)
@@ -284,13 +285,14 @@ def delete_saved_report(report_id: int, db: Session = Depends(get_db)):
 
 @app.post("/api/schema/refresh")
 @app.get("/api/schema/refresh")
-def refresh_schema():
-    """Manually triggers a fresh fetch of the client's live schema from ERPNext."""
+def refresh_schema(client_id: str = "DEMO_CLIENT_123"):
+    """Manually triggers a fresh fetch of the selected client's live schema from ERPNext."""
     from schema_fetcher import fetch_and_cache_local_schema
     try:
-        schema = fetch_and_cache_local_schema()
+        schema = fetch_and_cache_local_schema(client_id)
         return {
             "status": "success",
+            "client_id": client_id,
             "available_doctypes": len(schema.get("available_doctypes", [])),
             "custom_doctypes": len(schema.get("custom_doctypes", [])),
             "custom_fields": len(schema.get("custom_fields", [])),
@@ -307,7 +309,7 @@ async def execute_saved_report(report_id: int, db: Session = Depends(get_db)):
         
     try:
         validated_sql = validate_sql(report.sql_query)
-        data = await run_query(validated_sql)
+        data = await run_query(validated_sql, client_id=report.client_id)
         
         return {
             "id": report.id,
@@ -321,9 +323,9 @@ async def execute_saved_report(report_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=500, detail=f"Error executing report: {str(e)}")
 
 @app.get("/api/currency-info")
-async def get_currency_info():
+async def get_currency_info(client_id: str = "DEMO_CLIENT_123"):
     from erp_client import get_default_currency_info
-    return await get_default_currency_info()
+    return await get_default_currency_info(client_id)
 
 @app.get("/api/token-stats")
 def get_token_stats():
@@ -426,16 +428,18 @@ async def export_to_insights(request: ExportInsightsRequest):
 class LoginRequest(BaseModel):
     username: str
     password: str
+    client_id: Optional[str] = "DEMO_CLIENT_123"
 
 @app.post("/api/login")
 async def login(req: LoginRequest):
     try:
-        from erp_client import ERP_URL
+        from runtime_config import get_client_runtime_config
         import httpx
-        
+
+        config = get_client_runtime_config(req.client_id)
         async with httpx.AsyncClient() as client:
             resp = await client.post(
-                f"{ERP_URL}/api/method/login",
+                f"{config['erp_url']}/api/method/login",
                 json={"usr": req.username, "pwd": req.password}
             )
             data = resp.json()
@@ -454,6 +458,65 @@ async def login(req: LoginRequest):
         raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+class ClientConfigRequest(BaseModel):
+    client_id: str
+    erp_url: str
+    api_key: str
+    api_secret: str
+    app_name_override: Optional[str] = None
+    is_active: bool = True
+
+@app.get("/api/client-configs")
+def list_client_configs(db: Session = Depends(get_db)):
+    configs = db.query(ClientConfig).order_by(ClientConfig.client_id.asc()).all()
+    return [
+        {
+            "client_id": config.client_id,
+            "erp_url": config.erp_url,
+            "app_name_override": config.app_name_override,
+            "is_active": config.is_active,
+            "created_at": config.created_at.isoformat() if config.created_at else None,
+        }
+        for config in configs
+    ]
+
+@app.get("/api/client-configs/{client_id}")
+def get_client_config(client_id: str, db: Session = Depends(get_db)):
+    config = db.query(ClientConfig).filter(ClientConfig.client_id == client_id).first()
+    if not config:
+        raise HTTPException(status_code=404, detail="Client config not found")
+
+    return {
+        "client_id": config.client_id,
+        "erp_url": config.erp_url,
+        "app_name_override": config.app_name_override,
+        "is_active": config.is_active,
+        "created_at": config.created_at.isoformat() if config.created_at else None,
+    }
+
+@app.post("/api/client-configs")
+def upsert_client_config(request: ClientConfigRequest, db: Session = Depends(get_db)):
+    config = db.query(ClientConfig).filter(ClientConfig.client_id == request.client_id).first()
+    if not config:
+        config = ClientConfig(client_id=request.client_id)
+        db.add(config)
+
+    config.erp_url = request.erp_url.rstrip("/")
+    config.api_key = request.api_key
+    config.api_secret = request.api_secret
+    config.app_name_override = request.app_name_override
+    config.is_active = request.is_active
+    db.commit()
+    db.refresh(config)
+
+    return {
+        "status": "success",
+        "client_id": config.client_id,
+        "erp_url": config.erp_url,
+        "app_name_override": config.app_name_override,
+        "is_active": config.is_active,
+    }
 
 class FeedbackRequest(BaseModel):
     message_id: int
@@ -592,13 +655,14 @@ def delete_conversation(conversation_id: int, db: Session = Depends(get_db)):
 
 class ExecuteSqlRequest(BaseModel):
     sql: str
+    client_id: Optional[str] = "DEMO_CLIENT_123"
 
 @app.post("/api/execute-sql")
 async def api_execute_sql(request: ExecuteSqlRequest):
     """Securely re-execute a historical SQL query."""
     try:
         validated_sql = validate_sql(request.sql)
-        data = await run_query(validated_sql)
+        data = await run_query(validated_sql, client_id=request.client_id)
         return {"status": "success", "data": data}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

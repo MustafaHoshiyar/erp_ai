@@ -586,13 +586,18 @@ def generate_sql(user_prompt, history=None, client_id="DEMO_CLIENT_123", currenc
     from schema_planner import build_relation_constraints
     local_schema = None
     try:
-        local_schema = get_local_schema()
+        local_schema = get_local_schema(client_id)
     except Exception as e:
         print(f"[AI Engine] Could not load local schema for router: {e}")
         
-    filtered_schema, pass1_tokens, required_tables = get_optimized_schema_context(user_prompt, GLOBAL_SCHEMA, local_schema)
+    filtered_schema, pass1_tokens, required_tables = get_optimized_schema_context(
+        user_prompt,
+        GLOBAL_SCHEMA,
+        local_schema,
+        client_id=client_id,
+    )
     if local_schema is not None:
-        local_schema = get_local_schema()
+        local_schema = get_local_schema(client_id)
     relation_constraints = build_relation_constraints(required_tables, local_schema) if local_schema else []
     dynamic_system_prompt += f"\n\n{filtered_schema}"
     
@@ -710,7 +715,7 @@ def generate_sql(user_prompt, history=None, client_id="DEMO_CLIENT_123", currenc
     return result
 
 
-def normalize_sql_with_live_schema(sql_text, required_tables=None):
+def normalize_sql_with_live_schema(sql_text, required_tables=None, client_id="DEMO_CLIENT_123"):
     if not sql_text:
         return sql_text
 
@@ -718,9 +723,9 @@ def normalize_sql_with_live_schema(sql_text, required_tables=None):
         from schema_planner import build_relation_constraints
         from schema_fetcher import ensure_doctype_details
 
-        local_schema = get_local_schema()
+        local_schema = get_local_schema(client_id)
         referenced_tables = required_tables or _extract_referenced_tables(sql_text)
-        local_schema = ensure_doctype_details(referenced_tables, local_schema)
+        local_schema = ensure_doctype_details(referenced_tables, local_schema, client_id=client_id)
         relation_constraints = build_relation_constraints(referenced_tables, local_schema)
 
         if _find_unknown_tables(sql_text, local_schema):
