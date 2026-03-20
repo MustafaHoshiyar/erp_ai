@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import RedirectResponse
 from pydantic import BaseModel
+import time
 from ai_engine import (
     generate_sql,
     generate_chart_config,
@@ -56,6 +57,7 @@ class PromptRequest(BaseModel):
 
 @app.post("/generate-report")
 async def generate_report(request: PromptRequest, background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
+    request_started_at = time.perf_counter()
     intent_meta = classify_prompt_intent(request.prompt, request.history)
     detected_intent = intent_meta.get("intent", "report")
 
@@ -97,7 +99,9 @@ async def generate_report(request: PromptRequest, background_tasks: BackgroundTa
 
     from erp_client import get_default_currency_info
     currency_info = await get_default_currency_info()
+    generation_started_at = time.perf_counter()
     result = generate_sql(request.prompt, request.history, request.client_id, currency=currency_info["code"], currency_symbol=currency_info["symbol"])
+    generation_ms = round((time.perf_counter() - generation_started_at) * 1000)
     if result.get("sql"):
         original_sql = result["sql"]
         normalized_sql = normalize_sql_with_live_schema(original_sql)
@@ -121,6 +125,10 @@ async def generate_report(request: PromptRequest, background_tasks: BackgroundTa
     msg.assistant_response = result.get("message")
     msg.tokens_used = tokens_used
     msg.detected_intent = result.get("detected_intent", detected_intent)
+    msg.model_used = result.get("model_used")
+    msg.routing_tables = result.get("routing_tables")
+    msg.generation_ms = generation_ms
+    msg.total_duration_ms = round((time.perf_counter() - request_started_at) * 1000)
     db.add(msg)
     db.commit()
     db.refresh(msg)
@@ -132,6 +140,7 @@ async def generate_report(request: PromptRequest, background_tasks: BackgroundTa
         else:
             msg.execution_status = "error"
             msg.error_message = "No SQL generated"
+        msg.total_duration_ms = round((time.perf_counter() - request_started_at) * 1000)
         db.commit()
         return {
             "conversation_id": conversation_id,
@@ -144,8 +153,10 @@ async def generate_report(request: PromptRequest, background_tasks: BackgroundTa
         }
 
     try:
+        execution_started_at = time.perf_counter()
         validated_sql = validate_sql(result["sql"])
         data = await run_query(validated_sql)
+        msg.execution_ms = round((time.perf_counter() - execution_started_at) * 1000)
 
         if result.get("needs_forecast"):
             import re
@@ -159,11 +170,14 @@ async def generate_report(request: PromptRequest, background_tasks: BackgroundTa
                 data = generate_forecast(data, date_col, target_col, periods)
 
         msg.execution_status = "success"
+        msg.total_duration_ms = round((time.perf_counter() - request_started_at) * 1000)
         db.commit()
         background_tasks.add_task(backfill_embeddings_in_background, request.client_id)
     except Exception as e:
         msg.execution_status = "error"
         msg.error_message = str(e)
+        msg.execution_ms = round((time.perf_counter() - execution_started_at) * 1000) if 'execution_started_at' in locals() else None
+        msg.total_duration_ms = round((time.perf_counter() - request_started_at) * 1000)
         db.commit()
         failed_sql = locals().get("validated_sql") or result.get("sql")
         return {
@@ -325,6 +339,64 @@ def reset_token_stats():
     token_stats["request_count"] = 0
     token_stats["history"] = []
     return {"status": "success"}
+
+@app.get("/api/metrics/baseline")
+def get_baseline_metrics(client_id: Optional[str] = None, db: Session = Depends(get_db)):
+    query = db.query(ConversationMessage).join(Conversation)
+    if client_id:
+        query = query.filter(Conversation.client_id == client_id)
+
+    messages = query.all()
+    total_prompts = len(messages)
+    if total_prompts == 0:
+        return {
+            "scope": {"client_id": client_id},
+            "totals": {"prompts": 0},
+            "rates": {},
+            "latency_ms": {},
+        }
+
+    def avg(values):
+        values = [value for value in values if value is not None]
+        return round(sum(values) / len(values), 2) if values else None
+
+    report_prompts = [m for m in messages if m.detected_intent in {"report", "forecast"}]
+    chat_prompts = [m for m in messages if m.detected_intent == "chat"]
+    clarification_prompts = [m for m in messages if m.detected_intent == "clarification_needed"]
+    unsupported_prompts = [m for m in messages if m.detected_intent == "unsupported"]
+    sql_generated = [m for m in messages if m.generated_sql]
+    executed = [m for m in messages if m.execution_status in {"success", "error"}]
+    successes = [m for m in messages if m.execution_status == "success"]
+    failures = [m for m in messages if m.execution_status == "error"]
+    negative_feedback = [m for m in messages if m.user_feedback == -1]
+
+    return {
+        "scope": {"client_id": client_id},
+        "totals": {
+            "prompts": total_prompts,
+            "report_prompts": len(report_prompts),
+            "chat_prompts": len(chat_prompts),
+            "clarification_prompts": len(clarification_prompts),
+            "unsupported_prompts": len(unsupported_prompts),
+            "sql_generated": len(sql_generated),
+            "execution_attempted": len(executed),
+            "execution_successes": len(successes),
+            "true_failures": len(failures),
+            "negative_feedback": len(negative_feedback),
+        },
+        "rates": {
+            "sql_generation_success_rate": round(len(sql_generated) / total_prompts, 4),
+            "execution_success_rate": round(len(successes) / len(executed), 4) if executed else None,
+            "true_failure_rate": round(len(failures) / total_prompts, 4),
+            "negative_feedback_rate": round(len(negative_feedback) / total_prompts, 4),
+        },
+        "latency_ms": {
+            "avg_generation_ms": avg([m.generation_ms for m in messages]),
+            "avg_execution_ms": avg([m.execution_ms for m in executed]),
+            "avg_total_duration_ms": avg([m.total_duration_ms for m in messages]),
+        },
+        "models": sorted({m.model_used for m in messages if m.model_used}),
+    }
 
 class ExportInsightsRequest(BaseModel):
     title: str

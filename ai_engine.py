@@ -638,6 +638,8 @@ def generate_sql(user_prompt, history=None, client_id="DEMO_CLIENT_123", currenc
             "tokens_used": tokens_used,
             "needs_forecast": False,
             "detected_intent": "clarification_needed",
+            "model_used": AI_MODEL,
+            "routing_tables": required_tables,
         }
 
     relation_violations = _find_relation_constraint_violations(result.get("sql"), relation_constraints)
@@ -655,6 +657,8 @@ def generate_sql(user_prompt, history=None, client_id="DEMO_CLIENT_123", currenc
                 "tokens_used": tokens_used,
                 "needs_forecast": needs_forecast,
                 "detected_intent": result.get("detected_intent", "report"),
+                "model_used": AI_MODEL,
+                "routing_tables": required_tables,
             }
 
         repair_instruction = (
@@ -697,8 +701,12 @@ def generate_sql(user_prompt, history=None, client_id="DEMO_CLIENT_123", currenc
             "tokens_used": tokens_used,
             "needs_forecast": False,
             "detected_intent": "clarification_needed",
+            "model_used": AI_MODEL,
+            "routing_tables": required_tables,
         }
 
+    result["model_used"] = AI_MODEL
+    result["routing_tables"] = required_tables
     return result
 
 

@@ -175,3 +175,47 @@ Build a relation-planning layer from live DocType metadata so ERP AI can inject 
 - The routing path now includes a schema graph and a tenant-specific relation plan in addition to the filtered schema.
 - Future repair and validation steps can reuse the same graph instead of re-deriving join logic from scratch.
 - Multi-tenant quality will still depend on making the schema cache and ERP connection fully client-scoped in a later phase.
+
+## DEC-009 - Finish Phase 1 With Richer Telemetry And Baselines
+
+- Date: 2026-03-20
+- Status: accepted
+- Scope: `erp_ai`
+
+### Decision
+
+Capture richer per-message telemetry in `erp_ai` itself, including model name, routed tables, and latency timings, and expose a baseline metrics endpoint/script so Phase 1 ends with measurable quality and performance numbers.
+
+### Reason
+
+- We now have cleaner intent handling and better schema reasoning, but we still need a reproducible baseline to measure future improvements.
+- Motherbrain can only analyze the journey well if each event explains which model ran, what schema slice was selected, and how long each stage took.
+- Baseline metrics are the bridge between one-off bug fixing and phased product improvement.
+
+### Consequences
+
+- New messages will carry richer telemetry than older historical rows, so some baseline fields will remain empty until fresh traffic accumulates.
+- The telemetry sync payload needs to include the new fields so downstream analysis can use them.
+- Future phases should compare against the baseline endpoint/script instead of relying on anecdotal prompt tests.
+
+## DEC-010 - Phase 2 Starts With True Multi-Tenant Architecture
+
+- Date: 2026-03-20
+- Status: accepted
+- Scope: `shared`
+
+### Decision
+
+Make true multi-tenant runtime architecture the first priority of Phase 2 for both `erp_ai` and `motherbrain_admin`, and only continue with later intelligence improvements after that architecture is in place.
+
+### Reason
+
+- The current system is tenant-aware in memory, telemetry, and review flows, but still has runtime single-tenant assumptions in ERP connectivity and schema caching.
+- Autonomous learning and self-healing are too risky on top of a partially shared runtime because cross-client leakage would be expensive and hard to unwind.
+- A strong multi-tenant foundation makes every later improvement safer to deploy and easier to measure.
+
+### Consequences
+
+- Phase 2 implementation should begin with client configuration, tenant-specific ERP runtime selection, and per-client schema infrastructure.
+- Motherbrain should continue to be the shared admin surface, but its actions and insights must remain explicitly tenant-scoped by default.
+- Later Phase 2 work like retries, smoother execution, and more autonomous learning should wait until the runtime is properly tenant-safe.

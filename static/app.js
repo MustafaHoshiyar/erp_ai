@@ -67,6 +67,56 @@ document.addEventListener('DOMContentLoaded', () => {
         })} ${CURRENCY_SYMBOL}`;
     }
 
+    function isCurrencyColumn(header) {
+        const lowerHeader = String(header || '').toLowerCase();
+
+        const nonCurrencyHints = [
+            'qty',
+            'quantity',
+            'count',
+            'units',
+            'pieces',
+            'days',
+            'hours',
+            'minutes',
+            'months',
+            'years',
+            'percent',
+            'percentage',
+            'ratio',
+            'index',
+            'level'
+        ];
+
+        if (nonCurrencyHints.some(hint => lowerHeader.includes(hint))) {
+            return false;
+        }
+
+        const currencyHints = [
+            'amount',
+            'total',
+            'price',
+            'rate',
+            'cost',
+            'sum',
+            'revenue',
+            'expense',
+            'balance',
+            'payment',
+            'paid',
+            'value',
+            'valuation',
+            'debit',
+            'credit',
+            'subtotal',
+            'grand_total',
+            'net_total',
+            'outstanding'
+        ];
+
+        return currencyHints.some(hint => lowerHeader.includes(hint));
+    }
+
     const customConfirmModal = document.getElementById('custom-confirm-modal');
     const confirmModalTitle = document.getElementById('confirm-modal-title');
     const confirmModalMessage = document.getElementById('confirm-modal-message');
@@ -1036,18 +1086,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     const val = row[header];
 
                     if (val !== null && val !== undefined && typeof val === 'number') {
-                        // Format numeric columns that look like amounts
-                        const lowerHeader = header.toLowerCase();
-                        if (lowerHeader.includes('amount') || lowerHeader.includes('total') || lowerHeader.includes('price') || lowerHeader.includes('rate') || lowerHeader.includes('cost') || lowerHeader.includes('sum')) {
+                        if (isCurrencyColumn(header)) {
                             td.textContent = formatCurrencyValue(val);
                             td.style.textAlign = 'right';
                         } else {
                             td.textContent = val;
                         }
                     } else if (val !== null && val !== undefined && !isNaN(parseFloat(val)) && isFinite(val) && typeof val === 'string' && val.trim() !== '') {
-                        // Handle numeric strings just in case
-                        const lowerHeader = header.toLowerCase();
-                        if (lowerHeader.includes('amount') || lowerHeader.includes('total') || lowerHeader.includes('price') || lowerHeader.includes('rate') || lowerHeader.includes('cost') || lowerHeader.includes('sum')) {
+                        if (isCurrencyColumn(header)) {
                             const num = parseFloat(val);
                             td.textContent = formatCurrencyValue(num);
                             td.style.textAlign = 'right';
@@ -1075,8 +1121,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 headers.forEach(header => {
                     const td = document.createElement('td');
-                    const lowerHeader = header.toLowerCase();
-                    const isNumeric = lowerHeader.includes('amount') || lowerHeader.includes('total') || lowerHeader.includes('price') || lowerHeader.includes('rate') || lowerHeader.includes('cost') || lowerHeader.includes('sum');
+                    const isNumeric = isCurrencyColumn(header);
 
                     if (isNumeric) {
                         let colSum = 0;

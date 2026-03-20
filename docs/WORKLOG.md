@@ -266,3 +266,63 @@
 - Follow-up:
   - Restart the `erp_ai` backend and test the reorder prompt again in the UI.
   - If the displayed SQL still shows the old join after restart, we should inspect the frontend rendering path next.
+
+## 2026-03-20 - Batch 014
+
+- Phase: Phase 1 Implementation
+- Scope: `erp_ai`
+- Files changed:
+  - `static/app.js`
+  - `docs/WORKLOG.md`
+- Summary:
+  - Fixed the frontend numeric formatter so quantity-style columns are no longer rendered with currency symbols just because their header contains broad words like `total` or `rate`.
+- Reason:
+  - The UI was formatting quantity columns as money, which is misleading and makes otherwise-correct query output look wrong to users.
+- Validation:
+  - `node --check static/app.js` passed.
+  - Representative checks now classify `qty`, `total_qty`, and `warehouse_reorder_qty` as non-currency while keeping `grand_total`, `valuation_rate`, and `amount` as currency fields.
+- Follow-up:
+  - Refresh the browser and test reports that include both amount columns and quantity columns.
+  - If KPI cards or AI-generated text still show quantity values as money, tighten the chart/KPI formatting layer in a later batch.
+
+## 2026-03-20 - Batch 015
+
+- Phase: Phase 1 Implementation
+- Scope: `erp_ai`
+- Files changed:
+  - `database.py`
+  - `migrate_db.py`
+  - `ai_engine.py`
+  - `main.py`
+  - `scripts/telemetry_sync.py`
+  - `scripts/generate_phase1_baseline.py`
+  - `docs/DECISIONS.md`
+  - `docs/WORKLOG.md`
+- Summary:
+  - Finished the remaining Phase 1 measurement layer by storing model/routing/latency telemetry per message, syncing those fields to Motherbrain, and exposing a baseline metrics endpoint plus a snapshot script.
+- Reason:
+  - We needed a measurable baseline before moving deeper into autonomous learning, and the existing telemetry still could not explain which model ran, which schema tables were chosen, or how long the generation/execution stages took.
+- Validation:
+  - `python -m py_compile ai_engine.py main.py database.py migrate_db.py scripts/telemetry_sync.py scripts/generate_phase1_baseline.py` passed.
+  - `python migrate_db.py` added the new telemetry columns to the local database.
+  - Directly calling `get_baseline_metrics(...)` returned a working baseline snapshot from the current DB, including totals, rates, and latency buckets.
+- Follow-up:
+  - Restart the `erp_ai` backend so new messages start filling `model_used`, `routing_tables`, `generation_ms`, `execution_ms`, and `total_duration_ms`.
+  - Run `python scripts/generate_phase1_baseline.py` after collecting a few fresh prompts to save the first post-telemetry baseline snapshot.
+
+## 2026-03-20 - Batch 016
+
+- Phase: Phase 2 Planning
+- Scope: `shared`
+- Files changed:
+  - `docs/PHASE_2_ROADMAP.md`
+  - `docs/DECISIONS.md`
+  - `docs/WORKLOG.md`
+- Summary:
+  - Defined Phase 2 so it begins with true multi-tenant architecture across `erp_ai` and `motherbrain_admin`, and recorded that smarter execution/autonomy work comes after the tenant-safe runtime is complete.
+- Reason:
+  - The current product is tenant-aware but not yet fully multi-tenant at the infrastructure/runtime level, and the user wants that architecture finished before continuing the broader improvement phases.
+- Validation:
+  - The roadmap now covers client configuration, per-client ERP runtime selection, per-client schema infrastructure, tenant-bound learning, and multi-tenant Motherbrain workflows in implementation order.
+- Follow-up:
+  - Start Phase 2 implementation with the `erp_ai` client configuration model and per-client ERP connection refactor.

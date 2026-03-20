@@ -66,6 +66,11 @@ class ConversationMessage(Base):
     user_feedback = Column(Integer, nullable=True) # 1 (positive), -1 (negative), etc.
     feedback_comment = Column(Text, nullable=True) # User's correction context
     tokens_used = Column(Integer, nullable=True)
+    model_used = Column(String(100), nullable=True)
+    routing_tables = Column(JSON, nullable=True)
+    generation_ms = Column(Integer, nullable=True)
+    execution_ms = Column(Integer, nullable=True)
+    total_duration_ms = Column(Integer, nullable=True)
     embedding = Column(JSON, nullable=True)    # Stores specific float array for semantic search
     synced_to_motherbrain = Column(Boolean, default=False, index=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())

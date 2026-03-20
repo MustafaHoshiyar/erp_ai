@@ -44,7 +44,12 @@ def migrate():
         "detected_intent": "TEXT",
         "assistant_response": "TEXT",
         "tokens_used": "INTEGER",
-        "embedding": "JSON"
+        "embedding": "JSON",
+        "model_used": "TEXT",
+        "routing_tables": "JSON",
+        "generation_ms": "INTEGER",
+        "execution_ms": "INTEGER",
+        "total_duration_ms": "INTEGER"
     }
     
     for col, dtype in missing_cols.items():
