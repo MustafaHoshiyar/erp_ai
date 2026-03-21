@@ -1,18 +1,19 @@
 import os
-from sqlalchemy import create_engine, Column, Integer, String, Text, DateTime, JSON, ForeignKey, Boolean
-from sqlalchemy.orm import declarative_base, sessionmaker, relationship
-from sqlalchemy.sql import func
+
 from dotenv import load_dotenv
+from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Integer, JSON, String, Text, create_engine
+from sqlalchemy.orm import declarative_base, relationship, sessionmaker
+from sqlalchemy.sql import func
 
 load_dotenv()
 
-# Determine database URL. For simplicity in Phase 2, we default to SQLite.
-# This will create a file named 'erp_ai_memory.db' in the project root.
 DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./erp_ai_memory.db")
+IS_SQLITE = DATABASE_URL.startswith("sqlite")
 
 engine = create_engine(
-    DATABASE_URL, 
-    connect_args={"check_same_thread": False} if DATABASE_URL.startswith("sqlite") else {}
+    DATABASE_URL,
+    connect_args={"check_same_thread": False} if IS_SQLITE else {},
+    pool_pre_ping=not IS_SQLITE,
 )
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
@@ -38,9 +39,6 @@ class SavedReport(Base):
     chart_config = Column(JSON, nullable=True) # Stores Chart.js configuration
     embedding = Column(JSON, nullable=True)    # Stores specific float array for semantic search
     created_at = Column(DateTime(timezone=True), server_default=func.now())
-
-# Create all tables in the engine
-Base.metadata.create_all(bind=engine)
 
 class Conversation(Base):
     __tablename__ = "conversations"
@@ -99,8 +97,11 @@ class ClientConfig(Base):
     is_active = Column(Boolean, default=True, nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
-# Re-run create_all in case new tables were added (SQLite safe if tables don't exist)
-Base.metadata.create_all(bind=engine)
+def init_db(bind_engine=None):
+    Base.metadata.create_all(bind=bind_engine or engine)
+
+
+init_db()
 
 def get_db():
     db = SessionLocal()
