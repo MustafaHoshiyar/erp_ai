@@ -1,3 +1,5 @@
+import os
+
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import RedirectResponse
@@ -13,18 +15,13 @@ from ai_engine import (
 from sql_validator import validate_sql
 from erp_client import run_query
 from database import SessionLocal, SavedReport, get_db, Conversation, ConversationMessage, ClientConfig
+from sqlalchemy import func
 from sqlalchemy.orm import Session
 from fastapi import Depends, HTTPException, BackgroundTasks
 from memory_manager import backfill_embeddings_in_background
 
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
-
-token_stats = {
-    "total_tokens": 0,
-    "request_count": 0,
-    "history": []
-}
 
 @app.get("/")
 def home():
@@ -36,13 +33,14 @@ def health():
     
 @app.get("/api/config")
 def get_config():
-    import os
     from dotenv import load_dotenv
     load_dotenv()
     erp_url = os.getenv("ERP_URL", "").rstrip("/")
+    environment = os.getenv("ENVIRONMENT", "development")
     return {
-        "environment": os.getenv("ENVIRONMENT", "development"),
-        "insights_url": f"{erp_url}/insights/dashboards"
+        "environment": environment,
+        "insights_url": f"{erp_url}/insights/dashboards",
+        "allow_token_reset": environment.lower() != "production",
     }
     
 from typing import List, Optional, Dict, Any
@@ -110,16 +108,6 @@ async def generate_report(request: PromptRequest, background_tasks: BackgroundTa
             if (result.get("message") or "").strip() == original_sql.strip():
                 result["message"] = normalized_sql
     tokens_used = result.get("tokens_used", 0)
-
-    if tokens_used:
-        token_stats["total_tokens"] += tokens_used
-        token_stats["request_count"] += 1
-        token_stats["history"].append({
-            "tokens": tokens_used,
-            "prompt": request.prompt[:80]
-        })
-        if len(token_stats["history"]) > 50:
-            token_stats["history"] = token_stats["history"][-50:]
 
     msg.generated_sql = result.get("sql")
     msg.assistant_response = result.get("message")
@@ -327,19 +315,52 @@ async def get_currency_info(client_id: str = "DEMO_CLIENT_123"):
     from erp_client import get_default_currency_info
     return await get_default_currency_info(client_id)
 
+def _token_reset_allowed() -> bool:
+    return os.getenv("ENVIRONMENT", "development").lower() != "production"
+
+
 @app.get("/api/token-stats")
-def get_token_stats():
+def get_token_stats(client_id: Optional[str] = None, db: Session = Depends(get_db)):
+    base_query = db.query(ConversationMessage).join(Conversation)
+    if client_id:
+        base_query = base_query.filter(Conversation.client_id == client_id)
+
+    token_messages_query = base_query.filter(ConversationMessage.tokens_used.isnot(None), ConversationMessage.tokens_used > 0)
+    totals = token_messages_query.with_entities(
+        func.coalesce(func.sum(ConversationMessage.tokens_used), 0),
+        func.count(ConversationMessage.id),
+    ).one()
+    recent_messages = (
+        token_messages_query.order_by(ConversationMessage.created_at.desc()).limit(10).all()
+    )
+
     return {
-        "total_tokens": token_stats["total_tokens"],
-        "request_count": token_stats["request_count"],
-        "history": token_stats["history"][-10:]
+        "total_tokens": int(totals[0] or 0),
+        "request_count": int(totals[1] or 0),
+        "history": [
+            {
+                "tokens": int(msg.tokens_used or 0),
+                "prompt": (msg.user_prompt or "")[:80],
+            }
+            for msg in reversed(recent_messages)
+        ],
+        "allow_reset": _token_reset_allowed(),
     }
 
 @app.post("/api/token-stats/reset")
-def reset_token_stats():
-    token_stats["total_tokens"] = 0
-    token_stats["request_count"] = 0
-    token_stats["history"] = []
+def reset_token_stats(client_id: Optional[str] = None, db: Session = Depends(get_db)):
+    if not _token_reset_allowed():
+        raise HTTPException(status_code=403, detail="Token reset is disabled in production.")
+
+    query = db.query(ConversationMessage).join(Conversation)
+    if client_id:
+        query = query.filter(Conversation.client_id == client_id)
+
+    messages = query.filter(ConversationMessage.tokens_used.isnot(None), ConversationMessage.tokens_used > 0).all()
+    for msg in messages:
+        msg.tokens_used = None
+
+    db.commit()
     return {"status": "success"}
 
 @app.get("/api/metrics/baseline")

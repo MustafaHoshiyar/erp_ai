@@ -11,14 +11,6 @@ document.addEventListener('DOMContentLoaded', () => {
     let CURRENCY_SYMBOL = '$'; // Fallback
     let CURRENCY_DECIMALS = 2;
 
-    fetch('/api/config').then(res => res.json()).then(data => {
-        APP_ENV = data.environment;
-        const insightsLink = document.getElementById('menu-insights-link');
-        if (insightsLink && data.insights_url) {
-            insightsLink.href = data.insights_url;
-        }
-    }).catch(err => console.error("Failed to load config", err));
-
     fetch('/api/currency-info').then(res => res.json()).then(data => {
         CURRENCY_SYMBOL = data.symbol || '$';
         CURRENCY_DECIMALS = Number.isInteger(data.decimal_places) ? data.decimal_places : 2;
@@ -50,6 +42,22 @@ document.addEventListener('DOMContentLoaded', () => {
     const requestCountEl = document.getElementById('request-count');
     const avgTokensEl = document.getElementById('avg-tokens');
     const resetTokensBtn = document.getElementById('reset-tokens-btn');
+    if (resetTokensBtn) {
+        resetTokensBtn.style.display = 'none';
+    }
+
+    fetch('/api/config').then(res => res.json()).then(data => {
+        APP_ENV = data.environment;
+        const insightsLink = document.getElementById('menu-insights-link');
+        if (insightsLink && data.insights_url) {
+            insightsLink.href = data.insights_url;
+        }
+        if (resetTokensBtn) {
+            const allowReset = data.allow_token_reset !== false;
+            resetTokensBtn.style.display = allowReset ? 'inline-flex' : 'none';
+            resetTokensBtn.disabled = !allowReset;
+        }
+    }).catch(err => console.error("Failed to load config", err));
 
     // Modal Elements
     const modalBackdrop = document.getElementById('modal-backdrop');
@@ -1273,7 +1281,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Token Usage Stats ---
     async function fetchTokenStats() {
         try {
-            const res = await fetch('/api/token-stats');
+            const res = await fetch(`/api/token-stats?client_id=${encodeURIComponent(CLIENT_ID)}`);
             const stats = await res.json();
             totalTokensEl.textContent = formatNumber(stats.total_tokens);
             requestCountEl.textContent = formatNumber(stats.request_count);
@@ -1281,6 +1289,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 ? Math.round(stats.total_tokens / stats.request_count)
                 : 0;
             avgTokensEl.textContent = formatNumber(avg);
+            if (resetTokensBtn) {
+                const allowReset = stats.allow_reset !== false && APP_ENV !== 'production';
+                resetTokensBtn.style.display = allowReset ? 'inline-flex' : 'none';
+                resetTokensBtn.disabled = !allowReset;
+            }
         } catch (err) {
             console.error('Failed to fetch token stats:', err);
         }
@@ -1291,6 +1304,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     resetTokensBtn.addEventListener('click', async () => {
+        if (APP_ENV === 'production') return;
         const confirmed = await showCustomConfirm(
             'This will reset your session token counter to zero. Continue?',
             'Reset Token Stats'
@@ -1298,7 +1312,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!confirmed) return;
 
         try {
-            await fetch('/api/token-stats/reset', { method: 'POST' });
+            await fetch(`/api/token-stats/reset?client_id=${encodeURIComponent(CLIENT_ID)}`, { method: 'POST' });
             fetchTokenStats();
         } catch (err) {
             console.error('Failed to reset token stats:', err);

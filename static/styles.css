@@ -396,6 +396,7 @@ code {
 
 /* Table Design */
 .table-wrapper {
+    position: relative;
     overflow-x: auto;
     overflow-y: auto;
     max-height: 500px;
@@ -485,6 +486,10 @@ code {
         opacity 0.3s ease,
         padding 0.3s ease;
     opacity: 1;
+}
+
+.data-section .collapsible-body {
+    overflow: visible;
 }
 
 .collapsible-body.collapsed {
