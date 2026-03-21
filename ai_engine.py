@@ -10,6 +10,11 @@ load_dotenv()
 
 AI_PROVIDER = os.getenv("AI_PROVIDER", "openai").lower()
 AI_MODEL = os.getenv("AI_MODEL", "gpt-4o")
+_SALES_INVOICE_FOLLOWUP_GUARDRAIL_CLIENTS = {
+    client.strip()
+    for client in os.getenv("SALES_INVOICE_FOLLOWUP_GUARDRAIL_CLIENTS", "").split(",")
+    if client.strip()
+}
 
 if AI_PROVIDER == "groq":
     client = Groq(api_key=os.getenv("GROQ_API_KEY"))
@@ -145,6 +150,15 @@ _PAYMENT_COLLECTION_TERMS = (
     "received payments",
 )
 
+_SUMMARY_ROW_TERMS = (
+    "grand total row",
+    "grand total",
+    "total row",
+    "summary row",
+    "totals row",
+    "footer row",
+)
+
 _SQL_TABLE_PATTERN = re.compile(
     r"\b(?:FROM|JOIN)\s+`([^`]+)`|\b(?:FROM|JOIN)\s+([A-Za-z_][A-Za-z0-9_]*)",
     re.IGNORECASE,
@@ -255,9 +269,15 @@ def _contains_any(prompt_lower, terms) -> bool:
     return any(term in prompt_lower for term in terms)
 
 
-def build_prompt_specific_guidance(user_prompt):
+def _client_has_sales_invoice_followup_guardrail(client_id: str) -> bool:
+    return bool(client_id) and client_id in _SALES_INVOICE_FOLLOWUP_GUARDRAIL_CLIENTS
+
+
+def build_prompt_specific_guidance(user_prompt, history=None, client_id="DEMO_CLIENT_123"):
     prompt_lower = (user_prompt or "").strip().lower()
     guidance_lines = []
+    last_sql = _extract_last_sql_from_history(history)
+    client_guardrail_enabled = _client_has_sales_invoice_followup_guardrail(client_id)
 
     if _contains_any(prompt_lower, _REORDER_TERMS):
         guidance_lines.extend(
@@ -318,6 +338,29 @@ def build_prompt_specific_guidance(user_prompt):
                 "- Do not join raw sales and purchase rows directly on formatted month values.",
             ]
         )
+
+    if client_guardrail_enabled and last_sql and any(term in prompt_lower for term in _FOLLOW_UP_EDIT_TERMS):
+        guidance_lines.extend(
+            [
+                "- This is a follow-up edit to an existing SQL report.",
+                "- Preserve the existing FROM, JOIN, WHERE, and row granularity unless the user explicitly asks to change the dataset.",
+                "- Do not add new one-to-many joins just to compute totals, add labels, or format the output.",
+            ]
+        )
+
+    if client_guardrail_enabled and _contains_any(prompt_lower, _SUMMARY_ROW_TERMS):
+        guidance_lines.extend(
+            [
+                "- This prompt asks for a summary/footer/grand-total row appended to a detailed result set.",
+                "- Reuse the same filtered base dataset for both the detail rows and the summary row, preferably with a CTE or derived table.",
+                "- If the detail rows are document-level, aggregate document fields from the document table directly.",
+                "- Avoid one-to-many joins that can duplicate parent documents and inflate row counts or sums.",
+            ]
+        )
+        if "sales invoice" in prompt_lower or (last_sql and "tabSales Invoice" in last_sql):
+            guidance_lines.append(
+                "- For Sales Invoice header reports, do not join `tabSales Invoice Item` unless the user explicitly needs line-item fields, filters, or item-level aggregation."
+            )
 
     if not guidance_lines:
         return ""
@@ -409,6 +452,8 @@ def _find_relation_constraint_violations(sql_text, relation_constraints):
             continue
 
         child_table = constraint["child_table"]
+        if f"`{child_table}`" not in sql_text:
+            continue
         parent_table = constraint["parent_table"]
         parent_doctype = constraint["parent_doctype"]
         child_ref = aliases.get(child_table, child_table)
@@ -496,6 +541,57 @@ def _repair_child_table_joins(sql_text, relation_constraints):
     return repaired_sql
 
 
+def _remove_redundant_sales_invoice_item_joins(sql_text):
+    if not sql_text or "`tabSales Invoice Item`" not in sql_text:
+        return sql_text
+
+    join_pattern = re.compile(
+        r"(?is)\s+JOIN\s+`tabSales Invoice Item`(?:\s+(?:AS\s+)?([A-Za-z_][A-Za-z0-9_]*))?\s+ON\s+.*?(?=\bJOIN\b|\bWHERE\b|\bGROUP\s+BY\b|\bORDER\s+BY\b|\bLIMIT\b|\bUNION\s+ALL\b|$)"
+    )
+    repaired_sql = sql_text
+
+    for match in reversed(list(join_pattern.finditer(repaired_sql))):
+        alias = match.group(1)
+        candidate_sql = repaired_sql[:match.start()] + repaired_sql[match.end():]
+        sql_without_item_joins = join_pattern.sub("", candidate_sql)
+
+        reference_patterns = [re.compile(r"(?i)`tabSales Invoice Item`\s*\.")]
+        if alias:
+            reference_patterns.append(re.compile(rf"(?i)\b{re.escape(alias)}\s*\."))
+
+        if any(pattern.search(sql_without_item_joins) for pattern in reference_patterns):
+            continue
+
+        repaired_sql = candidate_sql
+
+    repaired_sql = re.sub(
+        r"(`[^`]+`)(WHERE|GROUP\s+BY|ORDER\s+BY|LIMIT|UNION\s+ALL)",
+        r"\1 \2",
+        repaired_sql,
+        flags=re.IGNORECASE,
+    )
+    return repaired_sql
+
+
+def _extract_last_sql_from_history(history):
+    if not history:
+        return None
+
+    for item in reversed(history):
+        content = str(item.get("content", "")).strip()
+        if not content:
+            continue
+
+        fenced_match = re.search(r"```sql\s*(.*?)```", content, re.IGNORECASE | re.DOTALL)
+        if fenced_match:
+            return fenced_match.group(1).strip()
+
+        if content.upper().startswith(("SELECT ", "WITH ")):
+            return content
+
+    return None
+
+
 def _history_contains_sql(history) -> bool:
     if not history:
         return False
@@ -580,7 +676,7 @@ def generate_sql(user_prompt, history=None, client_id="DEMO_CLIENT_123", currenc
     memory_context = get_relevant_schema_context(client_id, user_prompt)
     
     dynamic_system_prompt = SYSTEM_PROMPT.format(currency=currency)
-    prompt_specific_guidance = build_prompt_specific_guidance(user_prompt)
+    prompt_specific_guidance = build_prompt_specific_guidance(user_prompt, history, client_id)
     
     from schema_router import get_optimized_schema_context
     from schema_planner import build_relation_constraints
@@ -732,6 +828,8 @@ def normalize_sql_with_live_schema(sql_text, required_tables=None, client_id="DE
             return sql_text
 
         repaired_sql = _repair_child_table_joins(sql_text, relation_constraints)
+        if _client_has_sales_invoice_followup_guardrail(client_id):
+            repaired_sql = _remove_redundant_sales_invoice_item_joins(repaired_sql)
         if _find_relation_constraint_violations(repaired_sql, relation_constraints):
             return sql_text
 

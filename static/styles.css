@@ -407,18 +407,23 @@ code {
 
 .data-table {
     width: 100%;
-    border-collapse: collapse;
+    border-collapse: separate;
+    border-spacing: 0;
     text-align: left;
     white-space: nowrap;
     font-size: 0.85rem;
 }
 
 .data-thead th {
-    background: rgba(0, 0, 0, 0.2);
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background: var(--bg-color-surface);
     color: var(--text-secondary);
     font-weight: 500;
     padding: 0.75rem 1rem;
     border-bottom: 1px solid var(--border-color);
+    box-shadow: 0 1px 0 var(--border-color);
 }
 
 .data-tbody td {
