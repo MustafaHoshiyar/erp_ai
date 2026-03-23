@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const sidebarV2Container = document.getElementById('history-list');
 
     // Dynamic Client ID based on logged in user
-    const CLIENT_ID = localStorage.getItem('user_email') || "DEMO_CLIENT_123";
+    const CLIENT_ID = (localStorage.getItem('user_email') || "DEMO_CLIENT_123").trim();
 
     // Token Usage Elements
     const totalTokensEl = document.getElementById('total-tokens');
@@ -252,7 +252,7 @@ document.addEventListener('DOMContentLoaded', () => {
     async function loadConversationHistory() {
         sidebarV2Container.innerHTML = '<div class="text-muted" style="padding: 1rem;">Loading...</div>';
         try {
-            const res = await fetch(`/api/conversations/${CLIENT_ID}`);
+            const res = await fetch(`/api/conversations/${encodeURIComponent(CLIENT_ID)}`);
             const threads = await res.json();
 
             sidebarV2Container.innerHTML = '';

@@ -15,7 +15,7 @@ from ai_engine import (
 from sql_validator import validate_sql
 from erp_client import run_query
 from database import SessionLocal, SavedReport, get_db, Conversation, ConversationMessage, ClientConfig
-from sqlalchemy import func
+from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 from fastapi import Depends, HTTPException, BackgroundTasks
 from memory_manager import backfill_embeddings_in_background
@@ -53,9 +53,15 @@ class PromptRequest(BaseModel):
     app_name: Optional[str] = None
     conversation_id: Optional[int] = None
 
+
+def _normalize_client_id(client_id: Optional[str]) -> str:
+    normalized = (client_id or "DEMO_CLIENT_123").strip()
+    return normalized or "DEMO_CLIENT_123"
+
 @app.post("/generate-report")
 async def generate_report(request: PromptRequest, background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
     request_started_at = time.perf_counter()
+    client_id = _normalize_client_id(request.client_id)
     intent_meta = classify_prompt_intent(request.prompt, request.history)
     detected_intent = intent_meta.get("intent", "report")
 
@@ -64,9 +70,9 @@ async def generate_report(request: PromptRequest, background_tasks: BackgroundTa
         app_name = request.app_name
         if not app_name:
             from erp_client import get_app_name
-            app_name = await get_app_name(request.client_id)
-            
-        new_conv = Conversation(client_id=request.client_id, app_name=app_name)
+            app_name = await get_app_name(client_id)
+             
+        new_conv = Conversation(client_id=client_id, app_name=app_name)
         db.add(new_conv)
         db.commit()
         db.refresh(new_conv)
@@ -96,13 +102,13 @@ async def generate_report(request: PromptRequest, background_tasks: BackgroundTa
         }
 
     from erp_client import get_default_currency_info
-    currency_info = await get_default_currency_info(request.client_id)
+    currency_info = await get_default_currency_info(client_id)
     generation_started_at = time.perf_counter()
-    result = generate_sql(request.prompt, request.history, request.client_id, currency=currency_info["code"], currency_symbol=currency_info["symbol"])
+    result = generate_sql(request.prompt, request.history, client_id, currency=currency_info["code"], currency_symbol=currency_info["symbol"])
     generation_ms = round((time.perf_counter() - generation_started_at) * 1000)
     if result.get("sql"):
         original_sql = result["sql"]
-        normalized_sql = normalize_sql_with_live_schema(original_sql, client_id=request.client_id)
+        normalized_sql = normalize_sql_with_live_schema(original_sql, client_id=client_id)
         if normalized_sql != original_sql:
             result["sql"] = normalized_sql
             if (result.get("message") or "").strip() == original_sql.strip():
@@ -143,7 +149,7 @@ async def generate_report(request: PromptRequest, background_tasks: BackgroundTa
     try:
         execution_started_at = time.perf_counter()
         validated_sql = validate_sql(result["sql"])
-        data = await run_query(validated_sql, client_id=request.client_id)
+        data = await run_query(validated_sql, client_id=client_id)
         msg.execution_ms = round((time.perf_counter() - execution_started_at) * 1000)
 
         if result.get("needs_forecast"):
@@ -160,7 +166,7 @@ async def generate_report(request: PromptRequest, background_tasks: BackgroundTa
         msg.execution_status = "success"
         msg.total_duration_ms = round((time.perf_counter() - request_started_at) * 1000)
         db.commit()
-        background_tasks.add_task(backfill_embeddings_in_background, request.client_id)
+        background_tasks.add_task(backfill_embeddings_in_background, client_id)
     except Exception as e:
         msg.execution_status = "error"
         msg.error_message = str(e)
@@ -457,18 +463,19 @@ async def login(req: LoginRequest):
         from runtime_config import get_client_runtime_config
         import httpx
 
-        config = get_client_runtime_config(req.client_id)
+        username = req.username.strip()
+        config = get_client_runtime_config(_normalize_client_id(req.client_id))
         async with httpx.AsyncClient() as client:
             resp = await client.post(
                 f"{config['erp_url']}/api/method/login",
-                json={"usr": req.username, "pwd": req.password}
+                json={"usr": username, "pwd": req.password}
             )
             data = resp.json()
             
             if resp.status_code == 200 and data.get("message") == "Logged In":
                 return {
-                    "token": data.get("full_name", req.username) + "-auth-token",
-                    "email": req.username
+                    "token": data.get("full_name", username) + "-auth-token",
+                    "email": username
                 }
                 
             raise HTTPException(status_code=401, detail="Invalid credentials for Frappe")
@@ -625,19 +632,42 @@ def get_context_overrides(client_id: str, db: Session = Depends(get_db)):
 @app.get("/api/conversations/{client_id}")
 def get_conversations(client_id: str, db: Session = Depends(get_db)):
     """Fetch all conversation heads for a specific client."""
-    convs = db.query(Conversation).filter(Conversation.client_id == client_id).order_by(Conversation.created_at.desc()).all()
-    
-    results = []
-    for c in convs:
-        # Get the first message to use as a title/snippet
-        first_msg = db.query(ConversationMessage).filter(ConversationMessage.conversation_id == c.id).order_by(ConversationMessage.created_at.asc()).first()
-        results.append({
+    normalized_client_id = _normalize_client_id(client_id)
+    first_prompt_subquery = (
+        select(ConversationMessage.user_prompt)
+        .where(ConversationMessage.conversation_id == Conversation.id)
+        .order_by(ConversationMessage.created_at.asc(), ConversationMessage.id.asc())
+        .limit(1)
+        .scalar_subquery()
+    )
+    last_message_at_subquery = (
+        select(func.max(ConversationMessage.created_at))
+        .where(ConversationMessage.conversation_id == Conversation.id)
+        .scalar_subquery()
+    )
+    last_activity_expr = func.coalesce(last_message_at_subquery, Conversation.created_at)
+
+    convs = (
+        db.query(
+            Conversation.id,
+            Conversation.app_name,
+            Conversation.created_at,
+            first_prompt_subquery.label("title"),
+        )
+        .filter(func.trim(Conversation.client_id) == normalized_client_id)
+        .order_by(last_activity_expr.desc(), Conversation.id.desc())
+        .all()
+    )
+
+    return [
+        {
             "id": c.id,
             "app_name": c.app_name,
-            "title": first_msg.user_prompt if first_msg else "New Conversation",
-            "created_at": c.created_at.isoformat() if c.created_at else None
-        })
-    return results
+            "title": c.title or "New Conversation",
+            "created_at": c.created_at.isoformat() if c.created_at else None,
+        }
+        for c in convs
+    ]
 
 @app.get("/api/conversations/{conversation_id}/messages")
 def get_conversation_messages(conversation_id: int, db: Session = Depends(get_db)):
