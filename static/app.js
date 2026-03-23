@@ -75,54 +75,162 @@ document.addEventListener('DOMContentLoaded', () => {
         })} ${CURRENCY_SYMBOL}`;
     }
 
-    function isCurrencyColumn(header) {
-        const lowerHeader = String(header || '').toLowerCase();
+    function normalizeColumnKey(header) {
+        return String(header || '')
+            .trim()
+            .replace(/[`"'[\]]/g, '')
+            .toLowerCase();
+    }
 
-        const nonCurrencyHints = [
+    function tokenizeHeader(header) {
+        return normalizeColumnKey(header)
+            .replace(/([a-z])([A-Z])/g, '$1 $2')
+            .split(/[^a-z0-9]+/)
+            .filter(Boolean);
+    }
+
+    function extractCountAliasesFromSql(sqlText) {
+        const aliases = new Set();
+        const normalizedSql = String(sqlText || '').replace(/\s+/g, ' ');
+        const countAliasRegex = /\bcount\s*\([^)]*\)\s+(?:as\s+)?[`"]?([a-zA-Z_][\w$]*)[`"]?/ig;
+        let match;
+
+        while ((match = countAliasRegex.exec(normalizedSql)) !== null) {
+            aliases.add(normalizeColumnKey(match[1]));
+        }
+
+        return aliases;
+    }
+
+    function getNumericColumnStats(header, rows) {
+        const stats = {
+            totalNumericValues: 0,
+            hasFractionalValues: false
+        };
+
+        rows.forEach(row => {
+            const rawValue = row?.[header];
+            if (rawValue === null || rawValue === undefined || rawValue === '') {
+                return;
+            }
+
+            const numericValue = typeof rawValue === 'number' ? rawValue : Number(rawValue);
+            if (!Number.isFinite(numericValue)) {
+                return;
+            }
+
+            stats.totalNumericValues += 1;
+            if (!Number.isInteger(numericValue)) {
+                stats.hasFractionalValues = true;
+            }
+        });
+
+        return stats;
+    }
+
+    function isCurrencyColumn(header, rows = [], sqlText = '') {
+        const normalizedHeader = normalizeColumnKey(header);
+        const headerTokens = tokenizeHeader(header);
+        const countAliases = extractCountAliasesFromSql(sqlText);
+
+        const nonCurrencyHints = new Set([
             'qty',
             'quantity',
             'count',
+            'counts',
+            'number',
+            'numbers',
+            'num',
+            'unit',
             'units',
+            'piece',
             'pieces',
+            'day',
             'days',
+            'hour',
             'hours',
+            'minute',
             'minutes',
+            'month',
             'months',
+            'year',
             'years',
             'percent',
             'percentage',
             'ratio',
             'index',
-            'level'
-        ];
+            'level',
+            'score',
+            'rank',
+            'age'
+        ]);
 
-        if (nonCurrencyHints.some(hint => lowerHeader.includes(hint))) {
+        if (countAliases.has(normalizedHeader)) {
             return false;
         }
 
-        const currencyHints = [
+        if (headerTokens.some(token => nonCurrencyHints.has(token))) {
+            return false;
+        }
+
+        const strongCurrencyPhrases = [
+            'grand_total',
+            'net_total',
+            'base_grand_total',
+            'base_net_total',
+            'paid_amount',
+            'outstanding_amount',
+            'total_amount',
+            'debit_amount',
+            'credit_amount'
+        ];
+        const strongCurrencyTokens = new Set([
             'amount',
-            'total',
             'price',
-            'rate',
             'cost',
-            'sum',
             'revenue',
             'expense',
+            'debit',
+            'credit',
+            'valuation',
+            'outstanding',
+            'subtotal'
+        ]);
+        const contextualCurrencyTokens = new Set([
+            'total',
+            'sum',
+            'value',
             'balance',
             'payment',
             'paid',
-            'value',
-            'valuation',
-            'debit',
-            'credit',
-            'subtotal',
-            'grand_total',
-            'net_total',
-            'outstanding'
-        ];
+            'due',
+            'rate',
+            'net',
+            'grand'
+        ]);
 
-        return currencyHints.some(hint => lowerHeader.includes(hint));
+        if (strongCurrencyPhrases.some(phrase => normalizedHeader.includes(phrase))) {
+            return true;
+        }
+
+        if (headerTokens.some(token => strongCurrencyTokens.has(token))) {
+            return true;
+        }
+
+        const numericStats = getNumericColumnStats(header, rows);
+        if (numericStats.totalNumericValues === 0) {
+            return false;
+        }
+
+        if (!headerTokens.some(token => contextualCurrencyTokens.has(token))) {
+            return false;
+        }
+
+        if (numericStats.hasFractionalValues) {
+            return true;
+        }
+
+        return false;
     }
 
     const customConfirmModal = document.getElementById('custom-confirm-modal');
@@ -1068,6 +1176,9 @@ document.addEventListener('DOMContentLoaded', () => {
             rowCountBadge.textContent = `${data.length} row${data.length > 1 ? 's' : ''}`;
 
             const headers = Object.keys(data[0]);
+            const currencyColumns = new Map(
+                headers.map(header => [header, isCurrencyColumn(header, data, result.sql)])
+            );
 
             // Header
             const trHead = document.createElement('tr');
@@ -1092,16 +1203,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 headers.forEach(header => {
                     const td = document.createElement('td');
                     const val = row[header];
+                    const shouldFormatCurrency = currencyColumns.get(header);
 
                     if (val !== null && val !== undefined && typeof val === 'number') {
-                        if (isCurrencyColumn(header)) {
+                        if (shouldFormatCurrency) {
                             td.textContent = formatCurrencyValue(val);
                             td.style.textAlign = 'right';
                         } else {
                             td.textContent = val;
                         }
                     } else if (val !== null && val !== undefined && !isNaN(parseFloat(val)) && isFinite(val) && typeof val === 'string' && val.trim() !== '') {
-                        if (isCurrencyColumn(header)) {
+                        if (shouldFormatCurrency) {
                             const num = parseFloat(val);
                             td.textContent = formatCurrencyValue(num);
                             td.style.textAlign = 'right';
@@ -1129,7 +1241,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 headers.forEach(header => {
                     const td = document.createElement('td');
-                    const isNumeric = isCurrencyColumn(header);
+                    const isNumeric = currencyColumns.get(header);
 
                     if (isNumeric) {
                         let colSum = 0;
