@@ -92,7 +92,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function extractCountAliasesFromSql(sqlText) {
         const aliases = new Set();
         const normalizedSql = String(sqlText || '').replace(/\s+/g, ' ');
-        const countAliasRegex = /\bcount\s*\([^)]*\)\s+(?:as\s+)?[`"]?([a-zA-Z_][\w$]*)[`"]?/ig;
+        const countAliasRegex = /\bcount\s*\([^)]*\)\s+(?:as\s+)?[`"[]?([a-zA-Z_][\w$]*)[`"\]]?/ig;
         let match;
 
         while ((match = countAliasRegex.exec(normalizedSql)) !== null) {
@@ -100,6 +100,27 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         return aliases;
+    }
+
+    function isCountQueryForHeader(header, sqlText = '') {
+        const normalizedHeader = normalizeColumnKey(header);
+        const normalizedSql = String(sqlText || '').replace(/\s+/g, ' ').trim();
+
+        if (!normalizedSql) {
+            return false;
+        }
+
+        if (extractCountAliasesFromSql(normalizedSql).has(normalizedHeader)) {
+            return true;
+        }
+
+        const countExpressions = normalizedSql.match(/\bcount\s*\(/ig) || [];
+        const hasOtherAggregates = /\b(sum|avg|average|min|max)\s*\(/i.test(normalizedSql);
+        if (countExpressions.length === 1 && !hasOtherAggregates) {
+            return true;
+        }
+
+        return false;
     }
 
     function getNumericColumnStats(header, rows) {
@@ -131,7 +152,6 @@ document.addEventListener('DOMContentLoaded', () => {
     function isCurrencyColumn(header, rows = [], sqlText = '') {
         const normalizedHeader = normalizeColumnKey(header);
         const headerTokens = tokenizeHeader(header);
-        const countAliases = extractCountAliasesFromSql(sqlText);
 
         const nonCurrencyHints = new Set([
             'qty',
@@ -165,7 +185,7 @@ document.addEventListener('DOMContentLoaded', () => {
             'age'
         ]);
 
-        if (countAliases.has(normalizedHeader)) {
+        if (isCountQueryForHeader(header, sqlText)) {
             return false;
         }
 
