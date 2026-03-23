@@ -23,6 +23,13 @@ from memory_manager import backfill_embeddings_in_background
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
+
+def _normalize_erp_base_url(url: str) -> str:
+    normalized = (url or "").strip().rstrip("/")
+    if normalized.lower().endswith("/insights"):
+        normalized = normalized[: -len("/insights")]
+    return normalized
+
 @app.get("/")
 def home():
     return RedirectResponse(url="/static/login.html", status_code=302)
@@ -35,11 +42,11 @@ def health():
 def get_config():
     from dotenv import load_dotenv
     load_dotenv()
-    erp_url = os.getenv("ERP_URL", "").rstrip("/")
+    erp_url = _normalize_erp_base_url(os.getenv("ERP_URL", ""))
     environment = os.getenv("ENVIRONMENT", "development")
     return {
         "environment": environment,
-        "insights_url": f"{erp_url}/insights/dashboards",
+        "insights_url": f"{erp_url}/insights/dashboards" if erp_url else "",
         "allow_token_reset": environment.lower() != "production",
     }
     
@@ -240,10 +247,10 @@ def save_report(request: SaveReportRequest, background_tasks: BackgroundTasks, d
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/api/reports/insights-dashboards")
-async def get_insights_dashboards():
+async def get_insights_dashboards(client_id: str = "DEMO_CLIENT_123"):
     from frappe_insights import get_all_dashboards
     try:
-        dashboards = await get_all_dashboards()
+        dashboards = await get_all_dashboards(client_id=_normalize_client_id(client_id))
         return {"status": "success", "dashboards": dashboards}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -428,6 +435,7 @@ def get_baseline_metrics(client_id: Optional[str] = None, db: Session = Depends(
     }
 
 class ExportInsightsRequest(BaseModel):
+    client_id: Optional[str] = "DEMO_CLIENT_123"
     title: str
     sql: str
     chart_type: str = "Bar"
@@ -446,7 +454,8 @@ async def export_to_insights(request: ExportInsightsRequest):
             chart_type=request.chart_type,
             dashboard_name=request.dashboard_name,
             x_col=request.x_col,
-            y_cols=request.y_cols
+            y_cols=request.y_cols,
+            client_id=_normalize_client_id(request.client_id),
         )
         return result
     except Exception as e:

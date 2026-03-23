@@ -3,6 +3,7 @@ import json
 import httpx
 from datetime import datetime
 from dotenv import load_dotenv
+from runtime_config import get_client_runtime_config
 
 load_dotenv()
 ERP_URL = os.getenv("ERP_URL")
@@ -11,17 +12,42 @@ ERP_API_SECRET = os.getenv("ERP_API_SECRET")
 
 WORKBOOK_TITLE = "ERP AI Reports"
 
-async def get_or_create_workbook():
+
+def _normalize_site_base_url(url: str) -> str:
+    normalized = (url or "").strip().rstrip("/")
+    if normalized.lower().endswith("/insights"):
+        normalized = normalized[: -len("/insights")]
+    return normalized
+
+
+def _get_insights_runtime_config(client_id: str = "DEMO_CLIENT_123") -> dict:
+    config = get_client_runtime_config(client_id)
+    site_url = _normalize_site_base_url(config.get("erp_url") or ERP_URL or "")
+    api_key = config.get("api_key") or ERP_API_KEY
+    api_secret = config.get("api_secret") or ERP_API_SECRET
+    if not site_url:
+        raise Exception("Missing ERP URL for Insights export.")
+    if not api_key or not api_secret:
+        raise Exception("Missing ERP API credentials for Insights export.")
+    return {
+        "site_url": site_url,
+        "api_key": api_key,
+        "api_secret": api_secret,
+    }
+
+
+async def get_or_create_workbook(client_id: str = "DEMO_CLIENT_123"):
     """Finds or creates the 'ERP AI Reports' workbook in Frappe Insights."""
+    config = _get_insights_runtime_config(client_id)
     headers = {
-        "Authorization": f"token {ERP_API_KEY}:{ERP_API_SECRET}",
+        "Authorization": f"token {config['api_key']}:{config['api_secret']}",
         "Content-Type": "application/json",
         "Accept": "application/json"
     }
     
     async with httpx.AsyncClient() as client:
         res = await client.get(
-            f"{ERP_URL}/api/resource/Insights Workbook",
+            f"{config['site_url']}/api/resource/Insights Workbook",
             headers=headers,
             params={
                 "filters": f'[["title", "=", "{WORKBOOK_TITLE}"]]',
@@ -36,7 +62,7 @@ async def get_or_create_workbook():
             "title": WORKBOOK_TITLE
         }
         res_create = await client.post(
-            f"{ERP_URL}/api/resource/Insights Workbook",
+            f"{config['site_url']}/api/resource/Insights Workbook",
             headers=headers,
             json=wb_data
         )
@@ -46,15 +72,16 @@ async def get_or_create_workbook():
             
         raise Exception(f"Failed to create Insights Workbook: {res_create.text}")
 
-async def export_query_to_insights(title: str, sql: str):
+async def export_query_to_insights(title: str, sql: str, client_id: str = "DEMO_CLIENT_123"):
     """Creates a new Insights Query v3 record with the provided SQL."""
-    workbook_name = await get_or_create_workbook()
+    config = _get_insights_runtime_config(client_id)
+    workbook_name = await get_or_create_workbook(client_id=client_id)
     
     if not title:
         title = f"AI Query - {datetime.now().strftime('%Y-%m-%d %H:%M')}"
         
     headers = {
-        "Authorization": f"token {ERP_API_KEY}:{ERP_API_SECRET}",
+        "Authorization": f"token {config['api_key']}:{config['api_secret']}",
         "Content-Type": "application/json",
         "Accept": "application/json"
     }
@@ -78,7 +105,7 @@ async def export_query_to_insights(title: str, sql: str):
     
     async with httpx.AsyncClient() as client:
         res = await client.post(
-            f"{ERP_URL}/api/resource/Insights Query v3",
+            f"{config['site_url']}/api/resource/Insights Query v3",
             headers=headers,
             json=query_data
         )
@@ -89,17 +116,18 @@ async def export_query_to_insights(title: str, sql: str):
         
         raise Exception(f"Failed to export query to Insights: {res.text}")
 
-async def get_all_dashboards():
+async def get_all_dashboards(client_id: str = "DEMO_CLIENT_123"):
     """Fetches a list of all Insights Dashboards available in the system."""
+    config = _get_insights_runtime_config(client_id)
     headers = {
-        "Authorization": f"token {ERP_API_KEY}:{ERP_API_SECRET}",
+        "Authorization": f"token {config['api_key']}:{config['api_secret']}",
         "Content-Type": "application/json",
         "Accept": "application/json"
     }
     
     async with httpx.AsyncClient() as client:
         res = await client.get(
-            f"{ERP_URL}/api/resource/Insights Dashboard v3",
+            f"{config['site_url']}/api/resource/Insights Dashboard v3",
             headers=headers,
             params={
                 "fields": '["name", "title"]',
@@ -112,21 +140,22 @@ async def get_all_dashboards():
             return res.json().get("data", [])
         return []
 
-async def export_chart_and_dashboard_to_insights(title: str, sql: str, chart_type: str, dashboard_name: str, x_col: str = None, y_cols: list = None):
+async def export_chart_and_dashboard_to_insights(title: str, sql: str, chart_type: str, dashboard_name: str, x_col: str = None, y_cols: list = None, client_id: str = "DEMO_CLIENT_123"):
     """
     End-to-end export:
     1. Creates a native SQL Query v3 with type:"sql" operations
     2. Creates a Chart v3 linked to the query (query only, NO data_query)
     3. Appends to or creates Dashboard v3
     """
+    config = _get_insights_runtime_config(client_id)
     headers = {
-        "Authorization": f"token {ERP_API_KEY}:{ERP_API_SECRET}",
+        "Authorization": f"token {config['api_key']}:{config['api_secret']}",
         "Content-Type": "application/json",
         "Accept": "application/json"
     }
     
-    workbook_name = await get_or_create_workbook()
-    query_name = await export_query_to_insights(title, sql)
+    workbook_name = await get_or_create_workbook(client_id=client_id)
+    query_name = await export_query_to_insights(title, sql, client_id=client_id)
     if not query_name:
         raise Exception("Failed to create query")
     
@@ -142,7 +171,7 @@ async def export_chart_and_dashboard_to_insights(title: str, sql: str, chart_typ
         if " limit " not in sql_lower:
             introspect_sql += " LIMIT 5"
         
-        result_sample = await erp_run_query(introspect_sql)
+        result_sample = await erp_run_query(introspect_sql, client_id=client_id)
         sample_rows = result_sample.get("message", [])
         
         from ai_engine import determine_insights_chart_config
@@ -168,7 +197,7 @@ async def export_chart_and_dashboard_to_insights(title: str, sql: str, chart_typ
         if " limit " not in sql_lower:
             introspect_sql += " LIMIT 1"
         
-        result = await erp_run_query(introspect_sql)
+        result = await erp_run_query(introspect_sql, client_id=client_id)
         rows = result.get("message", [])
         
         if rows and isinstance(rows, list) and len(rows) > 0:
@@ -303,7 +332,7 @@ async def export_chart_and_dashboard_to_insights(title: str, sql: str, chart_typ
     
     async with httpx.AsyncClient() as client:
         c_res = await client.post(
-            f"{ERP_URL}/api/resource/Insights Chart v3",
+            f"{config['site_url']}/api/resource/Insights Chart v3",
             headers=headers,
             json=chart_data
         )
@@ -315,14 +344,14 @@ async def export_chart_and_dashboard_to_insights(title: str, sql: str, chart_typ
     existing_doc_name = None
     async with httpx.AsyncClient() as client:
         dash_list_res = await client.get(
-            f"{ERP_URL}/api/resource/Insights Dashboard v3",
+            f"{config['site_url']}/api/resource/Insights Dashboard v3",
             headers=headers,
             params={"limit_page_length": 100}
         )
         if dash_list_res.status_code == 200:
             for dash in dash_list_res.json().get("data", []):
                 dash_full = await client.get(
-                    f"{ERP_URL}/api/resource/Insights Dashboard v3/{dash['name']}",
+                    f"{config['site_url']}/api/resource/Insights Dashboard v3/{dash['name']}",
                     headers=headers
                 )
                 if dash_full.status_code == 200:
@@ -352,7 +381,7 @@ async def export_chart_and_dashboard_to_insights(title: str, sql: str, chart_typ
     async with httpx.AsyncClient() as client:
         if existing_doc_name:
             full_res = await client.get(
-                f"{ERP_URL}/api/resource/Insights Dashboard v3/{existing_doc_name}",
+                f"{config['site_url']}/api/resource/Insights Dashboard v3/{existing_doc_name}",
                 headers=headers
             )
             if full_res.status_code == 200:
@@ -369,7 +398,7 @@ async def export_chart_and_dashboard_to_insights(title: str, sql: str, chart_typ
                 items.append(new_item)
                 
                 u_res = await client.put(
-                    f"{ERP_URL}/api/resource/Insights Dashboard v3/{existing_doc_name}",
+                    f"{config['site_url']}/api/resource/Insights Dashboard v3/{existing_doc_name}",
                     headers=headers,
                     json={"items": items}
                 )
@@ -379,7 +408,7 @@ async def export_chart_and_dashboard_to_insights(title: str, sql: str, chart_typ
             dash_doc_name = existing_doc_name
         else:
             d_res = await client.post(
-                f"{ERP_URL}/api/resource/Insights Dashboard v3",
+                f"{config['site_url']}/api/resource/Insights Dashboard v3",
                 headers=headers,
                 json={
                     "title": dashboard_name,
@@ -397,5 +426,5 @@ async def export_chart_and_dashboard_to_insights(title: str, sql: str, chart_typ
         "chart_name": created_chart_name,
         "dashboard_name": dash_doc_name,
         "workbook_name": workbook_name,
-        "url": f"{ERP_URL}/insights/workbook/{workbook_name}/dashboard/{dash_doc_name}"
+        "url": f"{config['site_url']}/insights/workbook/{workbook_name}/dashboard/{dash_doc_name}"
     }

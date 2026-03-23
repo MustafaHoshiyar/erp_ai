@@ -150,6 +150,16 @@ _PAYMENT_COLLECTION_TERMS = (
     "received payments",
 )
 
+_CONTACT_DETAIL_TERMS = (
+    "contact detail",
+    "contact details",
+    "contact of",
+    "phone number",
+    "email address",
+    "contact number",
+    "address of",
+)
+
 _SUMMARY_ROW_TERMS = (
     "grand total row",
     "grand total",
@@ -166,6 +176,33 @@ _SQL_TABLE_PATTERN = re.compile(
 _SQL_TABLE_ALIAS_PATTERN = re.compile(
     r"\b(?:FROM|JOIN)\s+`([^`]+)`(?:\s+(?:AS\s+)?(?!ON\b|WHERE\b|JOIN\b|GROUP\b|ORDER\b|LIMIT\b)([A-Za-z_][A-Za-z0-9_]*))?",
     re.IGNORECASE,
+)
+_RELATION_CLARIFICATION_PATTERN = re.compile(
+    r"`(?P<child>tab[^`]+)` is a child table of `(?P<parent>tab[^`]+)`",
+    re.IGNORECASE,
+)
+_CHILD_TABLE_CONFIRM_TERMS = (
+    "use child table",
+    "use the child table",
+    "use child tables",
+    "use the child tables",
+    "use child row",
+    "use the child row",
+    "use child rows",
+    "use the child rows",
+    "child table rows",
+    "child rows",
+)
+_SHORT_AFFIRMATION_TERMS = (
+    "yes",
+    "y",
+    "yeah",
+    "yep",
+    "sure",
+    "ok",
+    "okay",
+    "proceed",
+    "go ahead",
 )
 
 SYSTEM_PROMPT = """
@@ -215,6 +252,7 @@ Performance & Syntax Rules:
 - Use DATE_FORMAT(CURDATE(), '%Y-%m-01') for current month filtering.
 - Use DATE_SUB(CURDATE(), INTERVAL X DAY) for rolling ranges.
 - NEVER wrap indexed columns in functions in WHERE clause.
+- When the user provides a human-readable party, customer, supplier, item, counter, or contact name, prefer case-insensitive matching on label-like fields (for example `LOWER(column) = LOWER('value')`) unless the prompt clearly refers to an exact code or ID field.
 - For TIME-SERIES FORECASTING, PREDICTIONS, or PROJECTIONS:
   - Do NOT attempt to calculate the forecast in SQL using recursive CTEs.
   - INSTEAD:
@@ -323,6 +361,17 @@ def build_prompt_specific_guidance(user_prompt, history=None, client_id="DEMO_CL
                 "- Use `tabPayment Entry.docstatus = 1` for submitted entries instead of generic status text like `Completed`.",
                 "- If the prompt is about users who recorded payments, group by `tabPayment Entry.owner`.",
                 "- Avoid optional joins that can zero out the result set unless the prompt explicitly requires them.",
+            ]
+        )
+
+    if _contains_any(prompt_lower, _CONTACT_DETAIL_TERMS):
+        guidance_lines.extend(
+            [
+                "- This is a contact or address lookup prompt.",
+                "- Prefer `tabContact` plus the appropriate optional child tables such as `tabContact Email` and `tabContact Phone` for email/phone details.",
+                "- If the user asks for an address, prefer `tabAddress` and the correct link table instead of forcing contact email/phone joins.",
+                "- When using `tabContact Email` or `tabContact Phone`, keep them as optional child-table joins through `parent` and `parenttype`.",
+                "- Match the requested party name case-insensitively on a human-readable field unless the prompt explicitly gives a code or ID.",
             ]
         )
 
@@ -445,6 +494,140 @@ def _extract_table_aliases(sql_text):
     return aliases
 
 
+def _table_ref_pattern(table_name, alias_name):
+    patterns = []
+    if table_name:
+        patterns.append(rf"`{re.escape(table_name)}`")
+    if alias_name and alias_name != table_name:
+        patterns.append(re.escape(alias_name))
+    if not patterns:
+        return r"(?!x)x"
+    return "(?:" + "|".join(patterns) + ")"
+
+
+def _condition_mentions_field_ref(condition_text, table_name, alias_name, field_name):
+    ref_pattern = _table_ref_pattern(table_name, alias_name)
+    return re.search(
+        rf"(?i){ref_pattern}\s*\.\s*`?{re.escape(field_name)}`?",
+        condition_text or "",
+    ) is not None
+
+
+def _extract_last_user_prompt(history):
+    if not history:
+        return None
+
+    for item in reversed(history):
+        if str(item.get("role", "")).lower() != "user":
+            continue
+        content = str(item.get("content", "")).strip()
+        if content:
+            return content
+
+    return None
+
+
+def _extract_recent_relation_clarification(history):
+    if not history:
+        return None
+
+    for item in reversed(history):
+        if str(item.get("role", "")).lower() != "assistant":
+            continue
+
+        content = str(item.get("content", "")).strip()
+        if "schema relation mismatch before running the report" not in content.lower():
+            continue
+
+        matches = [
+            {"child_table": match.group("child"), "parent_table": match.group("parent")}
+            for match in _RELATION_CLARIFICATION_PATTERN.finditer(content)
+        ]
+        return {
+            "message": content,
+            "relations": matches,
+        }
+
+    return None
+
+
+def _is_child_table_confirmation(user_prompt, history):
+    prompt_lower = (user_prompt or "").strip().lower()
+    if not prompt_lower:
+        return False
+
+    if not _extract_recent_relation_clarification(history):
+        return False
+
+    if any(term in prompt_lower for term in _CHILD_TABLE_CONFIRM_TERMS):
+        return True
+
+    compact_prompt = re.sub(r"[^\w\s]", " ", prompt_lower)
+    compact_prompt = re.sub(r"\s+", " ", compact_prompt).strip()
+    if compact_prompt in _SHORT_AFFIRMATION_TERMS:
+        return True
+
+    return False
+
+
+def _build_effective_user_prompt(user_prompt, history):
+    if not _is_child_table_confirmation(user_prompt, history):
+        return user_prompt
+
+    original_request = _extract_last_user_prompt(history)
+    clarification = _extract_recent_relation_clarification(history) or {}
+    if not original_request:
+        return user_prompt
+
+    lines = [
+        "This is a follow-up clarification for the immediately previous report request.",
+        f"Original report request: {original_request}",
+        f"User clarification: {user_prompt}",
+        "Generate the SQL for the original request using child-table row granularity where needed by the live schema.",
+        "Do not ask the same child-table clarification again.",
+    ]
+
+    for relation in clarification.get("relations", []):
+        parent_table = relation["parent_table"]
+        parent_doctype = parent_table[3:] if parent_table.startswith("tab") else parent_table
+        lines.append(
+            f"- `{relation['child_table']}` must join to `{parent_table}` with "
+            f"`{relation['child_table']}`.`parent` = `{parent_table}`.`name` "
+            f"and `{relation['child_table']}`.`parenttype` = '{parent_doctype}'."
+        )
+
+    return "\n".join(lines)
+
+
+def _build_relation_clarification_message(relation_violations, relation_constraints):
+    violated_constraints = []
+    violation_set = set(relation_violations or [])
+    for constraint in relation_constraints or []:
+        if constraint.get("message") in violation_set:
+            violated_constraints.append(constraint)
+
+    child_tables = []
+    for constraint in violated_constraints:
+        child_table = constraint.get("child_table")
+        if child_table and child_table not in child_tables:
+            child_tables.append(child_table)
+
+    if len(child_tables) == 1:
+        child_hint = f"Please tell me if you want this report based on `{child_tables[0]}` child rows, or point me to the exact doctype/field to use."
+    elif child_tables:
+        child_list = ", ".join(f"`{table_name}`" for table_name in child_tables)
+        child_hint = f"Please tell me if you want this report based on these child rows: {child_list}, or point me to the exact doctype/field to use."
+    else:
+        child_hint = "Please tell me if you want this report based on child table rows, or point me to the exact doctype/field to use."
+
+    return (
+        "I found a schema relation mismatch before running the report. "
+        + " ".join(relation_violations)
+        + " "
+        + child_hint
+    )
+
+
 def _find_relation_constraint_violations(sql_text, relation_constraints):
     if not sql_text or not relation_constraints:
         return []
@@ -463,13 +646,22 @@ def _find_relation_constraint_violations(sql_text, relation_constraints):
         parent_doctype = constraint["parent_doctype"]
         child_ref = aliases.get(child_table, child_table)
         parent_ref = aliases.get(parent_table, parent_table)
+        child_ref_pattern = _table_ref_pattern(child_table, child_ref)
+        parent_ref_pattern = _table_ref_pattern(parent_table, parent_ref)
 
         parent_join_pattern = re.compile(
-            rf"(?i)(`{re.escape(child_table)}`|{re.escape(child_ref)})\s*\.\s*`?parent`?\s*=\s*"
-            rf"(`{re.escape(parent_table)}`|{re.escape(parent_ref)})\s*\.\s*`?name`?"
+            rf"(?i)(?:"
+            rf"{child_ref_pattern}\s*\.\s*`?parent`?\s*=\s*{parent_ref_pattern}\s*\.\s*`?name`?"
+            rf"|"
+            rf"{parent_ref_pattern}\s*\.\s*`?name`?\s*=\s*{child_ref_pattern}\s*\.\s*`?parent`?"
+            rf")"
         )
         parenttype_pattern = re.compile(
-            rf"(?i)(`{re.escape(child_table)}`|{re.escape(child_ref)})\s*\.\s*`?parenttype`?\s*=\s*'{re.escape(parent_doctype)}'"
+            rf"(?i)(?:"
+            rf"{child_ref_pattern}\s*\.\s*`?parenttype`?\s*=\s*'{re.escape(parent_doctype)}'"
+            rf"|"
+            rf"'{re.escape(parent_doctype)}'\s*=\s*{child_ref_pattern}\s*\.\s*`?parenttype`?"
+            rf")"
         )
 
         if not parent_join_pattern.search(sql_text) or not parenttype_pattern.search(sql_text):
@@ -506,14 +698,14 @@ def _repair_child_table_joins(sql_text, relation_constraints):
             alias_pattern = rf"(?:\s+(?:AS\s+)?{re.escape(child_alias)})?"
 
         join_pattern = re.compile(
-            rf"(?is)(JOIN\s+`{child_table_pattern}`{alias_pattern}\s+ON\s+)(.*?)(?=\bJOIN\b|\bWHERE\b|\bGROUP\s+BY\b|\bORDER\s+BY\b|\bLIMIT\b|$)"
+            rf"(?is)(((?:LEFT|RIGHT|INNER|OUTER|FULL|CROSS)\s+)*JOIN\s+`{child_table_pattern}`{alias_pattern}\s+ON\s+)(.*?)(?=\bJOIN\b|\bWHERE\b|\bGROUP\s+BY\b|\bORDER\s+BY\b|\bLIMIT\b|$)"
         )
         match = join_pattern.search(repaired_sql)
         if not match:
             continue
 
         join_prefix = match.group(1)
-        on_clause = match.group(2).strip()
+        on_clause = match.group(3).strip()
         child_ref = _table_ref_for_sql(child_table, aliases)
         parent_ref = _table_ref_for_sql(parent_table, aliases)
 
@@ -525,12 +717,10 @@ def _repair_child_table_joins(sql_text, relation_constraints):
 
         filtered_conditions = []
         for condition in existing_conditions:
-            normalized = condition.lower()
-            if f"{child_table.lower()}`.`parent" in normalized or f"{child_table.lower()}`.`parenttype" in normalized:
+            if _condition_mentions_field_ref(condition, child_table, child_alias, "parent"):
                 continue
-            if child_alias and child_alias != child_table:
-                if f"{child_alias.lower()}.`parent" in normalized or f"{child_alias.lower()}.`parenttype" in normalized:
-                    continue
+            if _condition_mentions_field_ref(condition, child_table, child_alias, "parenttype"):
+                continue
             filtered_conditions.append(condition)
 
         mandatory_conditions = [
@@ -678,10 +868,11 @@ def build_non_report_response(user_prompt, intent):
     return "I am focused on ERPNext reporting and analytics. Ask me for a report, KPI, dashboard, trend, comparison, or forecast from your ERP data."
 
 def generate_sql(user_prompt, history=None, client_id="DEMO_CLIENT_123", currency="USD", currency_symbol="$"):
-    memory_context = get_relevant_schema_context(client_id, user_prompt)
+    effective_user_prompt = _build_effective_user_prompt(user_prompt, history)
+    memory_context = get_relevant_schema_context(client_id, effective_user_prompt)
     
     dynamic_system_prompt = SYSTEM_PROMPT.format(currency=currency)
-    prompt_specific_guidance = build_prompt_specific_guidance(user_prompt, history, client_id)
+    prompt_specific_guidance = build_prompt_specific_guidance(effective_user_prompt, history, client_id)
     
     from schema_router import get_optimized_schema_context
     from schema_planner import build_relation_constraints
@@ -692,7 +883,7 @@ def generate_sql(user_prompt, history=None, client_id="DEMO_CLIENT_123", currenc
         print(f"[AI Engine] Could not load local schema for router: {e}")
         
     filtered_schema, pass1_tokens, required_tables = get_optimized_schema_context(
-        user_prompt,
+        effective_user_prompt,
         GLOBAL_SCHEMA,
         local_schema,
         client_id=client_id,
@@ -713,7 +904,7 @@ def generate_sql(user_prompt, history=None, client_id="DEMO_CLIENT_123", currenc
     if history:
         messages.extend(history)
         
-    messages.append({"role": "user", "content": user_prompt})
+    messages.append({"role": "user", "content": effective_user_prompt})
 
     response = client.chat.completions.create(
         model=AI_MODEL,
@@ -796,10 +987,9 @@ def generate_sql(user_prompt, history=None, client_id="DEMO_CLIENT_123", currenc
         if not repaired_unknown_tables and not repaired_relation_violations:
             return repaired_result
 
-        clarification_message = (
-            "I found a schema relation mismatch before running the report. "
-            + " ".join(relation_violations)
-            + " Please tell me if you want this report based on child reorder rows, or point me to the exact doctype/field to use."
+        clarification_message = _build_relation_clarification_message(
+            relation_violations,
+            relation_constraints,
         )
         return {
             "sql": None,

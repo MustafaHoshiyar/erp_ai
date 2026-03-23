@@ -63,13 +63,13 @@ def get_relevant_schema_context(client_id: str, new_prompt: str, top_k: int = 3)
         if overrides:
             override_lines = [
                 "### CRITICAL: CLIENT SPECIFIC CONTEXT OVERRIDES ###",
-                "You MUST apply the following logic substitutions whenever the user's prompt contains the specified terms:",
+                "You MUST apply the following logic substitutions whenever the user's prompt contains the specified terms, regardless of letter case:",
                 "Do NOT use the literal term in your query. ALWAYS substitute it with the exact SQL given below.",
                 ""
             ]
             for o in overrides:
                 desc = f" ({o.description})" if o.description else ""
-                override_lines.append(f"- WHEN USER SAYS '{o.term}' -> YOU MUST USE THIS EXACT SQL: `{o.sql_logic}`{desc}")
+                override_lines.append(f"- WHEN USER SAYS '{o.term}' IN ANY LETTER CASE -> YOU MUST USE THIS EXACT SQL: `{o.sql_logic}`{desc}")
             override_lines.append("")
             override_text = "\n".join(override_lines) + "\n"
 

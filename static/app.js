@@ -1016,7 +1016,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 // Fetch existing dashboards
                 try {
-                    const res = await fetch('/api/reports/insights-dashboards');
+                    const res = await fetch(`/api/reports/insights-dashboards?client_id=${encodeURIComponent(CLIENT_ID)}`);
                     if (res.ok) {
                         const data = await res.json();
                         console.log('[Export Modal] Fetched dashboards:', data.dashboards);
@@ -1099,6 +1099,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     cancelBtn.style.display = 'none';
 
                     const originalBtnContent = exportInsightsBtn.innerHTML;
+                    const insightsWindow = window.open('', '_blank', 'noopener');
+                    if (insightsWindow && insightsWindow.document) {
+                        insightsWindow.document.title = 'Opening Insights';
+                        insightsWindow.document.body.innerHTML = '<p style="font-family: sans-serif; padding: 1rem;">Opening Insights dashboard...</p>';
+                    }
 
                     // Extract chart type
                     let chartType = "Bar";
@@ -1116,6 +1121,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify({
+                                client_id: CLIENT_ID,
                                 title: title,
                                 sql: result.sql,
                                 chart_type: chartType,
@@ -1133,10 +1139,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
                         // If successful, the API returns {"status": "success", "url": "..."}
                         if (resData.url) {
-                            window.open(resData.url, '_blank');
+                            if (insightsWindow && !insightsWindow.closed) {
+                                insightsWindow.location = resData.url;
+                            } else {
+                                window.open(resData.url, '_blank', 'noopener');
+                            }
+                        } else if (insightsWindow && !insightsWindow.closed) {
+                            insightsWindow.close();
                         }
 
                     } catch (e) {
+                        if (insightsWindow && !insightsWindow.closed) {
+                            insightsWindow.close();
+                        }
                         alert("Export failed: " + e.message);
                     } finally {
                         cleanup();
