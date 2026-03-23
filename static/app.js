@@ -153,7 +153,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const normalizedHeader = normalizeColumnKey(header);
         const headerTokens = tokenizeHeader(header);
 
-        const nonCurrencyHints = new Set([
+        const hardNonCurrencyHints = new Set([
             'qty',
             'quantity',
             'count',
@@ -165,16 +165,6 @@ document.addEventListener('DOMContentLoaded', () => {
             'units',
             'piece',
             'pieces',
-            'day',
-            'days',
-            'hour',
-            'hours',
-            'minute',
-            'minutes',
-            'month',
-            'months',
-            'year',
-            'years',
             'percent',
             'percentage',
             'ratio',
@@ -189,7 +179,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return false;
         }
 
-        if (headerTokens.some(token => nonCurrencyHints.has(token))) {
+        if (headerTokens.some(token => hardNonCurrencyHints.has(token))) {
             return false;
         }
 
@@ -629,6 +619,44 @@ document.addEventListener('DOMContentLoaded', () => {
         resultsArea.appendChild(clone);
     }
 
+    function setPlaceholderStatus(placeholder, label) {
+        if (!placeholder) return;
+        placeholder.innerHTML = `${label}<span class="dots">...</span>`;
+    }
+
+    function startPlaceholderStatusCycle(messageNode, placeholder) {
+        const loadingStages = [
+            { label: 'Thinking', delay: 0 },
+            { label: 'Generating', delay: 1800 },
+            { label: 'Analyzing your data', delay: 4200 },
+            { label: 'Preparing results', delay: 7000 }
+        ];
+
+        const timers = [];
+        loadingStages.forEach(stage => {
+            const timerId = window.setTimeout(() => {
+                setPlaceholderStatus(placeholder, stage.label);
+            }, stage.delay);
+            timers.push(timerId);
+        });
+
+        messageNode.__loadingStatusTimers = timers;
+    }
+
+    function cleanupPlaceholderState(messageNode) {
+        const timers = messageNode.__loadingStatusTimers || [];
+        timers.forEach(timerId => window.clearTimeout(timerId));
+        messageNode.__loadingStatusTimers = [];
+
+        const placeholder = messageNode.querySelector('.placeholder-text');
+        if (placeholder) placeholder.remove();
+
+        const avatarSvg = messageNode.querySelector('.ai-avatar svg');
+        if (avatarSvg) {
+            avatarSvg.classList.remove('thinking-animation');
+        }
+    }
+
     function createAiMessagePlaceholder() {
         const clone = aiResponseTemplate.content.cloneNode(true);
         const node = clone.querySelector('.message');
@@ -643,23 +671,16 @@ document.addEventListener('DOMContentLoaded', () => {
         const contentDiv = node.querySelector('.message-content');
         const loadingText = document.createElement('div');
         loadingText.className = 'placeholder-text text-muted';
-        loadingText.innerHTML = 'Thinking<span class="dots">...</span>';
+        setPlaceholderStatus(loadingText, 'Thinking');
         loadingText.style.fontStyle = 'italic';
         contentDiv.prepend(loadingText);
+        startPlaceholderStatusCycle(node, loadingText);
 
         return node;
     }
 
     function populateAiMessage(messageNode, result, preLoadedChartConfig = null) {
-        // Remove 'Thinking...' placeholder
-        const placeholder = messageNode.querySelector('.placeholder-text');
-        if (placeholder) placeholder.remove();
-
-        // Remove thinking animation from avatar
-        const avatarSvg = messageNode.querySelector('.ai-avatar svg');
-        if (avatarSvg) {
-            avatarSvg.classList.remove('thinking-animation');
-        }
+        cleanupPlaceholderState(messageNode);
 
         const sqlSection = messageNode.querySelector('.sql-section');
         const sqlOutput = messageNode.querySelector('.sql-output');
@@ -1377,13 +1398,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function showAiError(messageNode, errorMessage) {
-        const placeholder = messageNode.querySelector('.placeholder-text');
-        if (placeholder) placeholder.remove();
-
-        const avatarSvg = messageNode.querySelector('.ai-avatar svg');
-        if (avatarSvg) {
-            avatarSvg.classList.remove('thinking-animation');
-        }
+        cleanupPlaceholderState(messageNode);
 
         const toast = messageNode.querySelector('.error-toast');
         toast.textContent = errorMessage;
