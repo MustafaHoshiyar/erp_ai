@@ -393,44 +393,49 @@ def _find_unknown_tables(sql_text, local_schema):
 
 def _parse_sql_response(raw_output, tokens_used, needs_forecast):
     detected_intent = "forecast" if needs_forecast else "report"
+    raw_output = (raw_output or "").strip()
 
-    match = re.search(r"```sql(.*?)```", raw_output, re.IGNORECASE | re.DOTALL)
-    if match:
+    def build_result(sql_text=None):
         return {
-            "sql": match.group(1).strip(),
+            "sql": sql_text,
             "message": raw_output,
             "tokens_used": tokens_used,
-            "needs_forecast": needs_forecast,
-            "detected_intent": detected_intent,
+            "needs_forecast": needs_forecast if sql_text else False,
+            "detected_intent": detected_intent if sql_text else "report",
         }
 
-    match = re.search(r"(SELECT .*?;)", raw_output, re.IGNORECASE | re.DOTALL)
-    if match:
-        return {
-            "sql": match.group(1).strip(),
-            "message": raw_output,
-            "tokens_used": tokens_used,
-            "needs_forecast": needs_forecast,
-            "detected_intent": detected_intent,
-        }
+    def extract_sql_candidate(text):
+        if not text:
+            return None
 
-    match = re.search(r"(SELECT .*?$)", raw_output, re.IGNORECASE | re.DOTALL)
-    if match:
-        return {
-            "sql": match.group(1).strip(),
-            "message": raw_output,
-            "tokens_used": tokens_used,
-            "needs_forecast": needs_forecast,
-            "detected_intent": detected_intent,
-        }
+        fenced_match = re.search(r"```(?:sql)?\s*(.*?)```", text, re.IGNORECASE | re.DOTALL)
+        if fenced_match:
+            candidate = fenced_match.group(1).strip()
+            if candidate.upper().startswith(("SELECT ", "WITH ")):
+                return candidate
 
-    return {
-        "sql": None,
-        "message": raw_output,
-        "tokens_used": tokens_used,
-        "needs_forecast": False,
-        "detected_intent": "report",
-    }
+        direct_match = re.search(r"\b(SELECT|WITH)\b", text, re.IGNORECASE)
+        if not direct_match:
+            return None
+
+        candidate = text[direct_match.start():].strip()
+        candidate = re.sub(r"```+$", "", candidate).strip()
+
+        stop_markers = [
+            r"(?i)\n(?:Explanation|Notes?|Reasoning|Summary)\s*:",
+            r"(?i)\n(?:This query|Here(?:'s| is) the query)\b",
+        ]
+        for marker in stop_markers:
+            split_parts = re.split(marker, candidate, maxsplit=1)
+            candidate = split_parts[0].strip()
+
+        return candidate or None
+
+    sql_candidate = extract_sql_candidate(raw_output)
+    if sql_candidate:
+        return build_result(sql_candidate)
+
+    return build_result(None)
 
 
 def _extract_table_aliases(sql_text):
