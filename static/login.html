@@ -236,6 +236,18 @@
                 <span class="input-icon">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                         stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                        <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                    </svg>
+                </span>
+                <input type="text" id="client_id" class="frappe-input" placeholder="Workspace ID" required
+                    autocomplete="organization">
+            </div>
+
+            <div class="input-group">
+                <span class="input-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <rect width="20" height="16" x="2" y="4" rx="2" />
                         <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
                     </svg>
@@ -294,6 +306,7 @@
         document.getElementById('login-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const username = document.getElementById('username').value.trim();
+            const clientId = document.getElementById('client_id').value.trim();
             const password = pwdInput.value;
             const errorDiv = document.getElementById('login-error');
             const submitBtn = document.getElementById('login-btn');
@@ -306,13 +319,14 @@
                 const res = await fetch('/api/login', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ username, password })
+                    body: JSON.stringify({ username, password, client_id: clientId })
                 });
 
                 if (res.ok) {
                     const data = await res.json();
                     localStorage.setItem('auth_token', data.token);
                     localStorage.setItem('user_email', data.email);
+                    localStorage.setItem('client_id', clientId);
 
                     submitBtn.textContent = 'Success';
                     setTimeout(() => {

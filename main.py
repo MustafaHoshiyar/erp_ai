@@ -464,7 +464,7 @@ async def export_to_insights(request: ExportInsightsRequest):
 class LoginRequest(BaseModel):
     username: str
     password: str
-    client_id: Optional[str] = "DEMO_CLIENT_123"
+    client_id: str
 
 @app.post("/api/login")
 async def login(req: LoginRequest):
@@ -473,7 +473,15 @@ async def login(req: LoginRequest):
         import httpx
 
         username = req.username.strip()
-        config = get_client_runtime_config(_normalize_client_id(req.client_id))
+        client_id = req.client_id.strip()
+        
+        if not client_id:
+            raise HTTPException(status_code=400, detail="Workspace ID is required")
+
+        config = get_client_runtime_config(client_id)
+        if not config or not config.get('erp_url'):
+            raise HTTPException(status_code=404, detail=f"No configuration found for Workspace ID: {client_id}")
+
         async with httpx.AsyncClient() as client:
             resp = await client.post(
                 f"{config['erp_url']}/api/method/login",

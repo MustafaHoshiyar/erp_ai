@@ -463,7 +463,8 @@ def _parse_sql_response(raw_output, tokens_used, needs_forecast):
             if candidate.upper().startswith(("SELECT ", "WITH ")):
                 return candidate
 
-        direct_match = re.search(r"\b(SELECT|WITH)\b", text, re.IGNORECASE)
+        # Stricter fallback: only catch if SELECT/WITH appears at the START of a line, avoiding conversational "with"
+        direct_match = re.search(r"(?m)^\s*(SELECT|WITH)\b", text, re.IGNORECASE)
         if not direct_match:
             return None
 
@@ -477,6 +478,11 @@ def _parse_sql_response(raw_output, tokens_used, needs_forecast):
         for marker in stop_markers:
             split_parts = re.split(marker, candidate, maxsplit=1)
             candidate = split_parts[0].strip()
+
+        # Final sanity check: if the extracted candidate is very clearly mostly English, reject it.
+        # A valid query must have FROM or SELECT and not just be a paragraph starting with "With..."
+        if candidate and not re.search(r"\bFROM\b", candidate, re.IGNORECASE):
+            return None
 
         return candidate or None
 
@@ -643,6 +649,8 @@ def _find_relation_constraint_violations(sql_text, relation_constraints):
         if f"`{child_table}`" not in sql_text:
             continue
         parent_table = constraint["parent_table"]
+        if f"`{parent_table}`" not in sql_text:
+            continue
         parent_doctype = constraint["parent_doctype"]
         child_ref = aliases.get(child_table, child_table)
         parent_ref = aliases.get(parent_table, parent_table)
@@ -689,7 +697,11 @@ def _repair_child_table_joins(sql_text, relation_constraints):
             continue
 
         child_table = constraint["child_table"]
+        if f"`{child_table}`" not in repaired_sql:
+            continue
         parent_table = constraint["parent_table"]
+        if f"`{parent_table}`" not in repaired_sql:
+            continue
         parent_doctype = constraint["parent_doctype"]
         child_alias = aliases.get(child_table)
         child_table_pattern = re.escape(child_table)
@@ -841,6 +853,9 @@ def classify_prompt_intent(user_prompt, history=None):
 
     if any(term in prompt_lower for term in _UNSUPPORTED_TERMS) and not any(term in prompt_lower for term in _REPORT_HINT_TERMS):
         return {"intent": "unsupported"}
+
+    if history and any(term in prompt_lower for term in ("what logic", "how did you", "explain", "logic behind", "can you explain")):
+        return {"intent": "chat"}
 
     if _needs_follow_up_clarification(prompt_lower, history):
         return {"intent": "clarification_needed"}

@@ -34,8 +34,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const closeSidebarBtn = document.getElementById('close-sidebar-btn');
     const sidebarV2Container = document.getElementById('history-list');
 
-    // Dynamic Client ID based on logged in user
-    const CLIENT_ID = (localStorage.getItem('user_email') || "DEMO_CLIENT_123").trim();
+    // Dynamic Client ID based on logged in user's tenant
+    const CLIENT_ID = (localStorage.getItem('client_id') || "DEMO_CLIENT_123").trim();
 
     // Token Usage Elements
     const totalTokensEl = document.getElementById('total-tokens');

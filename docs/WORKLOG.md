@@ -359,3 +359,38 @@
 - Follow-up:
   - Add Motherbrain-side client configuration management or proxy endpoints if we want to administer tenant ERP connections from the admin panel.
   - Continue Phase 2 by removing the remaining single-tenant runtime assumptions, especially in auxiliary integrations like Insights/export flows and any global-URL utility paths.
+
+## 2026-03-24 - Batch 018
+
+- Phase: Documentation
+- Scope: `shared`
+- Files changed:
+  - `docs/THREAD_TASK_SUMMARY.md`
+  - `docs/WORKLOG.md`
+- Summary:
+  - Created a consolidated thread summary document that captures each major task, bug fix, new development, and the reason behind it across both `erp_ai` and `motherbrain_admin`.
+- Reason:
+  - We needed one easy-to-review document that explains the full implementation journey in this thread without having to reconstruct it from individual chat messages or multiple log entries.
+- Validation:
+  - Cross-checked the summary against `docs/WORKLOG.md`, `docs/DECISIONS.md`, `docs/PHASE_1_ROADMAP.md`, and `docs/PHASE_2_ROADMAP.md`.
+- Follow-up:
+  - Keep `docs/THREAD_TASK_SUMMARY.md` updated at major milestones so it remains a readable narrative companion to the detailed worklog.
+
+## 2026-03-24 - Batch 019
+
+- Phase: Phase 4 Implementation
+- Scope: `erp_ai`
+- Files changed:
+  - `ai_engine.py`
+  - `docs/WORKLOG.md`
+- Summary:
+  - Fixed a critical SQL extraction bug where natural language responses containing the word "with" were erroneously executed as MariaDB CTE queries.
+  - Updated prompt intent classification to correctly identify follow-up logic/explain questions as `CHAT` instead of `REPORT`.
+  - Relaxed the live-schema relation guardrail so that `tabItem` and `tabSales Invoice Item` can be joined dynamically without triggering a false "schema relation mismatch" when the parent invoice table isn't required by the query.
+- Reason:
+  - The strict relation checks and aggressive SQL extraction were causing the pipeline to crash or hallucinate on perfectly valid exploratory requests ("most profitable item", "logic behind this").
+- Validation:
+  - `extract_sql_candidate` now explicitly requires `SELECT`/`WITH` to begin a line and ensures the query contains a `FROM` clause.
+  - `_find_relation_constraint_violations` now gracefully skips enforcement if the parent table is omitted from the generated SQL entirely.
+- Follow-up:
+  - Continue implementing Phase 4 by adding the Review Queue clustering and manual SQL overriding UI inside Motherbrain.
