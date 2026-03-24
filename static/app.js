@@ -281,6 +281,92 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    function showStructuredFeedbackModal() {
+        return new Promise((resolve) => {
+            // Build modal HTML
+            const overlay = document.createElement('div');
+            overlay.style.cssText = `
+                position:fixed; inset:0; background:rgba(0,0,0,0.55); z-index:10000;
+                display:flex; align-items:center; justify-content:center; padding:1rem;
+            `;
+            const box = document.createElement('div');
+            box.style.cssText = `
+                background:var(--surface-color, #1e1e2e); color:var(--text-primary, #cdd6f4);
+                border:1px solid var(--border-color, #313244); border-radius:12px;
+                padding:1.5rem 1.75rem; width:100%; max-width:480px;
+                box-shadow:0 8px 32px rgba(0,0,0,0.4); font-family:inherit;
+            `;
+            box.innerHTML = `
+                <h3 style="margin:0 0 0.25rem; font-size:1rem; font-weight:600;">
+                    ❌ Help the AI Learn
+                </h3>
+                <p style="margin:0 0 1rem; font-size:0.82rem; opacity:0.6;">
+                    Your correction trains the AI so it gets it right next time.
+                </p>
+                <div style="display:flex; flex-direction:column; gap:0.5rem; margin-bottom:1rem;">
+                    ${[
+                    ['WRONG_TABLE', '🗂️ Wrong table / doctype used'],
+                    ['WRONG_FILTER', '🔍 Wrong filter or condition'],
+                    ['WRONG_DATES', '📅 Wrong date range'],
+                    ['WRONG_NUMBERS', '🔢 Numbers look off'],
+                    ['MISSING_DATA', '⚠️ Missing records or columns'],
+                    ['OTHER', '💬 Other'],
+                ].map(([val, label]) => `
+                        <label style="display:flex; align-items:center; gap:0.6rem; cursor:pointer; font-size:0.88rem; opacity:0.85;">
+                            <input type="checkbox" value="${val}" style="accent-color:var(--accent-color,#89b4fa); width:15px; height:15px; cursor:pointer;" />
+                            ${label}
+                        </label>
+                    `).join('')}
+                </div>
+                <label style="display:block; font-size:0.82rem; opacity:0.7; margin-bottom:0.4rem;">
+                    ✏️ What should the AI use instead? <span style="opacity:0.5;">(optional but very helpful)</span>
+                </label>
+                <textarea id="feedback-correction-text" rows="3" placeholder='e.g. "Revenue means grand_total in Sales Invoice, not Purchase Invoice"'
+                    style="width:100%; box-sizing:border-box; background:var(--input-bg, #313244); color:inherit;
+                    border:1px solid var(--border-color, #45475a); border-radius:8px; padding:0.6rem 0.75rem;
+                    font-family:inherit; font-size:0.88rem; resize:vertical; outline:none;"></textarea>
+                <p style="font-size:0.75rem; opacity:0.45; margin:0.4rem 0 1.25rem;">
+                    💡 Tip: Explain table/field relations, e.g. <em>"our Profit = Sales Invoice grand_total − freight_charges"</em>
+                </p>
+                <div style="display:flex; gap:0.75rem; justify-content:flex-end;">
+                    <button id="feedback-cancel-btn" style="
+                        background:transparent; color:inherit; border:1px solid var(--border-color,#45475a);
+                        border-radius:8px; padding:0.45rem 1rem; cursor:pointer; font-size:0.85rem;">
+                        Skip
+                    </button>
+                    <button id="feedback-submit-btn" style="
+                        background:var(--accent-color,#89b4fa); color:#1e1e2e;
+                        border:none; border-radius:8px; padding:0.45rem 1.1rem;
+                        cursor:pointer; font-size:0.85rem; font-weight:600;">
+                        Send Feedback
+                    </button>
+                </div>
+            `;
+            overlay.appendChild(box);
+            document.body.appendChild(overlay);
+
+            const textarea = box.querySelector('#feedback-correction-text');
+            const cancelBtn = box.querySelector('#feedback-cancel-btn');
+            const submitBtn = box.querySelector('#feedback-submit-btn');
+
+            const cleanup = () => document.body.removeChild(overlay);
+
+            cancelBtn.addEventListener('click', () => { cleanup(); resolve(null); });
+            submitBtn.addEventListener('click', () => {
+                const checkedCategories = [...box.querySelectorAll('input[type=checkbox]:checked')]
+                    .map(cb => `[${cb.value}]`).join(' ');
+                const correctionText = textarea.value.trim();
+                const combined = [checkedCategories, correctionText].filter(Boolean).join(' ');
+                cleanup();
+                resolve(combined || null);
+            });
+            // Close on overlay click
+            overlay.addEventListener('click', (e) => {
+                if (e.target === overlay) { cleanup(); resolve(null); }
+            });
+        });
+    }
+
     function showCustomConfirm(message, title = "Confirm Action") {
         return new Promise((resolve) => {
             confirmModalTitle.textContent = title;
@@ -1184,8 +1270,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             thumbsDownBtn.addEventListener('click', async () => {
                 try {
-                    const comment = await showCustomPrompt("Please tell us what went wrong so the AI can learn (Optional):", "Feedback");
-
+                    // Show structured feedback modal
+                    const comment = await showStructuredFeedbackModal();
                     thumbsDownBtn.classList.add('active');
                     thumbsUpBtn.classList.remove('active');
                     await fetch('/api/conversations/feedback', {

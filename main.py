@@ -193,6 +193,8 @@ async def generate_report(request: PromptRequest, background_tasks: BackgroundTa
         msg.execution_ms = round((time.perf_counter() - execution_started_at) * 1000) if 'execution_started_at' in locals() else None
         msg.total_duration_ms = round((time.perf_counter() - request_started_at) * 1000)
         db.commit()
+        # Auto-push failures to Motherbrain immediately
+        background_tasks.add_task(_push_telemetry_to_motherbrain, msg.id)
         failed_sql = locals().get("validated_sql") or result.get("sql")
         return {
             "conversation_id": conversation_id,
@@ -581,17 +583,127 @@ class FeedbackRequest(BaseModel):
     feedback: int
     comment: Optional[str] = None
 
+def _run_auto_extract_override(client_id: str, message_id: int, user_prompt: str, feedback_comment: str):
+    """Background task: extract context override from user feedback and store as pending."""
+    from ai_engine import auto_extract_context_override
+    from database import PendingContextOverride
+    import os
+    result = auto_extract_context_override(client_id, message_id, user_prompt, feedback_comment)
+    if not result:
+        return
+    db = SessionLocal()
+    try:
+        auto_approve = os.getenv("AUTO_APPROVE_OVERRIDES", "false").lower() == "true"
+        if auto_approve:
+            from database import ClientContextOverride
+            new_override = ClientContextOverride(
+                client_id=result["client_id"],
+                term=result["term"],
+                sql_logic=result["sql_logic"],
+                description=result["description"],
+            )
+            db.add(new_override)
+            print(f"[AutoExtract] AUTO-APPROVED override for '{result['term']}' (client={client_id})")
+        else:
+            pending = PendingContextOverride(
+                client_id=result["client_id"],
+                source_message_id=result["source_message_id"],
+                original_prompt=result["original_prompt"],
+                feedback_comment=result["feedback_comment"],
+                term=result["term"],
+                sql_logic=result["sql_logic"],
+                description=result["description"],
+                confidence=result["confidence"],
+                status="pending",
+            )
+            db.add(pending)
+            print(f"[AutoExtract] Queued pending override for '{result['term']}' (client={client_id}, confidence={result['confidence']})")
+        db.commit()
+    except Exception as e:
+        print(f"[AutoExtract] DB save failed: {e}")
+    finally:
+        db.close()
+
+
+def _push_telemetry_to_motherbrain(message_id: int):
+    """Background task: push a single ConversationMessage record to Motherbrain."""
+    import httpx, os, json
+    db = SessionLocal()
+    try:
+        msg = db.query(ConversationMessage).filter(ConversationMessage.id == message_id).first()
+        if not msg or msg.synced_to_motherbrain:
+            return
+        conv = db.query(Conversation).filter(Conversation.id == msg.conversation_id).first()
+        client_id = conv.client_id if conv else "unknown"
+        mb_url = os.getenv("MOTHERBRAIN_URL", "http://127.0.0.1:8001")
+        mb_key = os.getenv("MOTHERBRAIN_API_KEY", "dev_motherbrain_key_123")
+        payload = {
+            "telemetry_data": [{
+                "message_id": msg.id,
+                "client_id": client_id,
+                "app_name": conv.app_name if conv else None,
+                "timestamp": msg.created_at.isoformat() if msg.created_at else None,
+                "user_prompt": msg.user_prompt or "",
+                "detected_intent": msg.detected_intent,
+                "assistant_response": msg.assistant_response,
+                "model_used": msg.model_used,
+                "routing_tables": msg.routing_tables,
+                "anonymized_sql": msg.generated_sql or "",
+                "execution_status": msg.execution_status or "unknown",
+                "sql_generated": bool(msg.generated_sql),
+                "execution_attempted": msg.execution_status in ("success", "error"),
+                "is_true_failure": msg.execution_status == "error",
+                "generation_ms": msg.generation_ms,
+                "execution_ms": msg.execution_ms,
+                "total_duration_ms": msg.total_duration_ms,
+                "error_message": msg.error_message,
+                "user_feedback": msg.user_feedback,
+                "feedback_comment": msg.feedback_comment,
+            }]
+        }
+        resp = httpx.post(
+            f"{mb_url}/api/motherbrain/ingest",
+            json=payload,
+            headers={"Authorization": f"Bearer {mb_key}"},
+            timeout=10.0,
+        )
+        if resp.status_code == 200:
+            msg.synced_to_motherbrain = True
+            db.commit()
+            print(f"[Telemetry] Pushed message_id={message_id} to Motherbrain")
+        else:
+            print(f"[Telemetry] Motherbrain rejected message_id={message_id}: {resp.status_code}")
+    except Exception as e:
+        print(f"[Telemetry] Push to Motherbrain failed for message_id={message_id}: {e}")
+    finally:
+        db.close()
+
+
 @app.post("/api/conversations/feedback")
-def submit_feedback(request: FeedbackRequest, db: Session = Depends(get_db)):
+def submit_feedback(request: FeedbackRequest, background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
     msg = db.query(ConversationMessage).filter(ConversationMessage.id == request.message_id).first()
     if not msg:
         raise HTTPException(status_code=404, detail="Message not found")
-        
+
     msg.user_feedback = request.feedback
     if request.comment:
         msg.feedback_comment = request.comment
-        
     db.commit()
+
+    # On negative feedback — auto extract context + push to Motherbrain
+    if request.feedback == -1:
+        conv = db.query(Conversation).filter(Conversation.id == msg.conversation_id).first()
+        client_id = conv.client_id if conv else _normalize_client_id(None)
+        if request.comment and len(request.comment.strip()) > 10:
+            background_tasks.add_task(
+                _run_auto_extract_override,
+                client_id,
+                msg.id,
+                msg.user_prompt or "",
+                request.comment,
+            )
+        background_tasks.add_task(_push_telemetry_to_motherbrain, msg.id)
+
     return {"status": "success", "message_id": msg.id, "feedback": msg.user_feedback}
 
 
@@ -762,3 +874,166 @@ def delete_context_override(override_id: int, db: Session = Depends(get_db)):
     except Exception as e:
         db.rollback()
         raise HTTPException(status_code=500, detail=str(e))
+
+
+# ---------------------------------------------------------------------------
+# Pending Context Overrides (auto-extracted, awaiting admin approval)
+# ---------------------------------------------------------------------------
+
+@app.get("/api/pending-overrides/{client_id}")
+def get_pending_overrides(client_id: str, db: Session = Depends(get_db)):
+    from database import PendingContextOverride
+    items = (
+        db.query(PendingContextOverride)
+        .filter(
+            PendingContextOverride.client_id == client_id,
+            PendingContextOverride.status == "pending",
+        )
+        .order_by(PendingContextOverride.created_at.desc())
+        .all()
+    )
+    return [
+        {
+            "id": r.id,
+            "client_id": r.client_id,
+            "source_message_id": r.source_message_id,
+            "original_prompt": r.original_prompt,
+            "feedback_comment": r.feedback_comment,
+            "term": r.term,
+            "sql_logic": r.sql_logic,
+            "description": r.description,
+            "confidence": r.confidence,
+            "status": r.status,
+            "created_at": r.created_at.isoformat() if r.created_at else None,
+        }
+        for r in items
+    ]
+
+
+@app.post("/api/pending-overrides/{pending_id}/approve")
+def approve_pending_override(pending_id: int, db: Session = Depends(get_db)):
+    """Promote a pending override to an active ClientContextOverride."""
+    from database import PendingContextOverride, ClientContextOverride
+    pending = db.query(PendingContextOverride).filter(PendingContextOverride.id == pending_id).first()
+    if not pending:
+        raise HTTPException(status_code=404, detail="Pending override not found")
+    try:
+        new_override = ClientContextOverride(
+            client_id=pending.client_id,
+            term=pending.term,
+            sql_logic=pending.sql_logic,
+            description=pending.description,
+        )
+        db.add(new_override)
+        pending.status = "approved"
+        db.commit()
+        db.refresh(new_override)
+        return {"status": "approved", "override_id": new_override.id}
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/api/pending-overrides/{pending_id}/reject")
+def reject_pending_override(pending_id: int, db: Session = Depends(get_db)):
+    """Reject a pending auto-extracted override."""
+    from database import PendingContextOverride
+    pending = db.query(PendingContextOverride).filter(PendingContextOverride.id == pending_id).first()
+    if not pending:
+        raise HTTPException(status_code=404, detail="Pending override not found")
+    try:
+        pending.status = "rejected"
+        db.commit()
+        return {"status": "rejected"}
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+# ---------------------------------------------------------------------------
+# Context Health — per-client AI learning summary
+# ---------------------------------------------------------------------------
+
+@app.get("/api/context-health/{client_id}")
+def get_context_health(client_id: str, db: Session = Depends(get_db)):
+    """
+    Returns a summary of how much the AI has learned about a specific client.
+    Useful for the Motherbrain admin dashboard.
+    """
+    from database import ClientContextOverride, PendingContextOverride
+    normalized = _normalize_client_id(client_id)
+
+    saved_reports = db.query(SavedReport).filter(SavedReport.client_id == normalized).count()
+
+    success_msgs = (
+        db.query(ConversationMessage)
+        .join(Conversation)
+        .filter(
+            Conversation.client_id == normalized,
+            ConversationMessage.execution_status == "success",
+        )
+        .count()
+    )
+
+    context_overrides = (
+        db.query(ClientContextOverride)
+        .filter(ClientContextOverride.client_id == normalized)
+        .count()
+    )
+
+    pending_overrides = (
+        db.query(PendingContextOverride)
+        .filter(
+            PendingContextOverride.client_id == normalized,
+            PendingContextOverride.status == "pending",
+        )
+        .count()
+    )
+
+    # Embedding coverage over successful messages
+    total_msgs = (
+        db.query(ConversationMessage)
+        .join(Conversation)
+        .filter(Conversation.client_id == normalized)
+        .count()
+    )
+    embedded_msgs = (
+        db.query(ConversationMessage)
+        .join(Conversation)
+        .filter(
+            Conversation.client_id == normalized,
+            ConversationMessage.embedding.isnot(None),
+        )
+        .count()
+    )
+    embedding_pct = round((embedded_msgs / total_msgs) * 100) if total_msgs > 0 else 0
+
+    # Last learning event (most recent approved override or successful message)
+    last_override = (
+        db.query(ClientContextOverride)
+        .filter(ClientContextOverride.client_id == normalized)
+        .order_by(ClientContextOverride.created_at.desc())
+        .first()
+    )
+    last_success = (
+        db.query(ConversationMessage)
+        .join(Conversation)
+        .filter(
+            Conversation.client_id == normalized,
+            ConversationMessage.execution_status == "success",
+        )
+        .order_by(ConversationMessage.created_at.desc())
+        .first()
+    )
+    candidates = [x.created_at for x in [last_override, last_success] if x and x.created_at]
+    last_learning = max(candidates).isoformat() if candidates else None
+
+    return {
+        "client_id": normalized,
+        "saved_reports": saved_reports,
+        "successful_conversations": success_msgs,
+        "context_overrides": context_overrides,
+        "pending_overrides": pending_overrides,
+        "embedding_coverage_pct": embedding_pct,
+        "last_learning_event": last_learning,
+    }

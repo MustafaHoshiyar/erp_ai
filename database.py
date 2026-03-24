@@ -85,6 +85,22 @@ class ClientContextOverride(Base):
     description = Column(Text, nullable=True) # e.g., "Client A defines revenue as invoiced amount"
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
+class PendingContextOverride(Base):
+    """Auto-extracted context overrides from user feedback, pending admin review."""
+    __tablename__ = "pending_context_overrides"
+
+    id = Column(Integer, primary_key=True, index=True)
+    client_id = Column(String(50), index=True)
+    source_message_id = Column(Integer, ForeignKey("conversation_messages.id"), nullable=True)
+    original_prompt = Column(Text, nullable=True)  # The user's original query
+    feedback_comment = Column(Text, nullable=True)  # What the user said was wrong
+    term = Column(String(200), nullable=True)        # Extracted term
+    sql_logic = Column(Text, nullable=True)          # Extracted SQL logic
+    description = Column(Text, nullable=True)        # Human-readable description
+    confidence = Column(Integer, nullable=True)      # 0–100 confidence score from AI
+    status = Column(String(20), default="pending", index=True)  # pending, approved, rejected
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
 class ClientConfig(Base):
     __tablename__ = "client_configs"
 

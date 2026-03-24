@@ -1226,3 +1226,92 @@ def generate_chat_response(user_prompt, history=None):
             "tokens_used": 0,
             "detected_intent": "chat"
         }
+
+
+def auto_extract_context_override(client_id: str, message_id: int, original_prompt: str, feedback_comment: str) -> dict | None:
+    """
+    Uses AI to parse a user's correction/feedback comment and extract a structured
+    ClientContextOverride (term → sql_logic mapping).
+
+    Returns a dict with {term, sql_logic, description, confidence} if something
+    extractable was found with confidence >= 70, otherwise returns None.
+
+    This runs as a background task after a user submits negative feedback.
+    """
+    import json
+
+    system_prompt = """You are an ERP data analyst assistant. A user submitted negative feedback on an AI-generated ERPNext report.
+Your job is to read the original query and the user's correction comment, and determine if the user is teaching the AI a reusable business rule.
+
+Examples of extractable rules:
+- "use Sales Invoice instead of Purchase Invoice for revenue" → term=Revenue, sql_logic=SELECT ... FROM `tabSales Invoice`
+- "our 'profit' is grand_total minus freight_charges on Sales Invoice" → term=profit, sql_logic=SUM(si.grand_total - si.freight_charges)
+- "delivery means orders where status='Completed'" → term=delivery, sql_logic=status = 'Completed'
+
+Examples of NON-extractable feedback (just frustration, not a rule):
+- "this is wrong"
+- "numbers look off"
+- "show it differently"
+
+Return ONLY a raw JSON object in this format:
+{
+  "extractable": true,
+  "term": "Revenue",
+  "sql_logic": "SUM(`tabSales Invoice`.`grand_total`)",
+  "description": "User defines Revenue as the sum of Sales Invoice grand_total",
+  "confidence": 85
+}
+
+If nothing extractable, return:
+{"extractable": false}
+
+Rules:
+- confidence is 0-100. Only return extractable=true if you are >= 70 confident.
+- sql_logic should be the actual SQL fragment or table name to substitute, not a full query.
+- term should be the business concept (1-3 words) the user is redefining.
+- Return ONLY the JSON object. No markdown, no explanations.
+"""
+
+    user_message = f"Original user prompt: {original_prompt}\n\nUser's correction/feedback: {feedback_comment}"
+
+    try:
+        response = client.chat.completions.create(
+            model=AI_MODEL,
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_message},
+            ],
+            temperature=0,
+        )
+        raw = response.choices[0].message.content.strip()
+
+        # Strip markdown fences if present
+        match = re.search(r"```(?:json)?\s*(.*?)```", raw, re.IGNORECASE | re.DOTALL)
+        if match:
+            raw = match.group(1).strip()
+
+        result = json.loads(raw)
+
+        if not result.get("extractable"):
+            print(f"[AutoExtract] No extractable override found for message_id={message_id}")
+            return None
+
+        confidence = int(result.get("confidence", 0))
+        if confidence < 70:
+            print(f"[AutoExtract] Confidence too low ({confidence}) for message_id={message_id}, skipping.")
+            return None
+
+        return {
+            "client_id": client_id,
+            "source_message_id": message_id,
+            "original_prompt": original_prompt,
+            "feedback_comment": feedback_comment,
+            "term": result.get("term", "")[:200],
+            "sql_logic": result.get("sql_logic", ""),
+            "description": result.get("description", ""),
+            "confidence": confidence,
+        }
+
+    except Exception as e:
+        print(f"[AutoExtract] Failed to extract context override: {e}")
+        return None
