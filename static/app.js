@@ -1365,8 +1365,19 @@ document.addEventListener('DOMContentLoaded', () => {
             dataSection.classList.remove('hidden');
         } else {
             // Handle raw text response from AI (if any fallback exists)
-            const textResponse = document.createElement('p');
-            textResponse.textContent = result.message || "No data returned.";
+            const textResponse = document.createElement('div');
+            // Basic markdown regex replacing **bold**
+            const formattedHtml = (result.message || "No data returned.").replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+
+            // To preserve spaces and newlines, we can either set CSS pre-wrap or wrap lines in p tags:
+            const paragraphs = formattedHtml.split(/\n\n+/);
+            paragraphs.forEach(pText => {
+                const p = document.createElement('p');
+                // preserve single newlines using <br>
+                p.innerHTML = pText.replace(/\n/g, '<br>');
+                textResponse.appendChild(p);
+            });
+
             messageNode.querySelector('.message-content').prepend(textResponse);
         }
 
