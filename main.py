@@ -91,7 +91,13 @@ async def generate_report(request: PromptRequest, background_tasks: BackgroundTa
         detected_intent=detected_intent
     )
 
-    if detected_intent in {"chat", "clarification_needed", "unsupported"}:
+    should_fast_skip = False
+    if detected_intent in {"clarification_needed", "unsupported"}:
+        should_fast_skip = True
+    elif detected_intent == "chat" and not request.history:
+        should_fast_skip = True
+
+    if should_fast_skip:
         msg.assistant_response = build_non_report_response(request.prompt, detected_intent)
         msg.execution_status = "skipped"
         db.add(msg)
@@ -111,7 +117,14 @@ async def generate_report(request: PromptRequest, background_tasks: BackgroundTa
     from erp_client import get_default_currency_info
     currency_info = await get_default_currency_info(client_id)
     generation_started_at = time.perf_counter()
-    result = generate_sql(request.prompt, request.history, client_id, currency=currency_info["code"], currency_symbol=currency_info["symbol"])
+
+    if detected_intent == "chat":
+        from ai_engine import generate_chat_response
+        result = generate_chat_response(request.prompt, request.history)
+        result["sql"] = None
+    else:
+        result = generate_sql(request.prompt, request.history, client_id, currency=currency_info["code"], currency_symbol=currency_info["symbol"])
+
     generation_ms = round((time.perf_counter() - generation_started_at) * 1000)
     if result.get("sql"):
         original_sql = result["sql"]

@@ -449,8 +449,7 @@ def _parse_sql_response(raw_output, tokens_used, needs_forecast):
             "sql": sql_text,
             "message": raw_output,
             "tokens_used": tokens_used,
-            "needs_forecast": needs_forecast if sql_text else False,
-            "detected_intent": detected_intent if sql_text else "report",
+            "needs_forecast": needs_forecast if sql_text else False
         }
 
     def extract_sql_candidate(text):
@@ -968,7 +967,6 @@ def generate_sql(user_prompt, history=None, client_id="DEMO_CLIENT_123", currenc
                 "message": deterministically_repaired_sql,
                 "tokens_used": tokens_used,
                 "needs_forecast": needs_forecast,
-                "detected_intent": result.get("detected_intent", "report"),
                 "model_used": AI_MODEL,
                 "routing_tables": required_tables,
             }
@@ -1189,3 +1187,34 @@ Return strictly the JSON object. No markdown, no explanations.
     except Exception as e:
         print(f"[DEBUG] AI Insights Chart Config failed: {e}")
         return None
+
+def generate_chat_response(user_prompt, history=None):
+    messages = [
+        {"role": "system", "content": "You are a helpful ERPNext AI data assistant. The user is asking a follow-up question, asking for clarification about data logic, or just chatting. Use the conversation history to provide a thoughtful, clear response in natural language. Explain the previous query or data logic clearly if asked. Do NOT try to output a raw SQL query unless explicitly asked to rewrite it."}
+    ]
+    if history:
+        for msg in history:
+            messages.append({"role": msg.get("role"), "content": msg.get("content")})
+            
+    messages.append({"role": "user", "content": user_prompt})
+
+    try:
+        response = client.chat.completions.create(
+            model=AI_MODEL,
+            messages=messages,
+            temperature=0.3
+        )
+        output = response.choices[0].message.content.strip()
+        tokens_used = response.usage.total_tokens if hasattr(response, "usage") and response.usage else 0
+        return {
+            "message": output,
+            "tokens_used": tokens_used,
+            "detected_intent": "chat"
+        }
+    except Exception as e:
+        print(f"[AI Engine] chat error: {e}")
+        return {
+            "message": f"I encountered an error trying to process your chat request. ({str(e)})",
+            "tokens_used": 0,
+            "detected_intent": "chat"
+        }

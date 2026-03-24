@@ -392,5 +392,6 @@
 - Validation:
   - `extract_sql_candidate` now explicitly requires `SELECT`/`WITH` to begin a line and ensures the query contains a `FROM` clause.
   - `_find_relation_constraint_violations` now gracefully skips enforcement if the parent table is omitted from the generated SQL entirely.
+  - `generate_chat_response` added to handle follow-up queries using natural language via the LLM context directly, avoiding empty boilerplate logic.
 - Follow-up:
   - Continue implementing Phase 4 by adding the Review Queue clustering and manual SQL overriding UI inside Motherbrain.
