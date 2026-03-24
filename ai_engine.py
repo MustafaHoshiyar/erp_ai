@@ -1189,9 +1189,17 @@ Return strictly the JSON object. No markdown, no explanations.
         return None
 
 def generate_chat_response(user_prompt, history=None):
-    messages = [
-        {"role": "system", "content": "You are a helpful ERPNext AI data assistant. The user is asking a follow-up question, asking for clarification about data logic, or just chatting. Use the conversation history to provide a thoughtful, clear response in natural language. Explain the previous query or data logic clearly if asked. Do NOT try to output a raw SQL query unless explicitly asked to rewrite it."}
-    ]
+    system_prompt = (
+        "You are a helpful and professional ERPNext AI data assistant. "
+        "The user is asking a follow-up question, asking for clarification about data logic, or just chatting. "
+        "Use the conversation history to provide a thoughtful, clear response in natural language.\n\n"
+        "CRITICAL RULES for explanations:\n"
+        "1. DO NOT mention internal database table names (e.g., `tabSales Invoice`, `tabItem`). Use business concepts instead (e.g., 'Sales Invoices', 'Items').\n"
+        "2. DO NOT mention raw SQL clauses (e.g., avoid 'The WHERE clause filters...'). Explain in user-friendly terms ('It filters records where...').\n"
+        "3. FORMAT BEAUTIFULLY. Use markdown bullet points, bold text for key metrics, and ensure double newlines between points so it reads well on the frontend.\n"
+        "4. Do NOT output raw SQL queries unless explicitly asked."
+    )
+    messages = [{"role": "system", "content": system_prompt}]
     if history:
         for msg in history:
             messages.append({"role": msg.get("role"), "content": msg.get("content")})
