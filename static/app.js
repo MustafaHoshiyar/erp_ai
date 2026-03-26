@@ -641,6 +641,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     prompt: promptText,
                     history: chatHistory,
                     client_id: CLIENT_ID,
+                    user_id: localStorage.getItem('user_email') || null,
                     conversation_id: currentConversationId
                 })
             });
