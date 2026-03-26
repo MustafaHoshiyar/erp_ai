@@ -50,6 +50,7 @@ def run_evaluation():
             item["prompt"],
             history=item.get("history"),
             client_id=item.get("client_id", "EVALUATION_BOT"),
+            user_id="SYSTEM_EVALUATOR",
         )
 
         generated_sql = result.get("sql", "")

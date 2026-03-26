@@ -628,6 +628,38 @@ def _run_auto_extract_override(client_id: str, message_id: int, user_prompt: str
     finally:
         db.close()
 
+class OverridePushRequest(BaseModel):
+    client_id: str
+    term: str
+    sql_logic: str
+    description: Optional[str] = None
+
+@app.post("/api/motherbrain/push-override")
+def push_override_from_motherbrain(request: OverridePushRequest, db: Session = Depends(get_db)):
+    """Securely receive a Context Override push from Motherbrain Admin."""
+    from database import ClientContextOverride
+    
+    # Check if existing term exists for this client
+    existing = db.query(ClientContextOverride).filter(
+        ClientContextOverride.client_id == request.client_id,
+        ClientContextOverride.term.ilike(request.term)
+    ).first()
+    
+    if existing:
+        existing.sql_logic = request.sql_logic
+        existing.description = request.description
+    else:
+        new_override = ClientContextOverride(
+            client_id=request.client_id,
+            term=request.term,
+            sql_logic=request.sql_logic,
+            description=request.description
+        )
+        db.add(new_override)
+    
+    db.commit()
+    return {"status": "success", "message": f"Override for '{request.term}' pushed successfully."}
+
 
 def _push_telemetry_to_motherbrain(message_id: int):
     """Background task: push a single ConversationMessage record to Motherbrain."""
