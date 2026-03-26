@@ -448,7 +448,9 @@ def _parse_sql_response(raw_output, tokens_used, needs_forecast):
         return {
             "sql": sql_text,
             "message": raw_output,
-            "tokens_used": tokens_used,
+            "tokens_used": tokens_used.get("total", 0),
+            "input_tokens": tokens_used.get("prompt", 0),
+            "output_tokens": tokens_used.get("completion", 0),
             "needs_forecast": needs_forecast if sql_text else False
         }
 
@@ -925,10 +927,16 @@ def generate_sql(user_prompt, history=None, client_id="DEMO_CLIENT_123", currenc
         messages=messages,
         temperature=0
     )
-
     raw_output = response.choices[0].message.content.strip()
-    tokens_used = response.usage.total_tokens if hasattr(response, "usage") and response.usage else 0
-    tokens_used += pass1_tokens
+
+    usage = response.usage if hasattr(response, "usage") and response.usage else None
+    prompt_tokens = (usage.prompt_tokens if usage else 0) + pass1_tokens
+    completion_tokens = usage.completion_tokens if usage else 0
+    tokens_used = {
+        "total": prompt_tokens + completion_tokens,
+        "prompt": prompt_tokens,
+        "completion": completion_tokens
+    }
 
     needs_forecast = False
     if "FORECAST:" in raw_output:
@@ -965,7 +973,9 @@ def generate_sql(user_prompt, history=None, client_id="DEMO_CLIENT_123", currenc
             return {
                 "sql": deterministically_repaired_sql,
                 "message": deterministically_repaired_sql,
-                "tokens_used": tokens_used,
+                "tokens_used": tokens_used.get("total", 0),
+                "input_tokens": tokens_used.get("prompt", 0),
+                "output_tokens": tokens_used.get("completion", 0),
                 "needs_forecast": needs_forecast,
                 "model_used": AI_MODEL,
                 "routing_tables": required_tables,
@@ -1213,18 +1223,26 @@ def generate_chat_response(user_prompt, history=None):
             temperature=0.3
         )
         output = response.choices[0].message.content.strip()
-        tokens_used = response.usage.total_tokens if hasattr(response, "usage") and response.usage else 0
+        usage = response.usage if hasattr(response, "usage") and response.usage else None
+        prompt_tokens = usage.prompt_tokens if usage else 0
+        completion_tokens = usage.completion_tokens if usage else 0
         return {
             "message": output,
-            "tokens_used": tokens_used,
-            "detected_intent": "chat"
+            "tokens_used": prompt_tokens + completion_tokens,
+            "input_tokens": prompt_tokens,
+            "output_tokens": completion_tokens,
+            "detected_intent": "chat",
+            "model_used": AI_MODEL
         }
     except Exception as e:
         print(f"[AI Engine] chat error: {e}")
         return {
             "message": f"I encountered an error trying to process your chat request. ({str(e)})",
             "tokens_used": 0,
-            "detected_intent": "chat"
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "detected_intent": "chat",
+            "model_used": AI_MODEL
         }
 
 

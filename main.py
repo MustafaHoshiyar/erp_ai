@@ -58,6 +58,7 @@ class PromptRequest(BaseModel):
     history: Optional[List[Dict[str, str]]] = None
     client_id: Optional[str] = "DEMO_CLIENT_123"
     app_name: Optional[str] = None
+    user_id: Optional[str] = None
     conversation_id: Optional[int] = None
 
 
@@ -88,7 +89,8 @@ async def generate_report(request: PromptRequest, background_tasks: BackgroundTa
     msg = ConversationMessage(
         conversation_id=conversation_id,
         user_prompt=request.prompt,
-        detected_intent=detected_intent
+        detected_intent=detected_intent,
+        user_id=request.user_id
     )
 
     should_fast_skip = False
@@ -137,7 +139,9 @@ async def generate_report(request: PromptRequest, background_tasks: BackgroundTa
 
     msg.generated_sql = result.get("sql")
     msg.assistant_response = result.get("message")
-    msg.tokens_used = tokens_used
+    msg.tokens_used = result.get("tokens_used", 0)
+    msg.input_tokens = result.get("input_tokens", 0)
+    msg.output_tokens = result.get("output_tokens", 0)
     msg.detected_intent = result.get("detected_intent", detected_intent)
     msg.model_used = result.get("model_used")
     msg.routing_tables = result.get("routing_tables")
@@ -659,6 +663,9 @@ def _push_telemetry_to_motherbrain(message_id: int):
                 "error_message": msg.error_message,
                 "user_feedback": msg.user_feedback,
                 "feedback_comment": msg.feedback_comment,
+                "user_id": msg.user_id,
+                "input_tokens": msg.input_tokens,
+                "output_tokens": msg.output_tokens,
             }]
         }
         resp = httpx.post(

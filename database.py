@@ -64,6 +64,9 @@ class ConversationMessage(Base):
     user_feedback = Column(Integer, nullable=True) # 1 (positive), -1 (negative), etc.
     feedback_comment = Column(Text, nullable=True) # User's correction context
     tokens_used = Column(Integer, nullable=True)
+    input_tokens = Column(Integer, nullable=True)
+    output_tokens = Column(Integer, nullable=True)
+    user_id = Column(String(100), nullable=True)
     model_used = Column(String(100), nullable=True)
     routing_tables = Column(JSON, nullable=True)
     generation_ms = Column(Integer, nullable=True)

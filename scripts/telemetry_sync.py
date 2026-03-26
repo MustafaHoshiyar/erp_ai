@@ -69,8 +69,10 @@ def run_sync():
                 "total_duration_ms": msg.total_duration_ms,
                 "error_message": msg.error_message,
                 "user_feedback": msg.user_feedback,
-                "feedback_comment": msg.feedback_comment
-
+                "feedback_comment": msg.feedback_comment,
+                "user_id": msg.user_id,
+                "input_tokens": msg.input_tokens,
+                "output_tokens": msg.output_tokens
             })
 
         print(f"Prepared {len(payload)} records for sync.")
