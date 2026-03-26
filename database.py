@@ -116,9 +116,40 @@ class ClientConfig(Base):
     is_active = Column(Boolean, default=True, nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
-def init_db(bind_engine=None):
-    Base.metadata.create_all(bind=bind_engine or engine)
+from sqlalchemy import text, inspect
 
+def init_db(bind_engine=None):
+    target_engine = bind_engine or engine
+    Base.metadata.create_all(bind=target_engine)
+    
+    # Auto-migration for missing columns
+    try:
+        inspector = inspect(target_engine)
+        columns = {col["name"] for col in inspector.get_columns("conversation_messages")}
+        
+        # New columns to add if they are missing
+        migrations = {
+            "input_tokens": "INTEGER",
+            "output_tokens": "INTEGER",
+            "user_id": "TEXT",
+            "model_used": "TEXT",
+            "routing_tables": "JSON",
+            "generation_ms": "INTEGER",
+            "execution_ms": "INTEGER",
+            "total_duration_ms": "INTEGER",
+            "synced_to_motherbrain": "BOOLEAN DEFAULT 0"
+        }
+        
+        with target_engine.begin() as conn:
+            for column, definition in migrations.items():
+                if column not in columns:
+                    try:
+                        conn.execute(text(f"ALTER TABLE conversation_messages ADD COLUMN {column} {definition}"))
+                        print(f"[{target_engine.name}] Migration: Added column {column} to conversation_messages")
+                    except Exception as e:
+                        print(f"[{target_engine.name}] Migration error for {column}: {e}")
+    except Exception as outer_e:
+        print(f"Database auto-migration safety check failed: {outer_e}")
 
 init_db()
 
