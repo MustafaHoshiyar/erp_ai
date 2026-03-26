@@ -68,7 +68,7 @@ def run_sync():
                 "execution_ms": msg.execution_ms,
                 "total_duration_ms": msg.total_duration_ms,
                 "error_message": msg.error_message,
-                "user_feedback": "negative" if msg.user_feedback == -1 else "positive" if msg.user_feedback == 1 else msg.user_feedback,
+                "user_feedback": msg.user_feedback,
                 "feedback_comment": msg.feedback_comment
 
             })
