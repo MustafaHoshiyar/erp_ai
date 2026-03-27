@@ -1188,8 +1188,21 @@ document.addEventListener('DOMContentLoaded', () => {
                     const originalBtnContent = exportInsightsBtn.innerHTML;
                     const insightsWindow = window.open('', '_blank', 'noopener');
                     if (insightsWindow && insightsWindow.document) {
-                        insightsWindow.document.title = 'Opening Insights';
-                        insightsWindow.document.body.innerHTML = '<p style="font-family: sans-serif; padding: 1rem;">Opening Insights dashboard...</p>';
+                        try {
+                            insightsWindow.document.title = 'Opening Insights...';
+                            insightsWindow.document.body.innerHTML = `
+                                <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #f9fafb; color: #374151; overflow: hidden;">
+                                    <div style="border: 4px solid #f3f4f6; border-top: 4px solid #3b82f6; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite;"></div>
+                                    <p style="margin-top: 1.5rem; font-size: 1.125rem; font-weight: 500;">Creating Your Insights Dashboard</p>
+                                    <p style="margin-top: 0.5rem; font-size: 0.875rem; color: #6b7280;">Please wait while we sync your report...</p>
+                                    <style>
+                                        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+                                    </style>
+                                </div>
+                            `;
+                        } catch (e) {
+                            console.error("Failed to write to Insights window:", e);
+                        }
                     }
 
                     // Extract chart type
@@ -1227,12 +1240,15 @@ document.addEventListener('DOMContentLoaded', () => {
                         // If successful, the API returns {"status": "success", "url": "..."}
                         if (resData.url) {
                             if (insightsWindow && !insightsWindow.closed) {
-                                insightsWindow.location = resData.url;
+                                insightsWindow.location.href = resData.url;
                             } else {
                                 window.open(resData.url, '_blank', 'noopener');
                             }
-                        } else if (insightsWindow && !insightsWindow.closed) {
-                            insightsWindow.close();
+                        } else {
+                            // Close the blank window if no URL is returned
+                            if (insightsWindow && !insightsWindow.closed) {
+                                insightsWindow.close();
+                            }
                         }
 
                     } catch (e) {

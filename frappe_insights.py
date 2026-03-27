@@ -162,7 +162,8 @@ async def export_chart_and_dashboard_to_insights(title: str, sql: str, chart_typ
     print(f"[DEBUG] Created query: {query_name}")
     
     x_col = None
-    y_series = []
+    y_series_raw = []
+    available_columns = []
     
     try:
         from erp_client import run_query as erp_run_query
@@ -173,84 +174,67 @@ async def export_chart_and_dashboard_to_insights(title: str, sql: str, chart_typ
         
         result_sample = await erp_run_query(introspect_sql, client_id=client_id)
         sample_rows = result_sample.get("message", [])
+        if sample_rows and len(sample_rows) > 0:
+            available_columns = list(sample_rows[0].keys())
         
         from ai_engine import determine_insights_chart_config
         ai_config = determine_insights_chart_config(sql, sample_rows)
         if ai_config:
             print(f"[DEBUG] AI decided Config: {ai_config}")
-            x_col = ai_config.get("x_col")
-            y_series = ai_config.get("y_series", [])
+            # Validate X column
+            if ai_config.get("x_col") in available_columns:
+                x_col = ai_config.get("x_col")
+            
+            # Validate and filter Y series
+            for s in ai_config.get("y_series", []):
+                if s.get("column") in available_columns:
+                    y_series_raw.append(s)
+            
             chart_type = ai_config.get("chart_type", chart_type)
     except Exception as e:
         print(f"[DEBUG] AI Config Generation failed: {e}")
         
-    ai_x_col = x_col
-    ai_y_cols = [s.get("column") for s in y_series] if y_series else y_cols
-    
-    x_col = None
-    y_cols = []
-    
-    try:
-        from erp_client import run_query as erp_run_query
-        introspect_sql = sql.rstrip().rstrip(";")
-        sql_lower = introspect_sql.lower()
-        if " limit " not in sql_lower:
-            introspect_sql += " LIMIT 1"
+    # Manual Fallback Introspection if AI failed or returned invalid columns
+    if not x_col or not y_series_raw:
+        fallback_x = None
+        fallback_y_cols = []
         
-        result = await erp_run_query(introspect_sql, client_id=client_id)
-        rows = result.get("message", [])
-        
-        if rows and isinstance(rows, list) and len(rows) > 0:
-            row = rows[0]
-            for k, v in row.items():
-                if isinstance(v, (int, float)) and not isinstance(v, bool):
-                    k_lower = k.lower()
-                    if not any(stop in k_lower for stop in ["mobile", "phone"]) and k_lower not in ["id", "idx", "name"]:
-                        y_cols.append(k)
-                elif x_col is None:
-                    x_col = k
+        try:
+            if available_columns and len(sample_rows) > 0:
+                row = sample_rows[0]
+                for k in available_columns:
+                    v = row[k]
+                    if isinstance(v, (int, float)) and not isinstance(v, bool):
+                        k_lower = k.lower()
+                        # Skip ID/Phone looking columns
+                        if not any(stop in k_lower for stop in ["mobile", "phone"]) and k_lower not in ["id", "idx", "name"]:
+                            fallback_y_cols.append(k)
+                    elif fallback_x is None:
+                        fallback_x = k
+            
+            if fallback_x and not x_col:
+                x_col = fallback_x
+            if fallback_y_cols and not y_series_raw:
+                for y in fallback_y_cols:
+                    y_series_raw.append({"column": y, "aggregation": "sum"})
                     
-        print(f"[DEBUG] Introspection: x_col={x_col}, y_cols={y_cols}")
-    except Exception as e:
-        print(f"[DEBUG] Column introspection failed: {e}")
+            print(f"[DEBUG] Introspection Fallback: x_col={x_col}, y_cols={fallback_y_cols}")
+        except Exception as e:
+            print(f"[DEBUG] Fallback introspection failed: {e}")
     
-    if not x_col or not y_cols:
-        import re
-        all_matches = re.findall(r"SELECT\s+(.+?)\s+FROM", sql, re.IGNORECASE | re.DOTALL)
-        if all_matches:
-            cols_str = all_matches[-1]
-            col_parts = [c.strip() for c in cols_str.split(",")]
-            parsed_cols = []
-            for part in col_parts:
-                alias_match = re.search(r"\bAS\s+(\w+)$", part, re.IGNORECASE)
-                if alias_match:
-                    parsed_cols.append(alias_match.group(1))
-                else:
-                    words = re.findall(r"[\w]+", part)
-                    if words:
-                        parsed_cols.append(words[-1])
-            
-            print(f"[DEBUG] SQL fallback parsed columns: {parsed_cols}")
-            
-            for c in parsed_cols:
-                c_lower = c.lower()
-                if any(kw in c_lower for kw in ["count", "sum", "total", "amount", "qty", "quantity", "revenue", "price", "avg", "predicted", "forecast", "sales"]):
-                    if c not in y_cols:
-                        y_cols.append(c)
-                elif not x_col:
-                    x_col = c
-    
-    if ai_x_col:
-        x_col = ai_x_col
-    if ai_y_cols:
-        y_cols = ai_y_cols
-        
+    # Static Fallback if still nothing
     if not x_col:
-        x_col = "name"
-    if not y_cols:
-        y_cols = ["total"]
-        
-    print(f"[DEBUG] Final Chart Columns to export: x_col={x_col}, y_cols={y_cols}")
+        x_col = available_columns[0] if available_columns else "name"
+    if not y_series_raw:
+        # Pick the first numeric column we didn't use for X
+        for k in available_columns:
+            if k == x_col: continue
+            y_series_raw.append({"column": k, "aggregation": "sum"})
+            break
+        if not y_series_raw:
+            y_series_raw = [{"column": "total", "aggregation": "sum"}]
+            
+    print(f"[DEBUG] Final Chart Columns to export: x_col={x_col}, y_series={y_series_raw}")
     
     frappe_chart_type = "Bar"
     ct = chart_type.lower()
@@ -265,38 +249,28 @@ async def export_chart_and_dashboard_to_insights(title: str, sql: str, chart_typ
     elif "area" in ct:
         frappe_chart_type = "Area"
     
-    if not y_series:
-        y_series = []
-        for y in y_cols:
-            y_lower = y.lower()
-            if "count" in y_lower:
-                agg = "count"
-            elif "avg" in y_lower or "average" in y_lower:
-                agg = "avg"
-            else:
-                agg = "sum"
-            y_series.append({
-                "measure": {
-                    "aggregation": agg,
-                    "column_name": y,
-                    "data_type": "Decimal",
-                    "measure_name": f"{agg}_of_{y}"
-                }
-            })
-    else:
-        formatted_series = []
-        for series in y_series:
-            agg = series.get("aggregation", "sum")
-            col = series.get("column", "total")
-            formatted_series.append({
-                "measure": {
-                    "aggregation": agg,
-                    "column_name": col,
-                    "data_type": "Decimal",
-                    "measure_name": f"{agg}_of_{col}"
-                }
-            })
-        y_series = formatted_series
+    # Format the y_series for Frappe Insights JSON
+    formatted_y_series = []
+    for series in y_series_raw:
+        agg = series.get("aggregation", "sum")
+        col = series.get("column")
+        
+        # Determine aggregation based on column name if not specified or if sum is too generic
+        col_lower = col.lower()
+        if "count" in col_lower and agg == "sum":
+            agg = "count"
+        elif ("avg" in col_lower or "average" in col_lower) and agg == "sum":
+            agg = "avg"
+            
+        formatted_y_series.append({
+            "measure": {
+                "aggregation": agg,
+                "column_name": col,
+                "data_type": "Decimal",
+                "measure_name": f"{agg}_of_{col}"
+            }
+        })
+    y_series = formatted_y_series
     
     chart_config = {
         "filters": {"filters": [], "logical_operator": "And"},

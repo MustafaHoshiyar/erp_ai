@@ -1148,10 +1148,11 @@ Frappe Insights Charts require:
 2. One or more numerical measures for the Y-axis.
 
 CRITICAL RULES:
-- If the tabular data contains ONLY categorical columns or identifiers (like 'name', 'lead_owner', 'customer_name', 'phone_number'), you MUST NOT plot these directly. Instead, compute an aggregation (like "count") over one of the categorical columns to show a distribution (e.g. Count of leads by territory).
-- If the table contains real numeric metrics (like 'total_revenue', 'grand_total', 'amount', 'qty', 'stock_value', 'sales'), you should plot these metrics and use aggregations like "sum" or "avg".
-- Do NOT use phone numbers, document IDs, or timestamps as numerical Y-axis measures.
-- Use the best logical `chart_type` based on the data ("Bar", "Line", "Pie", "Donut", "Number"). E.g. time-series data => "Line". Category distribution => "Bar" or "Donut".
+1. **NO HALLUCINATIONS**: You must ONLY use column names that appear as keys in the provided `Data Sample`. Do NOT invent column names.
+2. **COLUMN SELECTION**: If the tabular data contains ONLY categorical columns or identifiers (like 'name', 'lead_owner', 'customer_name', 'phone_number'), you MUST NOT plot these directly. Instead, compute an aggregation (like "count") over one of the categorical columns to show a distribution (e.g. Count of leads by territory).
+3. **METRIC PLOTTING**: If the table contains real numeric metrics (like 'total_revenue', 'grand_total', 'amount', 'qty', 'stock_value', 'sales'), you should plot these metrics and use aggregations like "sum" or "avg".
+4. **NO IDENTIFIERS IN Y-AXIS**: Do NOT use phone numbers, document IDs, or timestamps as numerical Y-axis measures.
+5. **CHART TYPE**: Use the best logical `chart_type` based on the data ("Bar", "Line", "Pie", "Donut", "Number"). E.g. time-series data => "Line". Category distribution => "Bar" or "Donut".
 
 Return ONLY a raw JSON object with this exact structure:
 {
