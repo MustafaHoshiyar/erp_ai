@@ -68,6 +68,36 @@ document.addEventListener('DOMContentLoaded', () => {
     const promptModalCancel = document.getElementById('prompt-modal-cancel');
     const promptModalSubmit = document.getElementById('prompt-modal-submit');
 
+    function showToast(message, type = 'info', link = null) {
+        let container = document.getElementById('toast-container');
+        if (!container) {
+            container = document.createElement('div');
+            container.id = 'toast-container';
+            document.body.appendChild(container);
+        }
+
+        const toast = document.createElement('div');
+        toast.className = `toast toast-${type}`;
+        
+        let icon = '';
+        if (type === 'success') icon = '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>';
+        else if (type === 'error') icon = '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>';
+        else icon = '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>';
+
+        let content = `<span>${message}</span>`;
+        if (link) {
+            content += `<a href="${link}" target="_blank" style="margin-left:8px; color:#fff; text-decoration:underline; font-weight:700;">Open Dashboard</a>`;
+        }
+        
+        toast.innerHTML = `${icon}${content}`;
+        container.appendChild(toast);
+
+        setTimeout(() => {
+            toast.classList.add('toast-out');
+            setTimeout(() => toast.remove(), 200);
+        }, link ? 6000 : 3500); // Wait longer if it has a link
+    }
+
     function formatCurrencyValue(value) {
         return `${value.toLocaleString(undefined, {
             minimumFractionDigits: CURRENCY_DECIMALS,
@@ -1219,15 +1249,22 @@ document.addEventListener('DOMContentLoaded', () => {
                         // If successful, the API returns {"status": "success", "url": "..."}
                         if (resData.url) {
                             cleanup();
-                            window.location.href = resData.url;
+                            const newTab = window.open(resData.url, '_blank', 'noopener');
+                            
+                            if (!newTab || newTab.closed || typeof newTab.closed === 'undefined') {
+                                // Blocked by popup blocker
+                                showToast("Export successful! Pop-ups blocked. Click here:", "success", resData.url);
+                            } else {
+                                showToast("Export successful! Opening dashboard...", "success");
+                            }
                         } else {
                             cleanup();
-                            alert("Export successful but no dashboard URL was returned.");
+                            showToast("Export successful but no dashboard URL was returned.", "info");
                         }
 
                     } catch (e) {
                         cleanup();
-                        alert("Export failed: " + e.message);
+                        showToast(`Export failed: ${e.message}`, "error");
                     } finally {
                         // Ensure button is restored if still on page
                         submitBtn.disabled = false;
