@@ -202,23 +202,29 @@ async def export_chart_and_dashboard_to_insights(title: str, sql: str, chart_typ
         try:
             if available_columns and len(sample_rows) > 0:
                 row = sample_rows[0]
+                print(f"[DEBUG] Introspecting keys: {available_columns}")
                 for k in available_columns:
                     v = row[k]
+                    # Check if numeric (int, float) and not a common ID/Boolean
                     if isinstance(v, (int, float)) and not isinstance(v, bool):
                         k_lower = k.lower()
-                        # Skip ID/Phone looking columns
-                        if not any(stop in k_lower for stop in ["mobile", "phone"]) and k_lower not in ["id", "idx", "name"]:
+                        # Skip columns that look like identifiers or phone numbers
+                        if not any(stop in k_lower for stop in ["mobile", "phone", "id", "idx", "pincode", "zip"]) and k_lower not in ["name", "id", "idx"]:
                             fallback_y_cols.append(k)
+                        else:
+                            print(f"[DEBUG] Skipping likely identifier column: {k}")
                     elif fallback_x is None:
                         fallback_x = k
             
             if fallback_x and not x_col:
                 x_col = fallback_x
+                print(f"[DEBUG] Selected fallback X column: {x_col}")
+                
             if fallback_y_cols and not y_series_raw:
                 for y in fallback_y_cols:
                     y_series_raw.append({"column": y, "aggregation": "sum"})
+                print(f"[DEBUG] Selected fallback Y columns: {fallback_y_cols}")
                     
-            print(f"[DEBUG] Introspection Fallback: x_col={x_col}, y_cols={fallback_y_cols}")
         except Exception as e:
             print(f"[DEBUG] Fallback introspection failed: {e}")
     
@@ -226,13 +232,19 @@ async def export_chart_and_dashboard_to_insights(title: str, sql: str, chart_typ
     if not x_col:
         x_col = available_columns[0] if available_columns else "name"
     if not y_series_raw:
-        # Pick the first numeric column we didn't use for X
+        # Pick the first numeric column we didn't use for X from available_columns
         for k in available_columns:
             if k == x_col: continue
-            y_series_raw.append({"column": k, "aggregation": "sum"})
-            break
+            # Check if likely numeric
+            first_val = sample_rows[0].get(k) if sample_rows else None
+            if isinstance(first_val, (int, float)) and not isinstance(first_val, bool):
+                y_series_raw.append({"column": k, "aggregation": "sum"})
+                break
+        
+        # Absolute fallback if no numeric columns found
         if not y_series_raw:
-            y_series_raw = [{"column": "total", "aggregation": "sum"}]
+            # If no numeric columns, use the X column itself with a 'count' aggregation
+            y_series_raw = [{"column": x_col, "aggregation": "count"}]
             
     print(f"[DEBUG] Final Chart Columns to export: x_col={x_col}, y_series={y_series_raw}")
     

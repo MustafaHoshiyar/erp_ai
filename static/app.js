@@ -1186,24 +1186,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     cancelBtn.style.display = 'none';
 
                     const originalBtnContent = exportInsightsBtn.innerHTML;
-                    const insightsWindow = window.open('', '_blank', 'noopener');
-                    if (insightsWindow && insightsWindow.document) {
-                        try {
-                            insightsWindow.document.title = 'Opening Insights...';
-                            insightsWindow.document.body.innerHTML = `
-                                <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #f9fafb; color: #374151; overflow: hidden;">
-                                    <div style="border: 4px solid #f3f4f6; border-top: 4px solid #3b82f6; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite;"></div>
-                                    <p style="margin-top: 1.5rem; font-size: 1.125rem; font-weight: 500;">Creating Your Insights Dashboard</p>
-                                    <p style="margin-top: 0.5rem; font-size: 0.875rem; color: #6b7280;">Please wait while we sync your report...</p>
-                                    <style>
-                                        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-                                    </style>
-                                </div>
-                            `;
-                        } catch (e) {
-                            console.error("Failed to write to Insights window:", e);
-                        }
-                    }
 
                     // Extract chart type
                     let chartType = "Bar";
@@ -1234,30 +1216,22 @@ document.addEventListener('DOMContentLoaded', () => {
                         const resData = await response.json();
                         if (!response.ok) throw new Error(resData.detail || "Failed to export");
 
-                        exportInsightsBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--success-color)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>';
-                        setTimeout(() => exportInsightsBtn.innerHTML = originalBtnContent, 2000);
-
                         // If successful, the API returns {"status": "success", "url": "..."}
                         if (resData.url) {
-                            if (insightsWindow && !insightsWindow.closed) {
-                                insightsWindow.location.href = resData.url;
-                            } else {
-                                window.open(resData.url, '_blank', 'noopener');
-                            }
+                            cleanup();
+                            window.location.href = resData.url;
                         } else {
-                            // Close the blank window if no URL is returned
-                            if (insightsWindow && !insightsWindow.closed) {
-                                insightsWindow.close();
-                            }
+                            cleanup();
+                            alert("Export successful but no dashboard URL was returned.");
                         }
 
                     } catch (e) {
-                        if (insightsWindow && !insightsWindow.closed) {
-                            insightsWindow.close();
-                        }
+                        cleanup();
                         alert("Export failed: " + e.message);
                     } finally {
-                        cleanup();
+                        // Ensure button is restored if still on page
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = 'Export';
                     }
                 };
 
