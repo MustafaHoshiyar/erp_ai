@@ -13,15 +13,21 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# The centralized Motherbrain endpoint. 
+# The centralized Motherbrain base URL (recommended) or full ingest URL.
+# If a base URL is provided, we will append `/api/motherbrain/ingest`.
 MOTHERBRAIN_URL = os.getenv("MOTHERBRAIN_URL")
 API_KEY = os.getenv("MOTHERBRAIN_API_KEY", "dev_motherbrain_key_123")
 
-print(f"[{datetime.now().isoformat()}] DEBUG: Using DATABASE_URL={DATABASE_URL}")
-print(f"[{datetime.now().isoformat()}] DEBUG: Using MOTHERBRAIN_URL={MOTHERBRAIN_URL}")
-
 if not MOTHERBRAIN_URL:
     raise ValueError("MOTHERBRAIN_URL is not set in the environment. Telemetry sync safely aborted to prevent syncing to localhost.")
+
+def _build_ingest_url(motherbrain_url: str) -> str:
+    normalized = (motherbrain_url or "").strip().rstrip("/")
+    if not normalized:
+        return ""
+    if normalized.lower().endswith("/api/motherbrain/ingest"):
+        return normalized
+    return f"{normalized}/api/motherbrain/ingest"
 
 def anonymize_sql(sql: str) -> str:
     """
@@ -81,9 +87,10 @@ def run_sync():
             "Content-Type": "application/json",
             "Authorization": f"Bearer {API_KEY}"
         }
+        ingest_url = _build_ingest_url(MOTHERBRAIN_URL)
         
         try:
-            response = requests.post(MOTHERBRAIN_URL, json={"telemetry_data": payload}, headers=headers, timeout=10)
+            response = requests.post(ingest_url, json={"telemetry_data": payload}, headers=headers, timeout=10)
             
             if response.status_code == 200:
                 print(f"Successfully synced {len(payload)} telemetry events to Motherbrain: {response.json()}")
@@ -92,10 +99,14 @@ def run_sync():
                 db.commit()
                 print("Database updated: marked records as synced.")
             else:
-                print(f"Failed to sync. Status: {response.status_code}, Body: {response.text}")
+                body = (response.text or "").strip()
+                if len(body) > 2000:
+                    body = body[:2000] + "…"
+                # Do not print DATABASE_URL / full Motherbrain URL (may contain sensitive deployment info).
+                print(f"Failed to sync. Status: {response.status_code}, Endpoint: /api/motherbrain/ingest, Body: {body}")
                 
         except requests.exceptions.RequestException as e:
-            print(f"Network error syncing to Motherbrain: {e}")
+            print(f"Network error syncing to Motherbrain (Endpoint: /api/motherbrain/ingest): {e}")
             sys.exit(1)
         
         # Also exit with error if ingest failed with non-200
