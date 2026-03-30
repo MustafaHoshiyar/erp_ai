@@ -577,14 +577,17 @@ document.addEventListener('DOMContentLoaded', () => {
                         const execRes = await fetch('/api/execute-sql', {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ sql: msg.generated_sql })
+                            body: JSON.stringify({ 
+                                sql: msg.generated_sql,
+                                client_id: CLIENT_ID
+                            })
                         });
                         const dataRes = await execRes.json();
                         populateAiMessage(aiNode, {
                             message_id: msg.id,
                             sql: msg.generated_sql,
                             data: dataRes.data,
-                            message: "Restored from history"
+                            message: msg.assistant_response || "Restored from history"
                         });
                     } catch (e) {
                         showAiError(aiNode, "Failed to restore data: " + e.message);

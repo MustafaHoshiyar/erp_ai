@@ -538,6 +538,8 @@ def list_client_configs(db: Session = Depends(get_db)):
         {
             "client_id": config.client_id,
             "erp_url": config.erp_url,
+            "api_key": config.api_key,
+            "api_secret": config.api_secret,
             "app_name_override": config.app_name_override,
             "is_active": config.is_active,
             "created_at": config.created_at.isoformat() if config.created_at else None,
@@ -554,6 +556,8 @@ def get_client_config(client_id: str, db: Session = Depends(get_db)):
     return {
         "client_id": config.client_id,
         "erp_url": config.erp_url,
+        "api_key": config.api_key,
+        "api_secret": config.api_secret,
         "app_name_override": config.app_name_override,
         "is_active": config.is_active,
         "created_at": config.created_at.isoformat() if config.created_at else None,
@@ -578,6 +582,8 @@ def upsert_client_config(request: ClientConfigRequest, db: Session = Depends(get
         "status": "success",
         "client_id": config.client_id,
         "erp_url": config.erp_url,
+        "api_key": config.api_key,
+        "api_secret": config.api_secret,
         "app_name_override": config.app_name_override,
         "is_active": config.is_active,
     }
