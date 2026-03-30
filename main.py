@@ -17,7 +17,7 @@ from erp_client import run_query
 from database import SessionLocal, SavedReport, get_db, Conversation, ConversationMessage, ClientConfig
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
-from fastapi import Depends, HTTPException, BackgroundTasks
+from fastapi import Depends, HTTPException, BackgroundTasks, Header
 from memory_manager import backfill_embeddings_in_background
 
 app = FastAPI()
@@ -635,9 +635,25 @@ class OverridePushRequest(BaseModel):
     description: Optional[str] = None
 
 @app.post("/api/motherbrain/push-override")
-def push_override_from_motherbrain(request: OverridePushRequest, db: Session = Depends(get_db)):
+def push_override_from_motherbrain(
+    request: OverridePushRequest,
+    db: Session = Depends(get_db),
+    authorization: Optional[str] = Header(default=None),
+    x_api_key: Optional[str] = Header(default=None, alias="X-API-Key"),
+):
     """Securely receive a Context Override push from Motherbrain Admin."""
     from database import ClientContextOverride
+
+    expected_key = os.getenv("MOTHERBRAIN_API_KEY", "dev_motherbrain_key_123")
+    bearer = None
+    if authorization:
+        parts = authorization.split(" ", 1)
+        if len(parts) == 2 and parts[0].lower() == "bearer":
+            bearer = parts[1].strip()
+
+    provided_key = bearer or (x_api_key.strip() if x_api_key else None)
+    if not provided_key or provided_key != expected_key:
+        raise HTTPException(status_code=401, detail="Unauthorized (invalid Motherbrain API key)")
     
     # Check if existing term exists for this client
     existing = db.query(ClientContextOverride).filter(
@@ -671,7 +687,7 @@ def _push_telemetry_to_motherbrain(message_id: int):
             return
         conv = db.query(Conversation).filter(Conversation.id == msg.conversation_id).first()
         client_id = conv.client_id if conv else "unknown"
-        mb_url = os.getenv("MOTHERBRAIN_URL", "http://127.0.0.1:8001")
+        mb_url = os.getenv("MOTHERBRAIN_URL", "http://127.0.0.1:8005")
         mb_key = os.getenv("MOTHERBRAIN_API_KEY", "dev_motherbrain_key_123")
         payload = {
             "telemetry_data": [{
