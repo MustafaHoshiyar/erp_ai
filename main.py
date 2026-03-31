@@ -688,13 +688,17 @@ def push_override_from_motherbrain(
     return {"status": "success", "message": f"Override for '{request.term}' pushed successfully."}
 
 
-def _push_telemetry_to_motherbrain(message_id: int):
+def _push_telemetry_to_motherbrain(message_id: int, force: bool = False):
     """Background task: push a single ConversationMessage record to Motherbrain."""
     import httpx, os, json
     db = SessionLocal()
     try:
         msg = db.query(ConversationMessage).filter(ConversationMessage.id == message_id).first()
-        if not msg or msg.synced_to_motherbrain:
+        if not msg:
+            return
+        
+        # If already synced and NOT a forced update (like feedback), skip
+        if msg.synced_to_motherbrain and not force:
             return
         conv = db.query(Conversation).filter(Conversation.id == msg.conversation_id).first()
         client_id = conv.client_id if conv else "unknown"
@@ -768,7 +772,7 @@ def submit_feedback(request: FeedbackRequest, background_tasks: BackgroundTasks,
                 msg.user_prompt or "",
                 request.comment,
             )
-        background_tasks.add_task(_push_telemetry_to_motherbrain, msg.id)
+        background_tasks.add_task(_push_telemetry_to_motherbrain, msg.id, force=True)
 
     return {"status": "success", "message_id": msg.id, "feedback": msg.user_feedback}
 
