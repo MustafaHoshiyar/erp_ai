@@ -83,9 +83,32 @@ class ClientContextOverride(Base):
     
     id = Column(Integer, primary_key=True, index=True)
     client_id = Column(String(50), index=True)
+    app_name = Column(String(100), index=True, nullable=True) # Optional: filter by app context
     term = Column(String(100), index=True) # e.g., "Revenue"
     sql_logic = Column(Text)               # e.g., "SUM(tabSales Invoice.grand_total)"
     description = Column(Text, nullable=True) # e.g., "Client A defines revenue as invoiced amount"
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+class ClientSystemPrompt(Base):
+    """Stores dynamic system prompt segments per client and optional app context."""
+    __tablename__ = "client_system_prompts"
+
+    id = Column(Integer, primary_key=True, index=True)
+    client_id = Column(String(50), index=True, nullable=False)
+    app_name = Column(String(100), index=True, nullable=True)
+    segment_key = Column(String(100), index=True, nullable=False) # e.g., "date_logic", "module_rules"
+    prompt_text = Column(Text, nullable=False)
+    is_active = Column(Boolean, default=True, nullable=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+class ClientFeatureFlag(Base):
+    """Replaces hardcoded feature flags/guardrails for specific clients."""
+    __tablename__ = "client_feature_flags"
+
+    id = Column(Integer, primary_key=True, index=True)
+    client_id = Column(String(50), index=True, nullable=False)
+    feature_key = Column(String(100), index=True, nullable=False) # e.g., "sales_invoice_followup_guardrail"
+    is_enabled = Column(Boolean, default=True, nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
 class PendingContextOverride(Base):
@@ -140,6 +163,13 @@ def init_db(bind_engine=None):
             "synced_to_motherbrain": "BOOLEAN DEFAULT 0"
         }
         
+        # Migrations for client_context_overrides
+        context_columns = {col["name"] for col in inspector.get_columns("client_context_overrides")}
+        if "app_name" not in context_columns:
+            with target_engine.begin() as conn:
+                conn.execute(text("ALTER TABLE client_context_overrides ADD COLUMN app_name VARCHAR(100)"))
+                print(f"[{target_engine.name}] Migration: Added column app_name to client_context_overrides")
+
         with target_engine.begin() as conn:
             for column, definition in migrations.items():
                 if column not in columns:

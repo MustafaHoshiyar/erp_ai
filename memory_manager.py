@@ -53,12 +53,19 @@ def backfill_embeddings_in_background(client_id: str):
     finally:
         db.close()
 
-def get_relevant_schema_context(client_id: str, new_prompt: str, top_k: int = 3) -> str:
+def get_relevant_schema_context(client_id: str, new_prompt: str, app_name: str = None, top_k: int = 3) -> str:
     from database import ClientContextOverride
     db = SessionLocal()
     try:
         # Load Context Overrides
-        overrides = db.query(ClientContextOverride).filter(ClientContextOverride.client_id == client_id).all()
+        query = db.query(ClientContextOverride).filter(ClientContextOverride.client_id == client_id)
+        if app_name:
+            from sqlalchemy import or_
+            query = query.filter(or_(ClientContextOverride.app_name == app_name, ClientContextOverride.app_name == None))
+        else:
+            query = query.filter(ClientContextOverride.app_name == None)
+
+        overrides = query.all()
         override_text = ""
         if overrides:
             override_lines = [

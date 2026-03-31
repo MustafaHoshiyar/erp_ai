@@ -5,16 +5,18 @@ from openai import OpenAI
 from dotenv import load_dotenv
 from memory_manager import get_relevant_schema_context
 from schema_fetcher import extract_available_table_names, get_local_schema
+from database import SessionLocal, ClientSystemPrompt, ClientFeatureFlag
 
 load_dotenv()
 
 AI_PROVIDER = os.getenv("AI_PROVIDER", "openai").lower()
 AI_MODEL = os.getenv("AI_MODEL", "gpt-4o")
-_SALES_INVOICE_FOLLOWUP_GUARDRAIL_CLIENTS = {
-    client.strip()
-    for client in os.getenv("SALES_INVOICE_FOLLOWUP_GUARDRAIL_CLIENTS", "").split(",")
-    if client.strip()
-}
+# _SALES_INVOICE_FOLLOWUP_GUARDRAIL_CLIENTS replaced by ClientFeatureFlag table in DB
+# _SALES_INVOICE_FOLLOWUP_GUARDRAIL_CLIENTS = {
+#     client.strip()
+#     for client in os.getenv("SALES_INVOICE_FOLLOWUP_GUARDRAIL_CLIENTS", "").split(",")
+#     if client.strip()
+# }
 
 if AI_PROVIDER == "groq":
     client = Groq(api_key=os.getenv("GROQ_API_KEY"))
@@ -290,10 +292,9 @@ Safety & Row Limits:
 - Example: `SELECT /* NO_LIMIT */ name, customer FROM tabSales Invoice`
 - Do NOT add a `LIMIT` clause yourself if the user asks for all records; use the comment instead.
 
-Client-Specific Hard Rule:
-- For maintenance prompts about records that are "scheduled", "upcoming", "next week", "this week", or date-windowed future maintenance, prefer `tabMaintenance` over `tabMaintenance Schedule`.
-- In this client, the correct fields are `tabMaintenance`.`customer_id` and `tabMaintenance`.`scheduled_date`.
-- Do NOT use `tabMaintenance Schedule`.`start_date` for those prompts unless the user explicitly asks for Maintenance Schedule.
+# Client-Specific Rules moved to ClientSystemPrompt table in DB
+# Client-Specific Hard Rule Example (now handled dynamically):
+# - For maintenance prompts about records that are "scheduled", "upcoming", "next week", "this week"... prefer `tabMaintenance` over `tabMaintenance Schedule`.
 
 ERPNext Semantics To Respect:
 - `sales_partner` is NOT the same as a salesperson. Only use `sales_partner` when the user explicitly asks for sales partners.
@@ -307,15 +308,59 @@ def _contains_any(prompt_lower, terms) -> bool:
     return any(term in prompt_lower for term in terms)
 
 
-def _client_has_sales_invoice_followup_guardrail(client_id: str) -> bool:
-    return bool(client_id) and client_id in _SALES_INVOICE_FOLLOWUP_GUARDRAIL_CLIENTS
+def _client_has_feature_flag(client_id: str, feature_key: str) -> bool:
+    if not client_id:
+        return False
+    db = SessionLocal()
+    try:
+        flag = db.query(ClientFeatureFlag).filter(
+            ClientFeatureFlag.client_id == client_id,
+            ClientFeatureFlag.feature_key == feature_key,
+            ClientFeatureFlag.is_enabled == True
+        ).first()
+        return flag is not None
+    except Exception as e:
+        print(f"[AI Engine] Error checking feature flag {feature_key}: {e}")
+        return False
+    finally:
+        db.close()
+
+def _get_dynamic_system_prompt_segments(client_id: str, app_name: str = None) -> str:
+    if not client_id:
+        return ""
+    db = SessionLocal()
+    try:
+        query = db.query(ClientSystemPrompt).filter(
+            ClientSystemPrompt.client_id == client_id,
+            ClientSystemPrompt.is_active == True
+        )
+        if app_name:
+            # Load both global (null app) and app-specific segments
+            from sqlalchemy import or_
+            query = query.filter(or_(ClientSystemPrompt.app_name == app_name, ClientSystemPrompt.app_name == None))
+        else:
+            query = query.filter(ClientSystemPrompt.app_name == None)
+            
+        segments = query.all()
+        if not segments:
+            return ""
+        
+        lines = ["\n### DYNAMIC CLIENT-SPECIFIC INSTRUCTIONS ###"]
+        for s in segments:
+            lines.append(f"Rule ({s.segment_key}): {s.prompt_text}")
+        return "\n".join(lines)
+    except Exception as e:
+        print(f"[AI Engine] Error loading dynamic prompt segments: {e}")
+        return ""
+    finally:
+        db.close()
 
 
-def build_prompt_specific_guidance(user_prompt, history=None, client_id="DEMO_CLIENT_123"):
+def build_prompt_specific_guidance(user_prompt, history=None, client_id="DEMO_CLIENT_123", app_name=None):
     prompt_lower = (user_prompt or "").strip().lower()
     guidance_lines = []
     last_sql = _extract_last_sql_from_history(history)
-    client_guardrail_enabled = _client_has_sales_invoice_followup_guardrail(client_id)
+    client_guardrail_enabled = _client_has_feature_flag(client_id, "sales_invoice_followup_guardrail")
 
     if _contains_any(prompt_lower, _REORDER_TERMS):
         guidance_lines.extend(
@@ -883,12 +928,18 @@ def build_non_report_response(user_prompt, intent):
 
     return "I am focused on ERPNext reporting and analytics. Ask me for a report, KPI, dashboard, trend, comparison, or forecast from your ERP data."
 
-def generate_sql(user_prompt, history=None, client_id="DEMO_CLIENT_123", currency="USD", currency_symbol="$"):
+def generate_sql(user_prompt, history=None, client_id="DEMO_CLIENT_123", app_name=None, currency="USD", currency_symbol="$"):
     effective_user_prompt = _build_effective_user_prompt(user_prompt, history)
-    memory_context = get_relevant_schema_context(client_id, effective_user_prompt)
+    memory_context = get_relevant_schema_context(client_id, effective_user_prompt, app_name=app_name)
     
     dynamic_system_prompt = SYSTEM_PROMPT.format(currency=currency)
-    prompt_specific_guidance = build_prompt_specific_guidance(effective_user_prompt, history, client_id)
+    
+    # Inject Dynamic Database-stored Prompt Segments
+    dynamic_segments = _get_dynamic_system_prompt_segments(client_id, app_name)
+    if dynamic_segments:
+        dynamic_system_prompt += f"\n{dynamic_segments}"
+        
+    prompt_specific_guidance = build_prompt_specific_guidance(effective_user_prompt, history, client_id, app_name)
     
     from schema_router import get_optimized_schema_context
     from schema_planner import build_relation_constraints

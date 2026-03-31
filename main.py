@@ -125,7 +125,14 @@ async def generate_report(request: PromptRequest, background_tasks: BackgroundTa
         result = generate_chat_response(request.prompt, request.history)
         result["sql"] = None
     else:
-        result = generate_sql(request.prompt, request.history, client_id, currency=currency_info["code"], currency_symbol=currency_info["symbol"])
+        result = generate_sql(
+            request.prompt, 
+            request.history, 
+            client_id, 
+            app_name=app_name, 
+            currency=currency_info["code"], 
+            currency_symbol=currency_info["symbol"]
+        )
 
     generation_ms = round((time.perf_counter() - generation_started_at) * 1000)
     if result.get("sql"):
@@ -805,6 +812,7 @@ class ContextOverrideRequest(BaseModel):
     client_id: str
     term: str
     sql_logic: str
+    app_name: Optional[str] = None
     description: Optional[str] = None
 
 @app.post("/api/context-overrides")
@@ -815,6 +823,7 @@ def create_context_override(request: ContextOverrideRequest, db: Session = Depen
             client_id=request.client_id,
             term=request.term,
             sql_logic=request.sql_logic,
+            app_name=request.app_name,
             description=request.description
         )
         db.add(new_override)
@@ -826,18 +835,119 @@ def create_context_override(request: ContextOverrideRequest, db: Session = Depen
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/api/context-overrides/{client_id}")
-def get_context_overrides(client_id: str, db: Session = Depends(get_db)):
+def get_context_overrides(client_id: str, app_name: Optional[str] = None, db: Session = Depends(get_db)):
     from database import ClientContextOverride
-    overrides = db.query(ClientContextOverride).filter(ClientContextOverride.client_id == client_id).order_by(ClientContextOverride.created_at.desc()).all()
+    query = db.query(ClientContextOverride).filter(ClientContextOverride.client_id == client_id)
+    if app_name:
+        from sqlalchemy import or_
+        query = query.filter(or_(ClientContextOverride.app_name == app_name, ClientContextOverride.app_name == None))
+    
+    overrides = query.order_by(ClientContextOverride.created_at.desc()).all()
     return [
         {
             "id": r.id,
             "term": r.term,
             "sql_logic": r.sql_logic,
+            "app_name": r.app_name,
             "description": r.description
         }
         for r in overrides
     ]
+
+# --- Dynamic Learning Management Endpoints ---
+
+class SystemPromptRequest(BaseModel):
+    client_id: str
+    segment_key: str
+    prompt_text: str
+    app_name: Optional[str] = None
+    is_active: bool = True
+
+@app.post("/api/system-prompts")
+def create_system_prompt(request: SystemPromptRequest, db: Session = Depends(get_db)):
+    from database import ClientSystemPrompt
+    try:
+        new_prompt = ClientSystemPrompt(
+            client_id=request.client_id,
+            app_name=request.app_name,
+            segment_key=request.segment_key,
+            prompt_text=request.prompt_text,
+            is_active=request.is_active
+        )
+        db.add(new_prompt)
+        db.commit()
+        db.refresh(new_prompt)
+        return {"status": "success", "id": new_prompt.id}
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/system-prompts/{client_id}")
+def get_system_prompts(client_id: str, app_name: Optional[str] = None, db: Session = Depends(get_db)):
+    from database import ClientSystemPrompt
+    query = db.query(ClientSystemPrompt).filter(ClientSystemPrompt.client_id == client_id)
+    if app_name:
+        from sqlalchemy import or_
+        query = query.filter(or_(ClientSystemPrompt.app_name == app_name, ClientSystemPrompt.app_name == None))
+    
+    prompts = query.order_by(ClientSystemPrompt.created_at.desc()).all()
+    return [
+        {
+            "id": p.id,
+            "segment_key": p.segment_key,
+            "prompt_text": p.prompt_text,
+            "app_name": p.app_name,
+            "is_active": p.is_active,
+            "created_at": p.created_at.isoformat() if p.created_at else None
+        }
+        for p in prompts
+    ]
+
+@app.delete("/api/system-prompts/{prompt_id}")
+def delete_system_prompt(prompt_id: int, db: Session = Depends(get_db)):
+    from database import ClientSystemPrompt
+    prompt = db.query(ClientSystemPrompt).filter(ClientSystemPrompt.id == prompt_id).first()
+    if not prompt:
+        raise HTTPException(status_code=404, detail="Prompt segment not found")
+    try:
+        db.delete(prompt)
+        db.commit()
+        return {"status": "success"}
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=str(e))
+
+class FeatureFlagToggleRequest(BaseModel):
+    client_id: str
+    feature_key: str
+    is_enabled: bool
+
+@app.post("/api/feature-flags/toggle")
+def toggle_feature_flag(request: FeatureFlagToggleRequest, db: Session = Depends(get_db)):
+    from database import ClientFeatureFlag
+    flag = db.query(ClientFeatureFlag).filter(
+        ClientFeatureFlag.client_id == request.client_id,
+        ClientFeatureFlag.feature_key == request.feature_key
+    ).first()
+    
+    if flag:
+        flag.is_enabled = request.is_enabled
+    else:
+        flag = ClientFeatureFlag(
+            client_id=request.client_id,
+            feature_key=request.feature_key,
+            is_enabled=request.is_enabled
+        )
+        db.add(flag)
+    
+    db.commit()
+    return {"status": "success", "feature_key": request.feature_key, "is_enabled": flag.is_enabled}
+
+@app.get("/api/feature-flags/{client_id}")
+def get_feature_flags(client_id: str, db: Session = Depends(get_db)):
+    from database import ClientFeatureFlag
+    flags = db.query(ClientFeatureFlag).filter(ClientFeatureFlag.client_id == client_id).all()
+    return {f.feature_key: f.is_enabled for f in flags}
 
 # --- Conversation History Endpoints ---
 
