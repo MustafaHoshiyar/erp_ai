@@ -517,10 +517,15 @@ async def login(req: LoginRequest):
             raise HTTPException(status_code=401, detail="Invalid credentials for Frappe")
             
     except httpx.RequestError as exc:
+        import traceback
+        print(f"FAILED TO CONNECT TO ERPNext for client_id={client_id} at {config['erp_url']}")
+        traceback.print_exc()
         raise HTTPException(status_code=502, detail=f"Failed to connect to ERPNext: {str(exc)}")
     except HTTPException:
         raise
     except Exception as e:
+        import traceback
+        traceback.print_exc()
         raise HTTPException(status_code=500, detail=str(e))
 
 class ClientConfigRequest(BaseModel):
