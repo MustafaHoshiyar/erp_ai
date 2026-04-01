@@ -111,6 +111,21 @@ class ClientFeatureFlag(Base):
     is_enabled = Column(Boolean, default=True, nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
+class ClientConfig(Base):
+    """Stores per-client UI and engine configurations like currency and symbols."""
+    __tablename__ = "client_configs"
+
+    id = Column(Integer, primary_key=True, index=True)
+    client_id = Column(String(50), index=True, nullable=False, unique=True)
+    erp_url = Column(String(255), nullable=True) # e.g. https://supernatural.ribox.me
+    api_key = Column(String(255), nullable=True)
+    api_secret = Column(String(255), nullable=True)
+    app_name_override = Column(String(100), nullable=True)
+    default_currency_code = Column(String(10), default="KWD")
+    default_currency_symbol = Column(String(10), default="KWD")
+    is_active = Column(Boolean, default=True)
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+
 class PendingContextOverride(Base):
     """Auto-extracted context overrides from user feedback, pending admin review."""
     __tablename__ = "pending_context_overrides"

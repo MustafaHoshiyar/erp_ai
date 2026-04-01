@@ -39,14 +39,14 @@ def health():
     return {"status": "ok", "service": "erp_ai"}
     
 @app.get("/api/config")
-def get_config():
-    from dotenv import load_dotenv
-    load_dotenv()
-    erp_url = _normalize_erp_base_url(os.getenv("ERP_URL", ""))
+def get_config(client_id: str = "DEMO_CLIENT_123"):
+    from runtime_config import get_client_runtime_config
+    config = get_client_runtime_config(client_id)
+    erp_url = _normalize_erp_base_url(config.get("erp_url", ""))
     environment = os.getenv("ENVIRONMENT", "development")
     return {
         "environment": environment,
-        "insights_url": f"{erp_url}/insights/dashboards" if erp_url else "",
+        "insights_url": f"{erp_url}/insights/workbook" if erp_url else "",
         "allow_token_reset": environment.lower() != "production",
     }
     

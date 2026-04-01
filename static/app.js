@@ -46,7 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
         resetTokensBtn.style.display = 'none';
     }
 
-    fetch('/api/config').then(res => res.json()).then(data => {
+    fetch(`/api/config?client_id=${CLIENT_ID}`).then(res => res.json()).then(data => {
         APP_ENV = data.environment;
         const insightsLink = document.getElementById('menu-insights-link');
         if (insightsLink && data.insights_url) {
