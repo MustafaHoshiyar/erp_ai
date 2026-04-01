@@ -29,17 +29,24 @@ def _extract_erp_error_message(response: httpx.Response) -> str:
 
 
 def _get_headers(config: dict):
-    return {"Authorization": f"token {config['api_key']}:{config['api_secret']}"}
+    # Mandatory for some Frappe/ERPNext versions to identify as a valid requester
+    return {
+        "Authorization": f"token {config.get('api_key')}:{config.get('api_secret')}",
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        "User-Agent": "ERP-AI-Engine/1.0"
+    }
 
 
 async def run_query(sql, client_id="DEMO_CLIENT_123"):
     config = get_client_runtime_config(client_id)
+    url = config['erp_url'].rstrip("/")
     async with httpx.AsyncClient() as client:
         response = await client.post(
-            f"{config['erp_url']}/api/method/smberp_ai.api.run_ai_query",
+            f"{url}/api/method/smberp_ai.api.run_ai_query",
             headers=_get_headers(config),
             json={"sql": sql},
-            timeout=30.0,
+            timeout=180.0,
         )
 
         if response.is_error:
