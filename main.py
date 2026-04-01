@@ -46,7 +46,7 @@ def get_config(client_id: str = "DEMO_CLIENT_123"):
     environment = os.getenv("ENVIRONMENT", "development")
     return {
         "environment": environment,
-        "insights_url": f"{erp_url}/insights/workbook" if erp_url else "",
+        "insights_url": f"{erp_url}/insights/dashboards" if erp_url else "",
         "allow_token_reset": environment.lower() != "production",
     }
     
