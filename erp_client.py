@@ -153,4 +153,10 @@ async def get_default_currency_info(client_id="DEMO_CLIENT_123"):
             "debug_target_len": config.get("debug_target_len")
         }
 
-    return {"code": "USD", "symbol": "$", "decimal_places": 2}
+    return {
+        "status": "total_fallback",
+        "code": "USD", 
+        "symbol": "$", 
+        "decimal_places": 2,
+        "debug_msg": "Reached final fallback - ERP lookup completed but no data returned."
+    }
