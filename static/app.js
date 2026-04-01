@@ -5,6 +5,8 @@ document.addEventListener('DOMContentLoaded', () => {
         return; // Stop rendering and redirect
     }
 
+    // 1. App State
+    const CLIENT_ID = (localStorage.getItem('client_id') || "DEMO_CLIENT_123").trim();
     let APP_ENV = 'development';
     let chatHistory = [];
     let currentConversationId = null;
@@ -33,9 +35,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const openSidebarBtn = document.getElementById('open-sidebar-btn');
     const closeSidebarBtn = document.getElementById('close-sidebar-btn');
     const sidebarV2Container = document.getElementById('history-list');
-
-    // Dynamic Client ID based on logged in user's tenant
-    const CLIENT_ID = (localStorage.getItem('client_id') || "DEMO_CLIENT_123").trim();
 
     // Token Usage Elements
     const totalTokensEl = document.getElementById('total-tokens');
