@@ -74,8 +74,9 @@ async def generate_report(request: PromptRequest, background_tasks: BackgroundTa
     detected_intent = intent_meta.get("intent", "report")
 
     conversation_id = request.conversation_id
+    app_name = request.app_name
+    
     if not conversation_id:
-        app_name = request.app_name
         if not app_name:
             from erp_client import get_app_name
             app_name = await get_app_name(client_id)
@@ -85,6 +86,12 @@ async def generate_report(request: PromptRequest, background_tasks: BackgroundTa
         db.commit()
         db.refresh(new_conv)
         conversation_id = new_conv.id
+    else:
+        # Load app_name and client_id from existing conversation to ensure context is preserved
+        conv = db.query(Conversation).filter(Conversation.id == conversation_id).first()
+        if conv:
+            app_name = conv.app_name
+            client_id = conv.client_id
 
     msg = ConversationMessage(
         conversation_id=conversation_id,
