@@ -74,24 +74,21 @@ async def generate_report(request: PromptRequest, background_tasks: BackgroundTa
     detected_intent = intent_meta.get("intent", "report")
 
     conversation_id = request.conversation_id
-    app_name = request.app_name
     
     if not conversation_id:
-        if not app_name:
-            from erp_client import get_app_name
-            app_name = await get_app_name(client_id)
-             
-        new_conv = Conversation(client_id=client_id, app_name=app_name)
+        new_conv = Conversation(client_id=client_id, user_id=request.user_id, app_name="erp_ai")
         db.add(new_conv)
         db.commit()
         db.refresh(new_conv)
         conversation_id = new_conv.id
+        conversation = new_conv
+        app_name = "erp_ai"
     else:
-        # Load app_name and client_id from existing conversation to ensure context is preserved
-        conv = db.query(Conversation).filter(Conversation.id == conversation_id).first()
-        if conv:
-            app_name = conv.app_name
-            client_id = conv.client_id
+        conversation = db.query(Conversation).filter(Conversation.id == conversation_id).first()
+        if not conversation:
+            raise HTTPException(status_code=404, detail="Conversation not found")
+        app_name = getattr(conversation, "app_name", "erp_ai") or "erp_ai"
+        client_id = conversation.client_id
 
     msg = ConversationMessage(
         conversation_id=conversation_id,
