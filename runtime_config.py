@@ -29,20 +29,21 @@ def get_client_runtime_config(client_id: str = "DEMO_CLIENT_123"):
         all_clients = db.query(ClientConfig).all()
         print(f"[ConfigDebug] Total clients in DB: {len(all_clients)}. IDs: {[c.client_id for c in all_clients]}")
 
-        # Fuzzy lookup using strip to handle hidden database spaces
+        # Case-insensitive lookup using func.lower and strip
         target = client_id.strip()
+        from sqlalchemy import func
         config = (
             db.query(ClientConfig)
-            .filter(ClientConfig.client_id == target)
+            .filter(func.lower(ClientConfig.client_id) == target.lower())
             .first()
         )
         # If not found directly, try stripping the DB side too
         if not config:
             print(f"[ConfigDebug] Direct lookup failed for '{target}' (len:{len(target)})")
             for c in all_clients:
-                db_id = (c.client_id or "").strip()
-                print(f"[ConfigDebug] Comparing target '{target}' (len:{len(target)}) vs DB ID '{db_id}' (len:{len(db_id)})")
-                if db_id == target:
+                db_id = (c.client_id or "").strip().lower()
+                print(f"[ConfigDebug] Comparing target '{target.lower()}' vs DB ID '{db_id}'")
+                if db_id == target.lower():
                     config = c
                     break
 
