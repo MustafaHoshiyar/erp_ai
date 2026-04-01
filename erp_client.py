@@ -2,6 +2,24 @@ import httpx
 import os
 from runtime_config import get_client_runtime_config
 
+def get_default_currency_info(client_id="DEMO_CLIENT_123"):
+    """
+    Stable fallback for currency info.
+    """
+    from database import SessionLocal, ClientConfig
+    db = SessionLocal()
+    try:
+        config = db.query(ClientConfig).filter(ClientConfig.client_id == client_id).first()
+        if config:
+            code = getattr(config, "default_currency_code", "KWD") or "KWD"
+            symbol = getattr(config, "default_currency_symbol", code) or code
+            return {"symbol": symbol, "code": code}
+    except Exception:
+        pass
+    finally:
+        db.close()
+    return {"symbol": "KWD", "code": "KWD"}
+
 def _get_headers(config: dict):
     return {"Authorization": f"token {config['api_key']}:{config['api_secret']}"}
 
