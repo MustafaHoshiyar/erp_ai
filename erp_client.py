@@ -95,6 +95,8 @@ async def get_default_currency_info(client_id="DEMO_CLIENT_123"):
 
     config = get_client_runtime_config(client_id)
     print(f"[CurrencyDebug] Fetching for {client_id} from {config.get('erp_url')}")
+    last_status = None
+    last_body = None
     try:
         async with httpx.AsyncClient() as client:
             response = await client.get(
@@ -103,6 +105,8 @@ async def get_default_currency_info(client_id="DEMO_CLIENT_123"):
                 params={"fields": '["default_currency"]'},
                 timeout=10.0,
             )
+            last_status = response.status_code
+            last_body = response.text
             print(f"[CurrencyDebug] Status: {response.status_code}, Body: {response.text}")
             if response.status_code == 200:
                 data = response.json()
@@ -158,5 +162,7 @@ async def get_default_currency_info(client_id="DEMO_CLIENT_123"):
         "code": "USD", 
         "symbol": "$", 
         "decimal_places": 2,
+        "debug_erp_status": last_status,
+        "debug_erp_body": last_body,
         "debug_msg": "Reached final fallback - ERP lookup completed but no data returned."
     }
