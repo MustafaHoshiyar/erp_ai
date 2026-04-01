@@ -257,7 +257,7 @@ class ChartConfigRequest(BaseModel):
 async def api_generate_chart_config(request: ChartConfigRequest):
     try:
         from erp_client import get_default_currency_info
-        currency_info = await get_default_currency_info(request.client_id)
+        currency_info = get_default_currency_info(request.client_id)
         config_str = generate_chart_config(request.columns, request.data_sample, request.dataset_summary, currency=currency_info["code"], currency_symbol=currency_info["symbol"])
         import json
         config_json = json.loads(config_str)
@@ -369,7 +369,7 @@ async def execute_saved_report(report_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=500, detail=f"Error executing report: {str(e)}")
 
 @app.get("/api/currency-info")
-def get_currency_info_endpoint(client_id: str = "DEMO_CLIENT_123"):
+def get_currency_info(client_id: str = "DEMO_CLIENT_123"):
     from erp_client import get_default_currency_info
     return get_default_currency_info(client_id)
 
