@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let CURRENCY_SYMBOL = '$'; // Fallback
     let CURRENCY_DECIMALS = 2;
 
-    fetch('/api/currency-info').then(res => res.json()).then(data => {
+    fetch(`/api/currency-info?client_id=${encodeURIComponent(CLIENT_ID)}`).then(res => res.json()).then(data => {
         CURRENCY_SYMBOL = data.symbol || '$';
         CURRENCY_DECIMALS = Number.isInteger(data.decimal_places) ? data.decimal_places : 2;
     }).catch(err => console.error("Failed to load currency info", err));
