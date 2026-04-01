@@ -124,8 +124,6 @@ class ClientConfig(Base):
     default_currency_code = Column(String(10), default="KWD")
     default_currency_symbol = Column(String(10), default="KWD")
     is_active = Column(Boolean, default=True, nullable=False)
-    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
-    created_at = Column(DateTime(timezone=True), server_default=func.now())
 
 class PendingContextOverride(Base):
     """Auto-extracted context overrides from user feedback, pending admin review."""
