@@ -107,8 +107,8 @@ async def run_query(sql: str, client_id="DEMO_CLIENT_123"):
     import json
     config = get_client_runtime_config(client_id)
     try:
-        # Wrap SQL in the filters dict for the 'AI Report Writer' report
-        filters = json.dumps({"sql": sql})
+        # Standard Frappe filters format: a string containing a JSON-like dict
+        filters_str = json.dumps({"sql": sql})
         
         async with httpx.AsyncClient() as client:
             response = await client.post(
@@ -116,10 +116,14 @@ async def run_query(sql: str, client_id="DEMO_CLIENT_123"):
                 headers=_get_headers(config),
                 data={
                     "report_name": "AI Report Writer", 
-                    "filters": filters
+                    "filters": filters_str
                 },
                 timeout=30.0,
             )
+            # If we get a 404, the site URL might be wrong or the method name changed
+            if response.status_code == 404:
+                print(f"[ERPClient] 404 Error: Site {config['erp_url']} does not recognize the method.")
+            
             response.raise_for_status()
             res_json = response.json()
             return res_json.get("message", {})
