@@ -143,6 +143,7 @@ async def get_default_currency_info(client_id="DEMO_CLIENT_123"):
             "decimal_places": 2, 
             "debug_error": str(e),
             "debug_config_source": source,
+            "debug_all_client_ids": config.get("debug_all_client_ids", []),
             "debug_erp_url": config.get("erp_url")
         }
 
