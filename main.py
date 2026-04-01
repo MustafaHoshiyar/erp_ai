@@ -74,32 +74,27 @@ async def generate_report(request: PromptRequest, background_tasks: BackgroundTa
     detected_intent = intent_meta.get("intent", "report")
 
     conversation_id = request.conversation_id
+    app_name = request.app_name
     
-    # 2. CREATE NEW OR GET CONVERSATION (Load/Initialize Context)
     if not conversation_id:
         new_conv = Conversation(client_id=client_id, user_id=request.user_id, app_name="erp_ai")
         db.add(new_conv)
         db.commit()
         db.refresh(new_conv)
         conversation_id = new_conv.id
-        conversation = new_conv
         app_name = "erp_ai"
     else:
-        conversation = db.query(Conversation).filter(Conversation.id == conversation_id).first()
-        if not conversation:
+        # Load app_name and client_id from existing conversation to ensure context is preserved
+        conv = db.query(Conversation).filter(Conversation.id == conversation_id).first()
+        if not conv:
             raise HTTPException(status_code=404, detail="Conversation not found")
-        app_name = getattr(conversation, "app_name", "erp_ai") or "erp_ai"
-        client_id = conversation.client_id
+        app_name = getattr(conv, "app_name", "erp_ai") or "erp_ai"
+        client_id = conv.client_id
 
-    # 3. GENERATION LOOP (Harden against API failures)
-    request_started_at = time.perf_counter()
     msg = ConversationMessage(
         conversation_id=conversation_id,
         user_prompt=request.prompt,
-        role="user",
-        execution_status="pending",
-        user_data=request.history,
-        client_id=client_id,
+        detected_intent=detected_intent,
         user_id=request.user_id
     )
 
@@ -110,6 +105,7 @@ async def generate_report(request: PromptRequest, background_tasks: BackgroundTa
         result = generate_chat_response(request.prompt, request.history)
         result["sql"] = None
     else:
+        # Original call: Defaults to USD inside generate_sql
         result = generate_sql(
             request.prompt, 
             request.history, 
@@ -232,7 +228,9 @@ class ChartConfigRequest(BaseModel):
 @app.post("/api/generate_chart_config")
 async def api_generate_chart_config(request: ChartConfigRequest):
     try:
-        config_str = generate_chart_config(request.columns, request.data_sample, request.dataset_summary)
+        from erp_client import get_default_currency_info
+        currency_info = await get_default_currency_info(request.client_id)
+        config_str = generate_chart_config(request.columns, request.data_sample, request.dataset_summary, currency=currency_info["code"], currency_symbol=currency_info["symbol"])
         import json
         config_json = json.loads(config_str)
         return config_json
@@ -343,9 +341,9 @@ async def execute_saved_report(report_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=500, detail=f"Error executing report: {str(e)}")
 
 @app.get("/api/currency-info")
-def get_currency_info(client_id: str = "DEMO_CLIENT_123"):
+async def get_currency_info(client_id: str = "DEMO_CLIENT_123"):
     from erp_client import get_default_currency_info
-    return get_default_currency_info(client_id)
+    return await get_default_currency_info(client_id)
 
 def _token_reset_allowed() -> bool:
     return os.getenv("ENVIRONMENT", "development").lower() != "production"

@@ -137,8 +137,6 @@ class ClientConfig(Base):
     api_secret = Column(String(255), nullable=False)
     app_name_override = Column(String(100), nullable=True)
     is_active = Column(Boolean, default=True, nullable=False)
-    default_currency_code = Column(String(10), default="USD")
-    default_currency_symbol = Column(String(10), default="$")
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
 from sqlalchemy import text, inspect
@@ -180,23 +178,6 @@ def init_db(bind_engine=None):
                         print(f"[{target_engine.name}] Migration: Added column {column} to conversation_messages")
                     except Exception as e:
                         print(f"[{target_engine.name}] Migration error for {column}: {e}")
-
-        # 3. Client Config Migrations
-        config_columns = {col["name"] for col in inspector.get_columns("client_configs")}
-        c_migrations = {
-            "app_name_override": "TEXT",
-            "default_currency_code": "TEXT",
-            "default_currency_symbol": "TEXT"
-        }
-        with target_engine.begin() as conn:
-            for column, definition in c_migrations.items():
-                if column not in config_columns:
-                    try:
-                        conn.execute(text(f"ALTER TABLE client_configs ADD COLUMN {column} {definition}"))
-                        print(f"[{target_engine.name}] Migration: Added column {column} to client_configs")
-                    except Exception as e:
-                        print(f"[{target_engine.name}] Migration error for {column} in client_configs: {e}")
-
     except Exception as outer_e:
         print(f"Database auto-migration safety check failed: {outer_e}")
 
