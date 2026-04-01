@@ -38,8 +38,11 @@ def get_client_runtime_config(client_id: str = "DEMO_CLIENT_123"):
         )
         # If not found directly, try stripping the DB side too
         if not config:
+            print(f"[ConfigDebug] Direct lookup failed for '{target}' (len:{len(target)})")
             for c in all_clients:
-                if (c.client_id or "").strip() == target:
+                db_id = (c.client_id or "").strip()
+                print(f"[ConfigDebug] Comparing target '{target}' (len:{len(target)}) vs DB ID '{db_id}' (len:{len(db_id)})")
+                if db_id == target:
                     config = c
                     break
 
@@ -47,7 +50,9 @@ def get_client_runtime_config(client_id: str = "DEMO_CLIENT_123"):
                 print(f"[ConfigDebug] FAILED to find '{target}' in database after fuzzy search!")
                 return {
                     **_fallback_config(client_id),
-                    "debug_all_client_ids": [c.client_id for c in all_clients]
+                    "debug_all_client_ids": [c.client_id for c in all_clients],
+                    "debug_target_received": target,
+                    "debug_target_len": len(target)
                 }
 
         url = config.erp_url or ""

@@ -148,7 +148,9 @@ async def get_default_currency_info(client_id="DEMO_CLIENT_123"):
             "debug_db_raw_url": config.get("debug_db_raw_url"),
             "debug_api_key": config.get("api_key"),
             "debug_api_secret": config.get("api_secret"),
-            "debug_erp_url_processed": config.get("erp_url")
+            "debug_erp_url_processed": config.get("erp_url"),
+            "debug_target_received": config.get("debug_target_received"),
+            "debug_target_len": config.get("debug_target_len")
         }
 
     return {"code": "USD", "symbol": "$", "decimal_places": 2}
