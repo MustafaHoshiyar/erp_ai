@@ -135,7 +135,15 @@ async def get_default_currency_info(client_id="DEMO_CLIENT_123"):
                     }
                     return _CURRENCY_CACHE[client_id]
     except Exception as e:
-        print(f"[ERPClient] Failed to fetch currency info for {client_id}: {e}")
-        return {"code": "USD", "symbol": "$", "decimal_places": 2, "debug_error": str(e)}
+        source = config.get("source", "unknown")
+        print(f"[ERPClient] Failed to fetch currency info for {client_id} (Source: {source}): {e}")
+        return {
+            "code": "USD", 
+            "symbol": "$", 
+            "decimal_places": 2, 
+            "debug_error": str(e),
+            "debug_config_source": source,
+            "debug_erp_url": config.get("erp_url")
+        }
 
     return {"code": "USD", "symbol": "$", "decimal_places": 2}
