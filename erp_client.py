@@ -29,7 +29,13 @@ def _extract_erp_error_message(response: httpx.Response) -> str:
 
 
 def _get_headers(config: dict):
-    return {"Authorization": f"token {config['api_key']}:{config['api_secret']}"}
+    key = config.get('api_key', '')
+    secret = config.get('api_secret', '')
+    # Diagnostic print for server console (censored)
+    header_val = f"token {key}:{secret}"
+    censored = f"token {key[:4]}...{key[-4:]}:{secret[:4]}...{secret[-4:]}"
+    print(f"[AuthDebug] Using Header: {censored}")
+    return {"Authorization": header_val}
 
 
 async def run_query(sql, client_id="DEMO_CLIENT_123"):
@@ -164,5 +170,9 @@ async def get_default_currency_info(client_id="DEMO_CLIENT_123"):
         "decimal_places": 2,
         "debug_erp_status": last_status,
         "debug_erp_body": last_body,
+        "debug_k_start": config.get('api_key', '')[:4],
+        "debug_k_end": config.get('api_key', '')[-4:],
+        "debug_s_start": config.get('api_secret', '')[:4],
+        "debug_s_end": config.get('api_secret', '')[-4:],
         "debug_msg": "Reached final fallback - ERP lookup completed but no data returned."
     }
