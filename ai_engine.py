@@ -928,11 +928,11 @@ def build_non_report_response(user_prompt, intent):
 
     return "I am focused on ERPNext reporting and analytics. Ask me for a report, KPI, dashboard, trend, comparison, or forecast from your ERP data."
 
-def generate_sql(user_prompt, history=None, client_id="DEMO_CLIENT_123", app_name=None, currency="USD", currency_symbol="$"):
+def generate_sql(user_prompt, history=None, client_id="DEMO_CLIENT_123", app_name=None):
     effective_user_prompt = _build_effective_user_prompt(user_prompt, history)
     memory_context = get_relevant_schema_context(client_id, effective_user_prompt, app_name=app_name)
     
-    dynamic_system_prompt = SYSTEM_PROMPT.format(currency=currency)
+    dynamic_system_prompt = SYSTEM_PROMPT.format(currency="USD")
     
     # Inject Dynamic Database-stored Prompt Segments
     dynamic_segments = _get_dynamic_system_prompt_segments(client_id, app_name)
@@ -1142,7 +1142,7 @@ def normalize_sql_with_live_schema(sql_text, required_tables=None, client_id="DE
         return sql_text
 
 
-def generate_chart_config(columns, data_sample, dataset_summary=None, currency="USD", currency_symbol="$"):
+def generate_chart_config(columns, data_sample, dataset_summary=None):
     system_prompt = """
 You are an expert data visualization and dashboard assistant.
 Given a list of column names, their inferred data types, a small JSON sample of the data, and an overall dataset summary (total rows and sums of numerical columns), your task is to generate a comprehensive JSON dashboard configuration.

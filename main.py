@@ -75,6 +75,7 @@ async def generate_report(request: PromptRequest, background_tasks: BackgroundTa
 
     conversation_id = request.conversation_id
     
+    # 2. CREATE NEW OR GET CONVERSATION (Load/Initialize Context)
     if not conversation_id:
         new_conv = Conversation(client_id=client_id, user_id=request.user_id, app_name="erp_ai")
         db.add(new_conv)
@@ -90,38 +91,18 @@ async def generate_report(request: PromptRequest, background_tasks: BackgroundTa
         app_name = getattr(conversation, "app_name", "erp_ai") or "erp_ai"
         client_id = conversation.client_id
 
+    # 3. GENERATION LOOP (Harden against API failures)
+    request_started_at = time.perf_counter()
     msg = ConversationMessage(
         conversation_id=conversation_id,
         user_prompt=request.prompt,
-        detected_intent=detected_intent,
+        role="user",
+        execution_status="pending",
+        user_data=request.history,
+        client_id=client_id,
         user_id=request.user_id
     )
 
-    should_fast_skip = False
-    if detected_intent in {"clarification_needed", "unsupported"}:
-        should_fast_skip = True
-    elif detected_intent == "chat" and not request.history:
-        should_fast_skip = True
-
-    if should_fast_skip:
-        msg.assistant_response = build_non_report_response(request.prompt, detected_intent)
-        msg.execution_status = "skipped"
-        db.add(msg)
-        db.commit()
-        db.refresh(msg)
-
-        return {
-            "conversation_id": conversation_id,
-            "message_id": msg.id,
-            "intent": detected_intent,
-            "sql": None,
-            "data": None,
-            "message": msg.assistant_response,
-            "tokens_used": 0
-        }
-
-    from erp_client import get_default_currency_info
-    currency_info = get_default_currency_info(client_id)
     generation_started_at = time.perf_counter()
 
     if detected_intent == "chat":
@@ -133,9 +114,7 @@ async def generate_report(request: PromptRequest, background_tasks: BackgroundTa
             request.prompt, 
             request.history, 
             client_id, 
-            app_name=app_name, 
-            currency=currency_info["code"], 
-            currency_symbol=currency_info["symbol"]
+            app_name=app_name
         )
 
     generation_ms = round((time.perf_counter() - generation_started_at) * 1000)
@@ -253,9 +232,7 @@ class ChartConfigRequest(BaseModel):
 @app.post("/api/generate_chart_config")
 async def api_generate_chart_config(request: ChartConfigRequest):
     try:
-        from erp_client import get_default_currency_info
-        currency_info = get_default_currency_info(request.client_id)
-        config_str = generate_chart_config(request.columns, request.data_sample, request.dataset_summary, currency=currency_info["code"], currency_symbol=currency_info["symbol"])
+        config_str = generate_chart_config(request.columns, request.data_sample, request.dataset_summary)
         import json
         config_json = json.loads(config_str)
         return config_json
