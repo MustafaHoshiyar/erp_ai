@@ -104,13 +104,20 @@ async def run_query(sql: str, client_id="DEMO_CLIENT_123"):
     """
     Executes a SELECT query on the client's ERPNext instance.
     """
+    import json
     config = get_client_runtime_config(client_id)
     try:
+        # Wrap SQL in the filters dict for the 'AI Report Writer' report
+        filters = json.dumps({"sql": sql})
+        
         async with httpx.AsyncClient() as client:
             response = await client.post(
                 f"{config['erp_url']}/api/method/frappe.desk.query_report.run",
                 headers=_get_headers(config),
-                data={"report_name": "AI Report Writer", "filters": '{"sql": "' + sql.replace('"', '\\"') + '"}'},
+                data={
+                    "report_name": "AI Report Writer", 
+                    "filters": filters
+                },
                 timeout=30.0,
             )
             response.raise_for_status()
