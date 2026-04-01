@@ -117,14 +117,15 @@ class ClientConfig(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     client_id = Column(String(50), index=True, nullable=False, unique=True)
-    erp_url = Column(String(255), nullable=True) # e.g. https://supernatural.ribox.me
-    api_key = Column(String(255), nullable=True)
-    api_secret = Column(String(255), nullable=True)
+    erp_url = Column(String(500), nullable=False) # e.g. https://supernatural.ribox.me
+    api_key = Column(String(255), nullable=False)
+    api_secret = Column(String(255), nullable=False)
     app_name_override = Column(String(100), nullable=True)
     default_currency_code = Column(String(10), default="KWD")
     default_currency_symbol = Column(String(10), default="KWD")
-    is_active = Column(Boolean, default=True)
+    is_active = Column(Boolean, default=True, nullable=False)
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
 
 class PendingContextOverride(Base):
     """Auto-extracted context overrides from user feedback, pending admin review."""
@@ -140,18 +141,6 @@ class PendingContextOverride(Base):
     description = Column(Text, nullable=True)        # Human-readable description
     confidence = Column(Integer, nullable=True)      # 0–100 confidence score from AI
     status = Column(String(20), default="pending", index=True)  # pending, approved, rejected
-    created_at = Column(DateTime(timezone=True), server_default=func.now())
-
-class ClientConfig(Base):
-    __tablename__ = "client_configs"
-
-    id = Column(Integer, primary_key=True, index=True)
-    client_id = Column(String(50), unique=True, index=True, nullable=False)
-    erp_url = Column(String(500), nullable=False)
-    api_key = Column(String(255), nullable=False)
-    api_secret = Column(String(255), nullable=False)
-    app_name_override = Column(String(100), nullable=True)
-    is_active = Column(Boolean, default=True, nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
 from sqlalchemy import text, inspect
