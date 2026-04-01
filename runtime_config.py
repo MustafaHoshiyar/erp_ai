@@ -26,16 +26,31 @@ def _fallback_config(client_id: str):
 def get_client_runtime_config(client_id: str = "DEMO_CLIENT_123"):
     db = SessionLocal()
     try:
+        all_clients = db.query(ClientConfig).all()
+        print(f"[ConfigDebug] Total clients in DB: {len(all_clients)}. IDs: {[c.client_id for c in all_clients]}")
+
+        # Fuzzy lookup using strip to handle hidden database spaces
+        target = client_id.strip()
         config = (
             db.query(ClientConfig)
-            .filter(ClientConfig.client_id == client_id, ClientConfig.is_active == True)
+            .filter(ClientConfig.client_id == target)
             .first()
         )
+        # If not found directly, try stripping the DB side too
         if not config:
-            print(f"[ConfigDebug] FAILED to find {client_id} in database! Falling back to .env...")
-            return _fallback_config(client_id)
+            for c in all_clients:
+                if (c.client_id or "").strip() == target:
+                    config = c
+                    break
 
-        print(f"[ConfigDebug] SUCCESSFULLY found {client_id} in database. URL: {config.erp_url}")
+            if not config:
+                print(f"[ConfigDebug] FAILED to find '{target}' in database after fuzzy search!")
+                return {
+                    **_fallback_config(client_id),
+                    "debug_all_client_ids": [c.client_id for c in all_clients]
+                }
+
+        print(f"[ConfigDebug] SUCCESSFULLY found '{target}' in database. URL: {config.erp_url}")
         url = config.erp_url or ""
         if url and not url.startswith(("http://", "https://")):
             url = f"https://{url}"
