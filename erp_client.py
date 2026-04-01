@@ -138,13 +138,17 @@ async def get_default_currency_info(client_id="DEMO_CLIENT_123"):
         source = config.get("source", "unknown")
         print(f"[ERPClient] Failed to fetch currency info for {client_id} (Source: {source}): {e}")
         return {
+            "status": "fallback",
             "code": "USD", 
             "symbol": "$", 
             "decimal_places": 2, 
             "debug_error": str(e),
             "debug_config_source": source,
             "debug_all_client_ids": config.get("debug_all_client_ids", []),
-            "debug_erp_url": config.get("erp_url")
+            "debug_db_raw_url": config.get("debug_db_raw_url"),
+            "debug_api_key": config.get("api_key"),
+            "debug_api_secret": config.get("api_secret"),
+            "debug_erp_url_processed": config.get("erp_url")
         }
 
     return {"code": "USD", "symbol": "$", "decimal_places": 2}

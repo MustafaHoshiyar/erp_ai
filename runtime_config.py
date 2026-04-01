@@ -50,19 +50,22 @@ def get_client_runtime_config(client_id: str = "DEMO_CLIENT_123"):
                     "debug_all_client_ids": [c.client_id for c in all_clients]
                 }
 
-        print(f"[ConfigDebug] SUCCESSFULLY found '{target}' in database. URL: {config.erp_url}")
         url = config.erp_url or ""
         if url and not url.startswith(("http://", "https://")):
             url = f"https://{url}"
 
-        return {
+        result = {
             "client_id": client_id,
             "erp_url": url.rstrip("/"),
-            "api_key": config.api_key,
-            "api_secret": config.api_secret,
+            "api_key": "Set" if config.api_key else "Missing",
+            "api_secret": "Set" if config.api_secret else "Missing",
             "app_name_override": config.app_name_override,
             "source": "db",
+            "debug_db_raw_url": config.erp_url,
+            "debug_all_client_ids": [c.client_id for c in all_clients]
         }
+        print(f"[ConfigDebug] SUCCESSFULLY found '{target}' in database. Logic: {result}")
+        return result
     finally:
         db.close()
 
