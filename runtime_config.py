@@ -29,21 +29,17 @@ def get_client_runtime_config(client_id: str = "DEMO_CLIENT_123"):
         all_clients = db.query(ClientConfig).all()
         print(f"[ConfigDebug] Total clients in DB: {len(all_clients)}. IDs: {[c.client_id for c in all_clients]}")
 
-        # Case-insensitive lookup using func.lower and strip
+        # Fuzzy lookup using strip to handle hidden database spaces
         target = client_id.strip()
-        from sqlalchemy import func
         config = (
             db.query(ClientConfig)
-            .filter(func.lower(ClientConfig.client_id) == target.lower())
+            .filter(ClientConfig.client_id == target)
             .first()
         )
         # If not found directly, try stripping the DB side too
         if not config:
-            print(f"[ConfigDebug] Direct lookup failed for '{target}' (len:{len(target)})")
             for c in all_clients:
-                db_id = (c.client_id or "").strip().lower()
-                print(f"[ConfigDebug] Comparing target '{target.lower()}' vs DB ID '{db_id}'")
-                if db_id == target.lower():
+                if (c.client_id or "").strip() == target:
                     config = c
                     break
 
@@ -51,28 +47,22 @@ def get_client_runtime_config(client_id: str = "DEMO_CLIENT_123"):
                 print(f"[ConfigDebug] FAILED to find '{target}' in database after fuzzy search!")
                 return {
                     **_fallback_config(client_id),
-                    "debug_all_client_ids": [c.client_id for c in all_clients],
-                    "debug_target_received": target,
-                    "debug_target_len": len(target)
+                    "debug_all_client_ids": [c.client_id for c in all_clients]
                 }
 
+        print(f"[ConfigDebug] SUCCESSFULLY found '{target}' in database. URL: {config.erp_url}")
         url = config.erp_url or ""
         if url and not url.startswith(("http://", "https://")):
             url = f"https://{url}"
 
-        result = {
+        return {
             "client_id": client_id,
             "erp_url": url.rstrip("/"),
             "api_key": config.api_key,
             "api_secret": config.api_secret,
             "app_name_override": config.app_name_override,
             "source": "db",
-            "debug_key_status": "Set" if config.api_key else "Missing",
-            "debug_db_raw_url": config.erp_url,
-            "debug_all_client_ids": [c.client_id for c in all_clients]
         }
-        print(f"[ConfigDebug] SUCCESSFULLY found '{target}' in database. Logic: {result}")
-        return result
     finally:
         db.close()
 

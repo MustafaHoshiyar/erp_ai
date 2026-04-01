@@ -29,13 +29,7 @@ def _extract_erp_error_message(response: httpx.Response) -> str:
 
 
 def _get_headers(config: dict):
-    key = config.get('api_key', '')
-    secret = config.get('api_secret', '')
-    # Diagnostic print for server console (censored)
-    header_val = f"token {key}:{secret}"
-    censored = f"token {key[:4]}...{key[-4:]}:{secret[:4]}...{secret[-4:]}"
-    print(f"[AuthDebug] Using Header: {censored}")
-    return {"Authorization": header_val}
+    return {"Authorization": f"token {config['api_key']}:{config['api_secret']}"}
 
 
 async def run_query(sql, client_id="DEMO_CLIENT_123"):
@@ -101,8 +95,6 @@ async def get_default_currency_info(client_id="DEMO_CLIENT_123"):
 
     config = get_client_runtime_config(client_id)
     print(f"[CurrencyDebug] Fetching for {client_id} from {config.get('erp_url')}")
-    last_status = None
-    last_body = None
     try:
         async with httpx.AsyncClient() as client:
             response = await client.get(
@@ -111,8 +103,6 @@ async def get_default_currency_info(client_id="DEMO_CLIENT_123"):
                 params={"fields": '["default_currency"]'},
                 timeout=10.0,
             )
-            last_status = response.status_code
-            last_body = response.text
             print(f"[CurrencyDebug] Status: {response.status_code}, Body: {response.text}")
             if response.status_code == 200:
                 data = response.json()
@@ -148,31 +138,13 @@ async def get_default_currency_info(client_id="DEMO_CLIENT_123"):
         source = config.get("source", "unknown")
         print(f"[ERPClient] Failed to fetch currency info for {client_id} (Source: {source}): {e}")
         return {
-            "status": "fallback",
             "code": "USD", 
             "symbol": "$", 
             "decimal_places": 2, 
             "debug_error": str(e),
             "debug_config_source": source,
             "debug_all_client_ids": config.get("debug_all_client_ids", []),
-            "debug_db_raw_url": config.get("debug_db_raw_url"),
-            "debug_api_key": config.get("api_key"),
-            "debug_api_secret": config.get("api_secret"),
-            "debug_erp_url_processed": config.get("erp_url"),
-            "debug_target_received": config.get("debug_target_received"),
-            "debug_target_len": config.get("debug_target_len")
+            "debug_erp_url": config.get("erp_url")
         }
 
-    return {
-        "status": "total_fallback",
-        "code": "USD", 
-        "symbol": "$", 
-        "decimal_places": 2,
-        "debug_erp_status": last_status,
-        "debug_erp_body": last_body,
-        "debug_k_start": config.get('api_key', '')[:4],
-        "debug_k_end": config.get('api_key', '')[-4:],
-        "debug_s_start": config.get('api_secret', '')[:4],
-        "debug_s_end": config.get('api_secret', '')[-4:],
-        "debug_msg": "Reached final fallback - ERP lookup completed but no data returned."
-    }
+    return {"code": "USD", "symbol": "$", "decimal_places": 2}
