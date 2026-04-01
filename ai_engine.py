@@ -968,16 +968,50 @@ def generate_sql(user_prompt, history=None, client_id="DEMO_CLIENT_123", app_nam
 
     messages = [{"role": "system", "content": dynamic_system_prompt}]
     
+    # 1. CLEAN & SANITIZE HISTORY
+    sanitized_history = []
     if history:
-        messages.extend(history)
+        for item in history:
+            role = item.get("role", "user")
+            content = str(item.get("content", "")).strip()
+            
+            # If the content is an Assistant's Technical Error (Traceback), summarize it
+            if role == "assistant" and ("Traceback (most recent call last)" in content or "ERPNext SQL Error" in content):
+                # Extract only the last error line if possible, or just a short summary
+                last_line = content.splitlines()[-1] if content.strip() else "Unknown Database Error"
+                content = f"Error: {last_line}"
+            
+            # Do not add empty content items to history
+            if content:
+                sanitized_history.append({"role": role, "content": content})
+
+    # 2. DEDUPLICATE TRAILING USER PROMPT
+    # If the last item in the sanitized history is already the same as our current prompt,
+    # do not use history to avoid double-prompting some models. 
+    # Or better: remove that last duplicate from history before extending.
+    if sanitized_history and sanitized_history[-1]["role"] == "user":
+        if sanitized_history[-1]["content"].lower() == effective_user_prompt.lower():
+            sanitized_history.pop()
+
+    if sanitized_history:
+        messages.extend(sanitized_history)
         
     messages.append({"role": "user", "content": effective_user_prompt})
 
-    response = client.chat.completions.create(
-        model=AI_MODEL,
-        messages=messages,
-        temperature=0
-    )
+    try:
+        response = client.chat.completions.create(
+            model=AI_MODEL,
+            messages=messages,
+            temperature=0
+        )
+    except Exception as e:
+        print(f"[AI Engine] Critical LLM Provider Error: {e}")
+        return {
+            "sql": None,
+            "message": f"I'm sorry, I encountered a server error from the AI provider: {str(e)}",
+            "tokens_used": 0,
+            "error_type": "provider_500"
+        }
     raw_output = response.choices[0].message.content.strip()
 
     usage = response.usage if hasattr(response, "usage") and response.usage else None
