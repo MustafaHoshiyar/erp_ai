@@ -124,7 +124,7 @@ async def generate_report(request: PromptRequest, background_tasks: BackgroundTa
         }
 
     from erp_client import get_default_currency_info
-    currency_info = await get_default_currency_info(client_id)
+    currency_info = get_default_currency_info(client_id)
     generation_started_at = time.perf_counter()
 
     if detected_intent == "chat":
