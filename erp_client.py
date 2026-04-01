@@ -135,4 +135,4 @@ async def get_default_currency_info(client_id="DEMO_CLIENT_123"):
     except Exception as e:
         print(f"[ERPClient] Failed to fetch currency info for {client_id}: {e}")
 
-    return {"code": "USD", "symbol": "$", "decimal_places": 2}
+    return {"code": "KWD", "symbol": "KD", "decimal_places": 3}
