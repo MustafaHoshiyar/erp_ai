@@ -32,11 +32,17 @@ def get_client_runtime_config(client_id: str = "DEMO_CLIENT_123"):
             .first()
         )
         if not config:
+            print(f"[ConfigDebug] FAILED to find {client_id} in database! Falling back to .env...")
             return _fallback_config(client_id)
+
+        print(f"[ConfigDebug] SUCCESSFULLY found {client_id} in database. URL: {config.erp_url}")
+        url = config.erp_url or ""
+        if url and not url.startswith(("http://", "https://")):
+            url = f"https://{url}"
 
         return {
             "client_id": client_id,
-            "erp_url": (config.erp_url or "").rstrip("/"),
+            "erp_url": url.rstrip("/"),
             "api_key": config.api_key,
             "api_secret": config.api_secret,
             "app_name_override": config.app_name_override,
