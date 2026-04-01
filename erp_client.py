@@ -94,6 +94,7 @@ async def get_default_currency_info(client_id="DEMO_CLIENT_123"):
         return _CURRENCY_CACHE[client_id]
 
     config = get_client_runtime_config(client_id)
+    print(f"[CurrencyDebug] Fetching for {client_id} from {config.get('erp_url')}")
     try:
         async with httpx.AsyncClient() as client:
             response = await client.get(
@@ -102,6 +103,7 @@ async def get_default_currency_info(client_id="DEMO_CLIENT_123"):
                 params={"fields": '["default_currency"]'},
                 timeout=10.0,
             )
+            print(f"[CurrencyDebug] Status: {response.status_code}, Body: {response.text}")
             if response.status_code == 200:
                 data = response.json()
                 companies = data.get("data", [])
