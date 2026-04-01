@@ -142,21 +142,33 @@ async def generate_report(request: PromptRequest, background_tasks: BackgroundTa
             result["sql"] = normalized_sql
             if (result.get("message") or "").strip() == original_sql.strip():
                 result["message"] = normalized_sql
-    tokens_used = result.get("tokens_used", 0)
+    # 4. SAVE TO HISTORY (Harden against detached instances and NameErrors)
+    try:
+        tokens_used = result.get("tokens_used", 0)
+        if isinstance(tokens_used, dict):
+            tokens_used = tokens_used.get("total", 0)
 
-    msg.generated_sql = result.get("sql")
-    msg.assistant_response = result.get("message")
-    msg.tokens_used = result.get("tokens_used", 0)
-    msg.input_tokens = result.get("input_tokens", 0)
-    msg.output_tokens = result.get("output_tokens", 0)
-    msg.detected_intent = result.get("detected_intent", detected_intent)
-    msg.model_used = result.get("model_used")
-    msg.routing_tables = result.get("routing_tables")
-    msg.generation_ms = generation_ms
-    msg.total_duration_ms = round((time.perf_counter() - request_started_at) * 1000)
-    db.add(msg)
-    db.commit()
-    db.refresh(msg)
+        msg.generated_sql = result.get("sql")
+        msg.assistant_response = result.get("message")
+        msg.tokens_used = tokens_used
+        msg.input_tokens = result.get("input_tokens", 0)
+        msg.output_tokens = result.get("output_tokens", 0)
+        msg.detected_intent = result.get("detected_intent", detected_intent)
+        msg.model_used = result.get("model_used")
+        msg.routing_tables = result.get("routing_tables")
+        msg.generation_ms = generation_ms
+        msg.total_duration_ms = round((time.perf_counter() - request_started_at) * 1000)
+        
+        db.add(msg)
+        db.commit()
+        db.refresh(msg)
+
+        if result.get("sql"):
+            # Start background backfill for this client's learning
+            background_tasks.add_task(backfill_embeddings_in_background, client_id, msg.id)
+    except Exception as db_err:
+        print(f"[Main] Error saving assistant response to DB: {db_err}")
+        db.rollback()
 
     if not result.get("sql"):
         if msg.detected_intent in {"chat", "clarification_needed", "unsupported"}:
