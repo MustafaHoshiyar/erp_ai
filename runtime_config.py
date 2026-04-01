@@ -63,10 +63,11 @@ def get_client_runtime_config(client_id: str = "DEMO_CLIENT_123"):
         result = {
             "client_id": client_id,
             "erp_url": url.rstrip("/"),
-            "api_key": "Set" if config.api_key else "Missing",
-            "api_secret": "Set" if config.api_secret else "Missing",
+            "api_key": config.api_key,
+            "api_secret": config.api_secret,
             "app_name_override": config.app_name_override,
             "source": "db",
+            "debug_key_status": "Set" if config.api_key else "Missing",
             "debug_db_raw_url": config.erp_url,
             "debug_all_client_ids": [c.client_id for c in all_clients]
         }
