@@ -369,9 +369,9 @@ async def execute_saved_report(report_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=500, detail=f"Error executing report: {str(e)}")
 
 @app.get("/api/currency-info")
-async def get_currency_info(client_id: str = "DEMO_CLIENT_123"):
+def get_currency_info_endpoint(client_id: str = "DEMO_CLIENT_123"):
     from erp_client import get_default_currency_info
-    return await get_default_currency_info(client_id)
+    return get_default_currency_info(client_id)
 
 def _token_reset_allowed() -> bool:
     return os.getenv("ENVIRONMENT", "development").lower() != "production"

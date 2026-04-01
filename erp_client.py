@@ -8,17 +8,20 @@ def _get_headers(config: dict):
 def get_default_currency_info(client_id="DEMO_CLIENT_123"):
     """
     Emergency fallback for currency info from Database only.
+    Using getattr to prevent 500 errors if columns are missing.
     """
     from database import SessionLocal, ClientConfig
     db = SessionLocal()
-    config = db.query(ClientConfig).filter(ClientConfig.client_id == client_id).first()
-    db.close()
-    
-    if config and config.default_currency_code:
-        return {
-            "symbol": config.default_currency_symbol or config.default_currency_code,
-            "code": config.default_currency_code
-        }
+    try:
+        config = db.query(ClientConfig).filter(ClientConfig.client_id == client_id).first()
+        if config:
+            code = getattr(config, "default_currency_code", "KWD") or "KWD"
+            symbol = getattr(config, "default_currency_symbol", code) or code
+            return {"symbol": symbol, "code": code}
+    except Exception as e:
+        print(f"[ERPClient] DB Currency Fetch Error: {e}")
+    finally:
+        db.close()
     
     return {"symbol": "KWD", "code": "KWD"}
 
