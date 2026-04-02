@@ -44,8 +44,14 @@ def get_config(client_id: str = "DEMO_CLIENT_123"):
     config = get_client_runtime_config(client_id)
     erp_url = _normalize_erp_base_url(config.get("erp_url", ""))
     environment = os.getenv("ENVIRONMENT", "development")
+    # Fetch app name from override or fallback to client_id title
+    app_name = config.get("app_name_override")
+    if not app_name:
+        app_name = client_id.replace('_', ' ').replace('-', ' ').title()
+
     return {
         "environment": environment,
+        "app_name": app_name,
         "insights_url": f"{erp_url}/insights/dashboards" if erp_url else "",
         "allow_token_reset": environment.lower() != "production",
     }

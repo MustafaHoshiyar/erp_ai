@@ -623,7 +623,7 @@ code {
     display: flex;
     flex-direction: column;
     transition: margin-left 0.3s ease;
-    overflow-y: auto;
+    overflow-y: hidden;
 }
 
 .sidebar.collapsed {
@@ -984,6 +984,193 @@ body:has(.sidebar.collapsed) .open-sidebar-btn {
 .sidebar-new-chat {
     padding: 0.75rem 1rem;
     border-bottom: 1px solid var(--border-color);
+}
+
+/* User Profile Panel - Redesigned From Token Panel */
+.user-profile-panel {
+    border-top: 1px solid var(--border-color);
+    background: rgba(30, 30, 30, 0.4);
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+}
+
+.user-profile-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.25rem;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.user-profile-header:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.user-profile-info {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    min-width: 0;
+}
+
+.user-avatar {
+    width: 32px;
+    height: 32px;
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-secondary);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.user-details {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.user-email-text {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.app-name-text {
+    font-size: 0.7rem;
+    color: var(--primary-color);
+    font-weight: 600;
+    letter-spacing: 0.02em;
+}
+
+.profile-toggle-icon {
+    color: var(--text-muted);
+    transition: transform 0.3s ease;
+}
+
+.user-profile-panel.collapsed .profile-toggle-icon {
+    transform: rotate(-180deg);
+}
+
+.user-profile-content {
+    background: rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+    transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
+    max-height: 800px;
+    opacity: 1;
+    padding: 0 1.25rem 1.25rem 1.25rem;
+}
+
+.user-profile-content.collapsed {
+    max-height: 0;
+    opacity: 0;
+    padding-bottom: 0;
+}
+
+.token-stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+    padding-top: 0.5rem;
+}
+
+.token-stat {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 0.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+.token-stat-value {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.token-stat-label {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.token-per-request {
+    margin: 1rem 0;
+    padding: 0.5rem 0.75rem;
+    background: rgba(16, 163, 127, 0.05);
+    border-radius: 6px;
+    font-size: 0.8rem;
+}
+
+.token-per-request strong {
+    color: var(--primary-color);
+}
+
+/* Profile Actions Dashboard Style */
+.profile-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    border-top: 1px solid var(--border-color);
+    padding-top: 1rem;
+}
+
+.profile-action-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    width: 100%;
+    padding: 0.6rem 0.75rem;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: left;
+}
+
+.profile-action-btn:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--text-primary);
+    border-color: var(--border-highlight);
+}
+
+.profile-action-btn svg {
+    color: var(--text-muted);
+    transition: color 0.2s;
+}
+
+.profile-action-btn:hover svg {
+    color: var(--text-primary);
+}
+
+.profile-action-btn.logout:hover {
+    background: rgba(239, 68, 68, 0.1);
+    color: var(--error-color);
+    border-color: rgba(239, 68, 68, 0.2);
+}
+
+.profile-action-btn.logout:hover svg {
+    color: var(--error-color);
+}
+
+@media (max-width: 768px) {
+    .user-profile-panel {
+        display: block;
+    }
 }
 
 .new-chat-btn {
