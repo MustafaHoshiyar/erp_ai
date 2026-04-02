@@ -81,7 +81,7 @@ async def generate_report(request: PromptRequest, background_tasks: BackgroundTa
             from erp_client import get_app_name
             app_name = await get_app_name(client_id)
              
-        new_conv = Conversation(client_id=client_id, app_name=app_name)
+        new_conv = Conversation(client_id=client_id, app_name=app_name, user_id=request.user_id)
         db.add(new_conv)
         db.commit()
         db.refresh(new_conv)
@@ -267,6 +267,7 @@ async def api_generate_chart_config(request: ChartConfigRequest):
 
 class SaveReportRequest(BaseModel):
     client_id: str
+    user_id: Optional[str] = None
     name: str
     original_prompt: str
     sql_query: str
@@ -277,6 +278,7 @@ def save_report(request: SaveReportRequest, background_tasks: BackgroundTasks, d
     try:
         new_report = SavedReport(
             client_id=request.client_id,
+            user_id=request.user_id,
             name=request.name,
             original_prompt=request.original_prompt,
             sql_query=request.sql_query,
@@ -301,8 +303,12 @@ async def get_insights_dashboards(client_id: str = "DEMO_CLIENT_123"):
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/api/reports/{client_id}")
-def get_saved_reports(client_id: str, db: Session = Depends(get_db)):
-    reports = db.query(SavedReport).filter(SavedReport.client_id == client_id).order_by(SavedReport.created_at.desc()).all()
+def get_saved_reports(client_id: str, user_id: Optional[str] = None, db: Session = Depends(get_db)):
+    query = db.query(SavedReport).filter(SavedReport.client_id == client_id)
+    if user_id:
+        query = query.filter(SavedReport.user_id == user_id)
+    
+    reports = query.order_by(SavedReport.created_at.desc()).all()
     return [
         {
             "id": r.id,
@@ -383,10 +389,12 @@ def _token_reset_allowed() -> bool:
 
 
 @app.get("/api/token-stats")
-def get_token_stats(client_id: Optional[str] = None, db: Session = Depends(get_db)):
+def get_token_stats(client_id: Optional[str] = None, user_id: Optional[str] = None, db: Session = Depends(get_db)):
     base_query = db.query(ConversationMessage).join(Conversation)
     if client_id:
         base_query = base_query.filter(Conversation.client_id == client_id)
+    if user_id:
+        base_query = base_query.filter(ConversationMessage.user_id == user_id)
 
     token_messages_query = base_query.filter(ConversationMessage.tokens_used.isnot(None), ConversationMessage.tokens_used > 0)
     totals = token_messages_query.with_entities(
@@ -411,13 +419,15 @@ def get_token_stats(client_id: Optional[str] = None, db: Session = Depends(get_d
     }
 
 @app.post("/api/token-stats/reset")
-def reset_token_stats(client_id: Optional[str] = None, db: Session = Depends(get_db)):
+def reset_token_stats(client_id: Optional[str] = None, user_id: Optional[str] = None, db: Session = Depends(get_db)):
     if not _token_reset_allowed():
         raise HTTPException(status_code=403, detail="Token reset is disabled in production.")
 
     query = db.query(ConversationMessage).join(Conversation)
     if client_id:
         query = query.filter(Conversation.client_id == client_id)
+    if user_id:
+        query = query.filter(ConversationMessage.user_id == user_id)
 
     messages = query.filter(ConversationMessage.tokens_used.isnot(None), ConversationMessage.tokens_used > 0).all()
     for msg in messages:
@@ -976,34 +986,41 @@ def get_feature_flags(client_id: str, db: Session = Depends(get_db)):
 # --- Conversation History Endpoints ---
 
 @app.get("/api/conversations/{client_id}")
-def get_conversations(client_id: str, db: Session = Depends(get_db)):
-    """Fetch all conversation heads for a specific client."""
-    normalized_client_id = _normalize_client_id(client_id)
-    first_prompt_subquery = (
-        select(ConversationMessage.user_prompt)
-        .where(ConversationMessage.conversation_id == Conversation.id)
+def get_conversations(client_id: str, user_id: Optional[str] = None, db: Session = Depends(get_db)):
+    """Fetch all conversation heads for a specific client and user."""
+    normalized_client_id = _normalize_client_id(client_id).strip()
+    
+    # Using correlated subqueries for title and last_message_at
+    title_subquery = (
+        db.query(ConversationMessage.user_prompt)
+        .filter(ConversationMessage.conversation_id == Conversation.id)
         .order_by(ConversationMessage.created_at.asc(), ConversationMessage.id.asc())
         .limit(1)
-        .scalar_subquery()
+        .correlate(Conversation)
+        .as_scalar()
     )
+    
     last_message_at_subquery = (
-        select(func.max(ConversationMessage.created_at))
-        .where(ConversationMessage.conversation_id == Conversation.id)
-        .scalar_subquery()
+        db.query(func.max(ConversationMessage.created_at))
+        .filter(ConversationMessage.conversation_id == Conversation.id)
+        .correlate(Conversation)
+        .as_scalar()
     )
+    
     last_activity_expr = func.coalesce(last_message_at_subquery, Conversation.created_at)
-
-    convs = (
-        db.query(
-            Conversation.id,
-            Conversation.app_name,
-            Conversation.created_at,
-            first_prompt_subquery.label("title"),
-        )
-        .filter(func.trim(Conversation.client_id) == normalized_client_id)
-        .order_by(last_activity_expr.desc(), Conversation.id.desc())
-        .all()
-    )
+    
+    query = db.query(
+        Conversation.id,
+        Conversation.app_name,
+        Conversation.created_at,
+        title_subquery.label("title")
+    ).filter(func.trim(Conversation.client_id) == normalized_client_id)
+    
+    if user_id:
+        query = query.filter(Conversation.user_id == user_id)
+    last_activity_expr = func.coalesce(last_message_at_subquery, Conversation.created_at)
+    
+    convs = query.order_by(last_activity_expr.desc(), Conversation.id.desc()).all()
 
     return [
         {

@@ -31,7 +31,7 @@ def cosine_similarity(vec1: list[float], vec2: list[float]) -> float:
         return 0.0
     return dot_product / (norm_a * norm_b)
 
-def backfill_embeddings_in_background(client_id: str):
+def backfill_embeddings_in_background(client_id: str, *args):
     db = SessionLocal()
     try:
         reports = db.query(SavedReport).filter(SavedReport.client_id == client_id, SavedReport.embedding == None).all()

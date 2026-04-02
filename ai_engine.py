@@ -1114,6 +1114,16 @@ def generate_sql(user_prompt, history=None, client_id="DEMO_CLIENT_123", app_nam
     return result
 
 
+
+
+def _client_has_sales_invoice_followup_guardrail(client_id):
+    """
+    FIX: This function was previously called but not defined, causing a NameError.
+    It serves as a guardrail for specific tenants (like eagle_group) to prevent
+    the AI from generating redundant Sales Invoice Item joins in follow-up queries.
+    """
+    return client_id in ["DEMO_CLIENT_123", "eagle_group"]
+
 def normalize_sql_with_live_schema(sql_text, required_tables=None, client_id="DEMO_CLIENT_123"):
     if not sql_text:
         return sql_text
