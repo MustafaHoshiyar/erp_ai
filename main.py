@@ -369,8 +369,13 @@ async def execute_saved_report(report_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=500, detail=f"Error executing report: {str(e)}")
 
 @app.get("/api/currency-info")
-async def get_currency_info(client_id: str = "DEMO_CLIENT_123"):
+async def get_currency_info(client_id: Optional[str] = None, db: Session = Depends(get_db)):
     from erp_client import get_default_currency_info
+    if not client_id:
+        from database import ClientConfig
+        config = db.query(ClientConfig).filter(ClientConfig.is_active == True).first()
+        client_id = config.client_id if config else "DEMO_CLIENT_123"
+        
     return await get_default_currency_info(client_id)
 
 def _token_reset_allowed() -> bool:
