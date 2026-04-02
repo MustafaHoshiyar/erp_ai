@@ -5468,6 +5468,727 @@
           "fieldname": "supplier_numbers"
         }
       ]
+    },
+    "Contact": {
+      "name": "Contact",
+      "module": "Contacts",
+      "custom": 0,
+      "istable": 0,
+      "fields": [
+        {
+          "fieldname": "first_name",
+          "fieldtype": "Data",
+          "label": "First Name",
+          "options": null
+        },
+        {
+          "fieldname": "middle_name",
+          "fieldtype": "Data",
+          "label": "Middle Name",
+          "options": null
+        },
+        {
+          "fieldname": "last_name",
+          "fieldtype": "Data",
+          "label": "Last Name",
+          "options": null
+        },
+        {
+          "fieldname": "full_name",
+          "fieldtype": "Data",
+          "label": "Full Name",
+          "options": null
+        },
+        {
+          "fieldname": "email_id",
+          "fieldtype": "Data",
+          "label": "Email Address",
+          "options": "Email"
+        },
+        {
+          "fieldname": "user",
+          "fieldtype": "Link",
+          "label": "User Id",
+          "options": "User"
+        },
+        {
+          "fieldname": "address",
+          "fieldtype": "Link",
+          "label": "Address",
+          "options": "Address"
+        },
+        {
+          "fieldname": "sync_with_google_contacts",
+          "fieldtype": "Check",
+          "label": "Sync with Google Contacts",
+          "options": null
+        },
+        {
+          "fieldname": "status",
+          "fieldtype": "Select",
+          "label": "Status",
+          "options": "Passive\nOpen\nReplied"
+        },
+        {
+          "fieldname": "salutation",
+          "fieldtype": "Link",
+          "label": "Salutation",
+          "options": "Salutation"
+        },
+        {
+          "fieldname": "designation",
+          "fieldtype": "Data",
+          "label": "Designation",
+          "options": null
+        },
+        {
+          "fieldname": "gender",
+          "fieldtype": "Link",
+          "label": "Gender",
+          "options": "Gender"
+        },
+        {
+          "fieldname": "phone",
+          "fieldtype": "Data",
+          "label": "Phone",
+          "options": "Phone"
+        },
+        {
+          "fieldname": "mobile_no",
+          "fieldtype": "Data",
+          "label": "Mobile No",
+          "options": "Phone"
+        },
+        {
+          "fieldname": "company_name",
+          "fieldtype": "Data",
+          "label": "Company Name",
+          "options": null
+        },
+        {
+          "fieldname": "image",
+          "fieldtype": "Attach Image",
+          "label": "Image",
+          "options": null
+        },
+        {
+          "fieldname": "google_contacts",
+          "fieldtype": "Link",
+          "label": "Google Contacts",
+          "options": "Google Contacts"
+        },
+        {
+          "fieldname": "google_contacts_id",
+          "fieldtype": "Data",
+          "label": "Google Contacts Id",
+          "options": null
+        },
+        {
+          "fieldname": "pulled_from_google_contacts",
+          "fieldtype": "Check",
+          "label": "Pulled from Google Contacts",
+          "options": null
+        },
+        {
+          "fieldname": "email_ids",
+          "fieldtype": "Table",
+          "label": "Email IDs",
+          "options": "Contact Email"
+        },
+        {
+          "fieldname": "phone_nos",
+          "fieldtype": "Table",
+          "label": "Contact Numbers",
+          "options": "Contact Phone"
+        },
+        {
+          "fieldname": "links",
+          "fieldtype": "Table",
+          "label": "Links",
+          "options": "Dynamic Link"
+        },
+        {
+          "fieldname": "is_primary_contact",
+          "fieldtype": "Check",
+          "label": "Is Primary Contact",
+          "options": null
+        },
+        {
+          "fieldname": "department",
+          "fieldtype": "Data",
+          "label": "Department",
+          "options": null
+        },
+        {
+          "fieldname": "unsubscribed",
+          "fieldtype": "Check",
+          "label": "Unsubscribed",
+          "options": null
+        }
+      ],
+      "child_tables": [
+        {
+          "child_doctype": "Contact Email",
+          "fieldname": "email_ids"
+        },
+        {
+          "child_doctype": "Contact Phone",
+          "fieldname": "phone_nos"
+        },
+        {
+          "child_doctype": "Dynamic Link",
+          "fieldname": "links"
+        }
+      ]
+    },
+    "Contact Phone": {
+      "name": "Contact Phone",
+      "module": "Contacts",
+      "custom": 0,
+      "istable": 1,
+      "fields": [
+        {
+          "fieldname": "phone",
+          "fieldtype": "Data",
+          "label": "Number",
+          "options": "Phone"
+        },
+        {
+          "fieldname": "is_primary_phone",
+          "fieldtype": "Check",
+          "label": "Is Primary Phone",
+          "options": null
+        },
+        {
+          "fieldname": "is_primary_mobile_no",
+          "fieldtype": "Check",
+          "label": "Is Primary Mobile",
+          "options": null
+        }
+      ],
+      "child_tables": []
+    },
+    "Item": {
+      "name": "Item",
+      "module": "Stock",
+      "custom": 0,
+      "istable": 0,
+      "fields": [
+        {
+          "fieldname": "naming_series",
+          "fieldtype": "Select",
+          "label": "Series",
+          "options": "STO-ITEM-.YYYY.-"
+        },
+        {
+          "fieldname": "item_code",
+          "fieldtype": "Data",
+          "label": "Item Code",
+          "options": null
+        },
+        {
+          "fieldname": "item_name",
+          "fieldtype": "Data",
+          "label": "Item Name",
+          "options": null
+        },
+        {
+          "fieldname": "item_group",
+          "fieldtype": "Link",
+          "label": "Item Group",
+          "options": "Item Group"
+        },
+        {
+          "fieldname": "stock_uom",
+          "fieldtype": "Link",
+          "label": "Default Unit of Measure",
+          "options": "UOM"
+        },
+        {
+          "fieldname": "disabled",
+          "fieldtype": "Check",
+          "label": "Disabled",
+          "options": null
+        },
+        {
+          "fieldname": "allow_alternative_item",
+          "fieldtype": "Check",
+          "label": "Allow Alternative Item",
+          "options": null
+        },
+        {
+          "fieldname": "is_stock_item",
+          "fieldtype": "Check",
+          "label": "Maintain Stock",
+          "options": null
+        },
+        {
+          "fieldname": "has_variants",
+          "fieldtype": "Check",
+          "label": "Has Variants",
+          "options": null
+        },
+        {
+          "fieldname": "is_fixed_asset",
+          "fieldtype": "Check",
+          "label": "Is Fixed Asset",
+          "options": null
+        },
+        {
+          "fieldname": "auto_create_assets",
+          "fieldtype": "Check",
+          "label": "Auto Create Assets on Purchase",
+          "options": null
+        },
+        {
+          "fieldname": "is_grouped_asset",
+          "fieldtype": "Check",
+          "label": "Create Grouped Asset",
+          "options": null
+        },
+        {
+          "fieldname": "asset_category",
+          "fieldtype": "Link",
+          "label": "Asset Category",
+          "options": "Asset Category"
+        },
+        {
+          "fieldname": "asset_naming_series",
+          "fieldtype": "Select",
+          "label": "Asset Naming Series",
+          "options": null
+        },
+        {
+          "fieldname": "opening_stock",
+          "fieldtype": "Float",
+          "label": "Opening Stock",
+          "options": null
+        },
+        {
+          "fieldname": "standard_rate",
+          "fieldtype": "Currency",
+          "label": "Standard Selling Rate",
+          "options": null
+        },
+        {
+          "fieldname": "over_delivery_receipt_allowance",
+          "fieldtype": "Float",
+          "label": "Over Delivery/Receipt Allowance (%)",
+          "options": null
+        },
+        {
+          "fieldname": "over_billing_allowance",
+          "fieldtype": "Float",
+          "label": "Over Billing Allowance (%)",
+          "options": null
+        },
+        {
+          "fieldname": "image",
+          "fieldtype": "Attach Image",
+          "label": "Image",
+          "options": "image"
+        },
+        {
+          "fieldname": "description",
+          "fieldtype": "Text Editor",
+          "label": "Description",
+          "options": null
+        },
+        {
+          "fieldname": "brand",
+          "fieldtype": "Link",
+          "label": "Brand",
+          "options": "Brand"
+        },
+        {
+          "fieldname": "uoms",
+          "fieldtype": "Table",
+          "label": "UOMs",
+          "options": "UOM Conversion Detail"
+        },
+        {
+          "fieldname": "valuation_method",
+          "fieldtype": "Select",
+          "label": "Valuation Method",
+          "options": "\nFIFO\nMoving Average\nLIFO"
+        },
+        {
+          "fieldname": "valuation_rate",
+          "fieldtype": "Currency",
+          "label": "Valuation Rate",
+          "options": null
+        },
+        {
+          "fieldname": "shelf_life_in_days",
+          "fieldtype": "Int",
+          "label": "Shelf Life In Days",
+          "options": null
+        },
+        {
+          "fieldname": "end_of_life",
+          "fieldtype": "Date",
+          "label": "End of Life",
+          "options": null
+        },
+        {
+          "fieldname": "default_material_request_type",
+          "fieldtype": "Select",
+          "label": "Default Material Request Type",
+          "options": "Purchase\nMaterial Transfer\nMaterial Issue\nManufacture\nCustomer Provided"
+        },
+        {
+          "fieldname": "warranty_period",
+          "fieldtype": "Data",
+          "label": "Warranty Period (in days)",
+          "options": null
+        },
+        {
+          "fieldname": "weight_per_unit",
+          "fieldtype": "Float",
+          "label": "Weight Per Unit",
+          "options": null
+        },
+        {
+          "fieldname": "weight_uom",
+          "fieldtype": "Link",
+          "label": "Weight UOM",
+          "options": "UOM"
+        },
+        {
+          "fieldname": "allow_negative_stock",
+          "fieldtype": "Check",
+          "label": "Allow Negative Stock",
+          "options": null
+        },
+        {
+          "fieldname": "barcodes",
+          "fieldtype": "Table",
+          "label": "Barcodes",
+          "options": "Item Barcode"
+        },
+        {
+          "fieldname": "reorder_levels",
+          "fieldtype": "Table",
+          "label": "Reorder level based on Warehouse",
+          "options": "Item Reorder"
+        },
+        {
+          "fieldname": "has_batch_no",
+          "fieldtype": "Check",
+          "label": "Has Batch No",
+          "options": null
+        },
+        {
+          "fieldname": "create_new_batch",
+          "fieldtype": "Check",
+          "label": "Automatically Create New Batch",
+          "options": null
+        },
+        {
+          "fieldname": "batch_number_series",
+          "fieldtype": "Data",
+          "label": "Batch Number Series",
+          "options": null
+        },
+        {
+          "fieldname": "has_expiry_date",
+          "fieldtype": "Check",
+          "label": "Has Expiry Date",
+          "options": null
+        },
+        {
+          "fieldname": "retain_sample",
+          "fieldtype": "Check",
+          "label": "Retain Sample",
+          "options": null
+        },
+        {
+          "fieldname": "sample_quantity",
+          "fieldtype": "Int",
+          "label": "Max Sample Quantity",
+          "options": null
+        },
+        {
+          "fieldname": "has_serial_no",
+          "fieldtype": "Check",
+          "label": "Has Serial No",
+          "options": null
+        },
+        {
+          "fieldname": "serial_no_series",
+          "fieldtype": "Data",
+          "label": "Serial Number Series",
+          "options": null
+        },
+        {
+          "fieldname": "item_defaults",
+          "fieldtype": "Table",
+          "label": "Item Defaults",
+          "options": "Item Default"
+        },
+        {
+          "fieldname": "variant_of",
+          "fieldtype": "Link",
+          "label": "Variant Of",
+          "options": "Item"
+        },
+        {
+          "fieldname": "variant_based_on",
+          "fieldtype": "Select",
+          "label": "Variant Based On",
+          "options": "Item Attribute\nManufacturer"
+        },
+        {
+          "fieldname": "attributes",
+          "fieldtype": "Table",
+          "label": "Variant Attributes",
+          "options": "Item Variant Attribute"
+        },
+        {
+          "fieldname": "enable_deferred_expense",
+          "fieldtype": "Check",
+          "label": "Enable Deferred Expense",
+          "options": null
+        },
+        {
+          "fieldname": "no_of_months_exp",
+          "fieldtype": "Int",
+          "label": "No of Months (Expense)",
+          "options": null
+        },
+        {
+          "fieldname": "enable_deferred_revenue",
+          "fieldtype": "Check",
+          "label": "Enable Deferred Revenue",
+          "options": null
+        },
+        {
+          "fieldname": "no_of_months",
+          "fieldtype": "Int",
+          "label": "No of Months (Revenue)",
+          "options": null
+        },
+        {
+          "fieldname": "purchase_uom",
+          "fieldtype": "Link",
+          "label": "Default Purchase Unit of Measure",
+          "options": "UOM"
+        },
+        {
+          "fieldname": "min_order_qty",
+          "fieldtype": "Float",
+          "label": "Minimum Order Qty",
+          "options": null
+        },
+        {
+          "fieldname": "safety_stock",
+          "fieldtype": "Float",
+          "label": "Safety Stock",
+          "options": null
+        },
+        {
+          "fieldname": "is_purchase_item",
+          "fieldtype": "Check",
+          "label": "Allow Purchase",
+          "options": null
+        },
+        {
+          "fieldname": "lead_time_days",
+          "fieldtype": "Int",
+          "label": "Lead Time in days",
+          "options": null
+        },
+        {
+          "fieldname": "last_purchase_rate",
+          "fieldtype": "Float",
+          "label": "Last Purchase Rate",
+          "options": null
+        },
+        {
+          "fieldname": "is_customer_provided_item",
+          "fieldtype": "Check",
+          "label": "Is Customer Provided Item",
+          "options": null
+        },
+        {
+          "fieldname": "customer",
+          "fieldtype": "Link",
+          "label": "Customer",
+          "options": "Customer"
+        },
+        {
+          "fieldname": "delivered_by_supplier",
+          "fieldtype": "Check",
+          "label": "Delivered by Supplier (Drop Ship)",
+          "options": null
+        },
+        {
+          "fieldname": "supplier_items",
+          "fieldtype": "Table",
+          "label": "Supplier Items",
+          "options": "Item Supplier"
+        },
+        {
+          "fieldname": "country_of_origin",
+          "fieldtype": "Link",
+          "label": "Country of Origin",
+          "options": "Country"
+        },
+        {
+          "fieldname": "customs_tariff_number",
+          "fieldtype": "Link",
+          "label": "Customs Tariff Number",
+          "options": "Customs Tariff Number"
+        },
+        {
+          "fieldname": "sales_uom",
+          "fieldtype": "Link",
+          "label": "Default Sales Unit of Measure",
+          "options": "UOM"
+        },
+        {
+          "fieldname": "grant_commission",
+          "fieldtype": "Check",
+          "label": "Grant Commission",
+          "options": null
+        },
+        {
+          "fieldname": "is_sales_item",
+          "fieldtype": "Check",
+          "label": "Allow Sales",
+          "options": null
+        },
+        {
+          "fieldname": "max_discount",
+          "fieldtype": "Float",
+          "label": "Max Discount (%)",
+          "options": null
+        },
+        {
+          "fieldname": "customer_items",
+          "fieldtype": "Table",
+          "label": "Customer Items",
+          "options": "Item Customer Detail"
+        },
+        {
+          "fieldname": "taxes",
+          "fieldtype": "Table",
+          "label": "Taxes",
+          "options": "Item Tax"
+        },
+        {
+          "fieldname": "purchase_tax_withholding_category",
+          "fieldtype": "Link",
+          "label": "Purchase Tax Withholding Category",
+          "options": "Tax Withholding Category"
+        },
+        {
+          "fieldname": "sales_tax_withholding_category",
+          "fieldtype": "Link",
+          "label": "Sales Tax Withholding Category",
+          "options": "Tax Withholding Category"
+        },
+        {
+          "fieldname": "inspection_required_before_purchase",
+          "fieldtype": "Check",
+          "label": "Inspection Required before Purchase",
+          "options": null
+        },
+        {
+          "fieldname": "inspection_required_before_delivery",
+          "fieldtype": "Check",
+          "label": "Inspection Required before Delivery",
+          "options": null
+        },
+        {
+          "fieldname": "quality_inspection_template",
+          "fieldtype": "Link",
+          "label": "Quality Inspection Template",
+          "options": "Quality Inspection Template"
+        },
+        {
+          "fieldname": "include_item_in_manufacturing",
+          "fieldtype": "Check",
+          "label": "Include Item In Manufacturing",
+          "options": null
+        },
+        {
+          "fieldname": "is_sub_contracted_item",
+          "fieldtype": "Check",
+          "label": "Is Subcontracted Item",
+          "options": null
+        },
+        {
+          "fieldname": "default_bom",
+          "fieldtype": "Link",
+          "label": "Default BOM",
+          "options": "BOM"
+        },
+        {
+          "fieldname": "production_capacity",
+          "fieldtype": "Int",
+          "label": "Production Capacity",
+          "options": null
+        },
+        {
+          "fieldname": "total_projected_qty",
+          "fieldtype": "Float",
+          "label": "Total Projected Qty",
+          "options": null
+        },
+        {
+          "fieldname": "customer_code",
+          "fieldtype": "Small Text",
+          "label": "Customer Code",
+          "options": null
+        },
+        {
+          "fieldname": "default_manufacturer_part_no",
+          "fieldtype": "Data",
+          "label": "Default Manufacturer Part No",
+          "options": null
+        },
+        {
+          "fieldname": "default_item_manufacturer",
+          "fieldtype": "Link",
+          "label": "Default Item Manufacturer",
+          "options": "Manufacturer"
+        }
+      ],
+      "child_tables": [
+        {
+          "child_doctype": "UOM Conversion Detail",
+          "fieldname": "uoms"
+        },
+        {
+          "child_doctype": "Item Barcode",
+          "fieldname": "barcodes"
+        },
+        {
+          "child_doctype": "Item Reorder",
+          "fieldname": "reorder_levels"
+        },
+        {
+          "child_doctype": "Item Default",
+          "fieldname": "item_defaults"
+        },
+        {
+          "child_doctype": "Item Variant Attribute",
+          "fieldname": "attributes"
+        },
+        {
+          "child_doctype": "Item Supplier",
+          "fieldname": "supplier_items"
+        },
+        {
+          "child_doctype": "Item Customer Detail",
+          "fieldname": "customer_items"
+        },
+        {
+          "child_doctype": "Item Tax",
+          "fieldname": "taxes"
+        }
+      ]
     }
   }
 }

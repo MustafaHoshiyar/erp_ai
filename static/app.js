@@ -486,7 +486,8 @@ document.addEventListener('DOMContentLoaded', () => {
     async function loadConversationHistory() {
         sidebarV2Container.innerHTML = '<div class="text-muted" style="padding: 1rem;">Loading...</div>';
         try {
-            const res = await fetch(`/api/conversations/${encodeURIComponent(CLIENT_ID)}`);
+            const user_id = localStorage.getItem('user_email');
+            const res = await fetch(`/api/conversations/${encodeURIComponent(CLIENT_ID)}?user_id=${encodeURIComponent(user_id)}`);
             const threads = await res.json();
 
             sidebarV2Container.innerHTML = '';
@@ -1091,6 +1092,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
                             client_id: CLIENT_ID,
+                            user_id: localStorage.getItem('user_email'),
                             name: reportName,
                             original_prompt: originalPrompt,
                             sql_query: result.sql,
@@ -1237,6 +1239,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify({
                                 client_id: CLIENT_ID,
+                                user_id: localStorage.getItem('user_email'),
                                 title: title,
                                 sql: result.sql,
                                 chart_type: chartType,
@@ -1540,6 +1543,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    async function loadSavedReports() {
+        // This was previously missing in the core file but referenced in save logic.
+        // It refreshes the history list so the newly saved report appears in the sidebar.
+        loadConversationHistory();
+    }
+
     function showAiError(messageNode, errorMessage) {
         cleanupPlaceholderState(messageNode);
 
@@ -1571,7 +1580,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Token Usage Stats ---
     async function fetchTokenStats() {
         try {
-            const res = await fetch(`/api/token-stats?client_id=${encodeURIComponent(CLIENT_ID)}`);
+            const user_id = localStorage.getItem('user_email');
+            const res = await fetch(`/api/token-stats?client_id=${encodeURIComponent(CLIENT_ID)}&user_id=${encodeURIComponent(user_id)}`);
             const stats = await res.json();
             totalTokensEl.textContent = formatNumber(stats.total_tokens);
             requestCountEl.textContent = formatNumber(stats.request_count);
@@ -1602,7 +1612,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!confirmed) return;
 
         try {
-            await fetch(`/api/token-stats/reset?client_id=${encodeURIComponent(CLIENT_ID)}`, { method: 'POST' });
+            const user_id = localStorage.getItem('user_email');
+            await fetch(`/api/token-stats/reset?client_id=${encodeURIComponent(CLIENT_ID)}&user_id=${encodeURIComponent(user_id)}`, { method: 'POST' });
             fetchTokenStats();
         } catch (err) {
             console.error('Failed to reset token stats:', err);
