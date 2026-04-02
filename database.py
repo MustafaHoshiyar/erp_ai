@@ -33,6 +33,7 @@ class SavedReport(Base):
     
     id = Column(Integer, primary_key=True, index=True)
     client_id = Column(String(50), index=True) # Identifier for the specific client/user
+    user_id = Column(String(100), index=True, nullable=True) # User-level isolation
     name = Column(String(255), index=True)     # User-given name for the report
     original_prompt = Column(Text)
     sql_query = Column(Text, nullable=False)
@@ -45,6 +46,7 @@ class Conversation(Base):
     
     id = Column(Integer, primary_key=True, index=True)
     client_id = Column(String(50), index=True)
+    user_id = Column(String(100), index=True, nullable=True) # User-level isolation
     app_name = Column(String(100), index=True, nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     
@@ -150,36 +152,42 @@ def init_db(bind_engine=None):
     # Auto-migration for missing columns
     try:
         inspector = inspect(target_engine)
-        columns = {col["name"] for col in inspector.get_columns("conversation_messages")}
         
         # New columns to add if they are missing
         migrations = {
-            "input_tokens": "INTEGER",
-            "output_tokens": "INTEGER",
-            "user_id": "TEXT",
-            "model_used": "TEXT",
-            "routing_tables": "JSON",
-            "generation_ms": "INTEGER",
-            "execution_ms": "INTEGER",
-            "total_duration_ms": "INTEGER",
-            "synced_to_motherbrain": "BOOLEAN DEFAULT 0"
+            "conversation_messages": {
+                "input_tokens": "INTEGER",
+                "output_tokens": "INTEGER",
+                "user_id": "TEXT",
+                "model_used": "TEXT",
+                "routing_tables": "JSON" if not IS_SQLITE else "TEXT",
+                "generation_ms": "INTEGER",
+                "execution_ms": "INTEGER",
+                "total_duration_ms": "INTEGER",
+                "synced_to_motherbrain": "BOOLEAN DEFAULT False"
+            },
+            "conversations": {
+                "user_id": "VARCHAR(100)"
+            },
+            "saved_reports": {
+                "user_id": "VARCHAR(100)"
+            },
+            "client_context_overrides": {
+                "app_name": "VARCHAR(100)"
+            }
         }
         
-        # Migrations for client_context_overrides
-        context_columns = {col["name"] for col in inspector.get_columns("client_context_overrides")}
-        if "app_name" not in context_columns:
-            with target_engine.begin() as conn:
-                conn.execute(text("ALTER TABLE client_context_overrides ADD COLUMN app_name VARCHAR(100)"))
-                print(f"[{target_engine.name}] Migration: Added column app_name to client_context_overrides")
-
         with target_engine.begin() as conn:
-            for column, definition in migrations.items():
-                if column not in columns:
-                    try:
-                        conn.execute(text(f"ALTER TABLE conversation_messages ADD COLUMN {column} {definition}"))
-                        print(f"[{target_engine.name}] Migration: Added column {column} to conversation_messages")
-                    except Exception as e:
-                        print(f"[{target_engine.name}] Migration error for {column}: {e}")
+            for table, columns_to_migrate in migrations.items():
+                existing_cols = {col["name"] for col in inspector.get_columns(table)}
+                for column, definition in columns_to_migrate.items():
+                    if column not in existing_cols:
+                        try:
+                            # Standard SQL works for both PG and SQLite for simple ALTER
+                            conn.execute(text(f"ALTER TABLE {table} ADD COLUMN {column} {definition}"))
+                            print(f"[{target_engine.name}] Migration: Added {column} to {table}")
+                        except Exception as e:
+                            print(f"[{target_engine.name}] Migration error for {table}.{column}: {e}")
     except Exception as outer_e:
         print(f"Database auto-migration safety check failed: {outer_e}")
 
