@@ -10,8 +10,10 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentConversationId = null;
     let CURRENCY_SYMBOL = '$'; // Fallback
     let CURRENCY_DECIMALS = 2;
+    // Dynamic Client ID based on logged in user's tenant
+    const CLIENT_ID = (localStorage.getItem('client_id') || "DEMO_CLIENT_123").trim();
 
-    fetch('/api/currency-info').then(res => res.json()).then(data => {
+    fetch(`/api/currency-info?client_id=${CLIENT_ID}`).then(res => res.json()).then(data => {
         CURRENCY_SYMBOL = data.symbol || '$';
         CURRENCY_DECIMALS = Number.isInteger(data.decimal_places) ? data.decimal_places : 2;
     }).catch(err => console.error("Failed to load currency info", err));
@@ -34,8 +36,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const closeSidebarBtn = document.getElementById('close-sidebar-btn');
     const sidebarV2Container = document.getElementById('history-list');
 
-    // Dynamic Client ID based on logged in user's tenant
-    const CLIENT_ID = (localStorage.getItem('client_id') || "DEMO_CLIENT_123").trim();
 
     // Token Usage Elements
     const totalTokensEl = document.getElementById('total-tokens');
