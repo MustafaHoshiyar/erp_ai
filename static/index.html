@@ -21,37 +21,6 @@
         <div class="sidebar-header">
             <h2>History</h2>
             <div class="header-actions-right" style="display: flex; gap: 0.5rem; align-items: center;">
-                <div class="sidebar-menu-container">
-                    <button class="menu-icon-btn" id="sidebar-menu-btn" title="Menu">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <circle cx="12" cy="12" r="1"></circle>
-                            <circle cx="12" cy="5" r="1"></circle>
-                            <circle cx="12" cy="19" r="1"></circle>
-                        </svg>
-                    </button>
-                    <div class="menu-dropdown hidden" id="sidebar-menu-dropdown">
-                        <a href="#" id="menu-insights-link" target="_blank" class="menu-item">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
-                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                stroke-linejoin="round">
-                                <line x1="7" y1="17" x2="17" y2="7"></line>
-                                <polyline points="7 7 17 7 17 17"></polyline>
-                            </svg>
-                            Insight Dashboards
-                        </a>
-                        <button id="menu-logout-btn" class="menu-item">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
-                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                stroke-linejoin="round">
-                                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-                                <polyline points="16 17 21 12 16 7"></polyline>
-                                <line x1="21" y1="12" x2="9" y2="12"></line>
-                            </svg>
-                            Logout
-                        </button>
-                    </div>
-                </div>
                 <button class="close-sidebar-btn" id="close-sidebar-btn" title="Close Sidebar">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -76,22 +45,28 @@
         <div class="history-list" id="history-list">
             <!-- Saved reports will be populated here -->
         </div>
-        <div class="token-usage-panel collapsed" id="token-usage-panel">
-            <div class="token-usage-header" id="token-toggle-header" title="Toggle Token Usage">
-                <div class="token-usage-header-left">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-                    </svg>
-                    <span>Token Usage</span>
+        <div class="user-profile-panel collapsed" id="user-profile-panel">
+            <div class="user-profile-header" id="user-profile-toggle" title="User Profile & Settings">
+                <div class="user-profile-info">
+                    <div class="user-avatar">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+                            <circle cx="12" cy="7" r="4" />
+                        </svg>
+                    </div>
+                    <div class="user-details">
+                        <span class="user-email-text" id="user-email-sidebar">User Email</span>
+                        <span class="app-name-text" id="app-name-display">SMB Solutions ERP AI</span>
+                    </div>
                 </div>
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                    class="token-usage-toggle-icon">
+                    class="profile-toggle-icon">
                     <polyline points="6 9 12 15 18 9"></polyline>
                 </svg>
             </div>
-            <div class="token-usage-content collapsed" id="token-usage-content">
+            <div class="user-profile-content collapsed" id="user-profile-content">
                 <div class="token-stats-grid">
                     <div class="token-stat">
                         <span class="token-stat-value" id="total-tokens">0</span>
@@ -105,16 +80,37 @@
                 <div class="token-per-request" id="token-per-request">
                     <span class="token-stat-label">Avg per request: <strong id="avg-tokens">0</strong></span>
                 </div>
-                <button class="token-reset-btn" id="reset-tokens-btn" title="Reset Token Counter">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" />
-                        <path d="M21 3v5h-5" />
-                        <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16" />
-                        <path d="M3 21v-5h5" />
-                    </svg>
-                    Reset
-                </button>
+
+                <div class="profile-actions">
+                    <button class="profile-action-btn" id="reset-tokens-btn" title="Reset Token Counter">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" />
+                            <path d="M21 3v5h-5" />
+                            <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16" />
+                            <path d="M3 21v-5h5" />
+                        </svg>
+                        Reset Token Usage
+                    </button>
+                    <a href="#" id="menu-insights-link" target="_blank" class="profile-action-btn">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M15 3h6v6" />
+                            <path d="M10 14 21 3" />
+                            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                        </svg>
+                        Insights Workspace
+                    </a>
+                    <button id="menu-logout-btn-card" class="profile-action-btn logout">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                            <polyline points="16 17 21 12 16 7" />
+                            <line x1="21" y1="12" x2="9" y2="12" />
+                        </svg>
+                        Logout Session
+                    </button>
+                </div>
             </div>
         </div>
     </aside>

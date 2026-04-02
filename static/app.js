@@ -35,9 +35,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const openSidebarBtn = document.getElementById('open-sidebar-btn');
     const closeSidebarBtn = document.getElementById('close-sidebar-btn');
     const sidebarV2Container = document.getElementById('history-list');
-
-
-    // Token Usage Elements
+    const userEmailSidebar = document.getElementById('user-email-sidebar');
+    if (userEmailSidebar) {
+        userEmailSidebar.textContent = localStorage.getItem('user_email') || "User";
+    }
     const totalTokensEl = document.getElementById('total-tokens');
     const requestCountEl = document.getElementById('request-count');
     const avgTokensEl = document.getElementById('avg-tokens');
@@ -49,12 +50,18 @@ document.addEventListener('DOMContentLoaded', () => {
     fetch(`/api/config?client_id=${CLIENT_ID}`).then(res => res.json()).then(data => {
         APP_ENV = data.environment;
         const insightsLink = document.getElementById('menu-insights-link');
+        const appNameDisplay = document.getElementById('app-name-display');
+        
+        if (appNameDisplay && data.app_name) {
+            appNameDisplay.textContent = data.app_name;
+        }
+
         if (insightsLink && data.insights_url) {
             insightsLink.href = data.insights_url;
         }
         if (resetTokensBtn) {
             const allowReset = data.allow_token_reset !== false;
-            resetTokensBtn.style.display = allowReset ? 'inline-flex' : 'none';
+            resetTokensBtn.style.display = allowReset ? 'flex' : 'none';
             resetTokensBtn.disabled = !allowReset;
         }
     }).catch(err => console.error("Failed to load config", err));
@@ -468,14 +475,14 @@ document.addEventListener('DOMContentLoaded', () => {
         promptInput.focus();
     });
 
-    // Token toggle logic
-    const tokenToggleHeader = document.getElementById('token-toggle-header');
-    const tokenUsagePanel = document.getElementById('token-usage-panel');
-    const tokenUsageContent = document.getElementById('token-usage-content');
-    if (tokenToggleHeader) {
-        tokenToggleHeader.addEventListener('click', () => {
-            tokenUsagePanel.classList.toggle('collapsed');
-            tokenUsageContent.classList.toggle('collapsed');
+    // User Profile toggle logic (Renamed from Token toggle)
+    const userProfileToggle = document.getElementById('user-profile-toggle');
+    const userProfilePanel = document.getElementById('user-profile-panel');
+    const userProfileContent = document.getElementById('user-profile-content');
+    if (userProfileToggle) {
+        userProfileToggle.addEventListener('click', () => {
+            userProfilePanel.classList.toggle('collapsed');
+            userProfileContent.classList.toggle('collapsed');
         });
     }
 
@@ -1620,30 +1627,16 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Sidebar Menu Logic
-    const menuBtn = document.getElementById('sidebar-menu-btn');
-    const menuDropdown = document.getElementById('sidebar-menu-dropdown');
-    const menuLogoutBtn = document.getElementById('menu-logout-btn');
-
-    if (menuBtn && menuDropdown) {
-        menuBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            menuDropdown.classList.toggle('hidden');
-        });
-
-        // Close menu when clicking outside
-        document.addEventListener('click', (e) => {
-            if (!menuDropdown.classList.contains('hidden') && !menuDropdown.contains(e.target) && e.target !== menuBtn) {
-                menuDropdown.classList.add('hidden');
-            }
-        });
-    }
-
-    if (menuLogoutBtn) {
-        menuLogoutBtn.addEventListener('click', () => {
+    // Card Session Actions
+    const cardLogoutBtn = document.getElementById('menu-logout-btn-card');
+    if (cardLogoutBtn) {
+        cardLogoutBtn.addEventListener('click', () => {
             localStorage.removeItem('auth_token');
             localStorage.removeItem('user_email');
             window.location.href = 'login.html';
         });
     }
+
+    // Deprecated header menu logic (already removed from index.html)
+    // kept temporarily for safety but IDs won't match.
 });
