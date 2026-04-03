@@ -5,6 +5,8 @@
 
 ## ============================================================
 ## MODULE: SELLING
+## WARNING: Only include standard ERPNext fields here. 
+## Custom fields (like custom_sales_person) MUST be handled via dynamic prompts or context overrides.
 ## ============================================================
 
 `tabCustomer`: name (PK), customer_name (Data), customer_type (Select), customer_group (Link), territory (Link), default_currency (Link), default_price_list (Link), tax_id (Data), disabled (Check)
@@ -13,7 +15,7 @@
 
 `tabSales Order Item`: name (PK), parent (Link→Sales Order), item_code (Link→Item), item_name (Data), qty (Float), rate (Currency), amount (Currency), delivery_date (Date), warehouse (Link→Warehouse), uom (Link), net_amount (Currency) | CHILD OF: `tabSales Order`
 
-`tabSales Invoice`: name (PK), customer (Link→Customer), customer_name (Data), posting_date (Date), due_date (Date), company (Link), currency (Link), grand_total (Currency), net_total (Currency), outstanding_amount (Currency), total_qty (Float), status (Select), is_return (Check), return_against (Link), territory (Link), cost_center (Link), sales_partner (Link), custom_sales_person (Link)
+`tabSales Invoice`: name (PK), customer (Link→Customer), customer_name (Data), posting_date (Date), due_date (Date), company (Link), currency (Link), grand_total (Currency), net_total (Currency), outstanding_amount (Currency), total_qty (Float), status (Select), is_return (Check), return_against (Link), territory (Link), cost_center (Link), sales_partner (Link)
 
 `tabSales Invoice Item`: name (PK), parent (Link→Sales Invoice), item_code (Link→Item), item_name (Data), qty (Float), rate (Currency), amount (Currency), warehouse (Link→Warehouse), uom (Link), net_amount (Currency), cost_center (Link), income_account (Link) | CHILD OF: `tabSales Invoice`
 

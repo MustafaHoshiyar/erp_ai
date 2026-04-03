@@ -330,14 +330,22 @@ def _get_dynamic_system_prompt_segments(client_id: str, app_name: str = None) ->
         return ""
     db = SessionLocal()
     try:
+        from sqlalchemy import or_, func
         query = db.query(ClientSystemPrompt).filter(
-            ClientSystemPrompt.client_id == client_id,
+            or_(
+                ClientSystemPrompt.client_id == client_id,
+                ClientSystemPrompt.client_id == "GLOBAL"
+            ),
             ClientSystemPrompt.is_active == True
         )
         if app_name:
             # Load both global (null app) and app-specific segments
-            from sqlalchemy import or_
-            query = query.filter(or_(ClientSystemPrompt.app_name == app_name, ClientSystemPrompt.app_name == None))
+            query = query.filter(
+                or_(
+                    func.lower(ClientSystemPrompt.app_name) == func.lower(app_name),
+                    ClientSystemPrompt.app_name == None
+                )
+            )
         else:
             query = query.filter(ClientSystemPrompt.app_name == None)
             
@@ -955,9 +963,10 @@ def generate_sql(user_prompt, history=None, client_id="DEMO_CLIENT_123", app_nam
         local_schema,
         client_id=client_id,
     )
-    if local_schema is not None:
-        local_schema = get_local_schema(client_id)
-    relation_constraints = build_relation_constraints(required_tables, local_schema) if local_schema else []
+    if local_schema:
+        relation_constraints = build_relation_constraints(required_tables, local_schema)
+    else:
+        relation_constraints = []
     dynamic_system_prompt += f"\n\n{filtered_schema}"
     
     if memory_context:

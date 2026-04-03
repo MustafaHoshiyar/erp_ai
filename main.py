@@ -601,19 +601,27 @@ def list_client_configs(db: Session = Depends(get_db)):
 
 @app.get("/api/client-configs/{client_id}")
 def get_client_config(client_id: str, db: Session = Depends(get_db)):
-    config = db.query(ClientConfig).filter(ClientConfig.client_id == client_id).first()
-    if not config:
-        raise HTTPException(status_code=404, detail="Client config not found")
+    try:
+        config = db.query(ClientConfig).filter(ClientConfig.client_id == client_id).first()
+        if not config:
+            # Let's return a special case for not found so Motherbrain knows it's empty but reachable
+            return {"status": "not_initialized", "client_id": client_id}
 
-    return {
-        "client_id": config.client_id,
-        "erp_url": config.erp_url,
-        "api_key": config.api_key,
-        "api_secret": config.api_secret,
-        "app_name_override": config.app_name_override,
-        "is_active": config.is_active,
-        "created_at": config.created_at.isoformat() if config.created_at else None,
-    }
+        return {
+            "client_id": config.client_id,
+            "erp_url": config.erp_url,
+            "api_key": config.api_key,
+            "api_secret": config.api_secret,
+            "app_name_override": config.app_name_override,
+            "is_active": config.is_active,
+            "created_at": config.created_at.isoformat() if config.created_at else None,
+        }
+    except Exception as e:
+        return {
+            "status": "node_internal_error",
+            "error": str(e),
+            "internal_details": "Check edge node database connection or schema."
+        }
 
 @app.post("/api/client-configs")
 def upsert_client_config(request: ClientConfigRequest, db: Session = Depends(get_db)):

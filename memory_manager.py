@@ -57,11 +57,21 @@ def get_relevant_schema_context(client_id: str, new_prompt: str, app_name: str =
     from database import ClientContextOverride
     db = SessionLocal()
     try:
-        # Load Context Overrides
-        query = db.query(ClientContextOverride).filter(ClientContextOverride.client_id == client_id)
+        from sqlalchemy import or_, func
+        # Load Context Overrides - include both client-specific and GLOBAL rules
+        query = db.query(ClientContextOverride).filter(
+            or_(
+                ClientContextOverride.client_id == client_id,
+                ClientContextOverride.client_id == "GLOBAL"
+            )
+        )
         if app_name:
-            from sqlalchemy import or_
-            query = query.filter(or_(ClientContextOverride.app_name == app_name, ClientContextOverride.app_name == None))
+            query = query.filter(
+                or_(
+                    func.lower(ClientContextOverride.app_name) == func.lower(app_name),
+                    ClientContextOverride.app_name == None
+                )
+            )
         else:
             query = query.filter(ClientContextOverride.app_name == None)
 
