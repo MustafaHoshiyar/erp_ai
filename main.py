@@ -594,7 +594,6 @@ def list_client_configs(db: Session = Depends(get_db)):
             "api_secret": config.api_secret,
             "app_name_override": config.app_name_override,
             "is_active": config.is_active,
-            "created_at": config.created_at.isoformat() if config.created_at else None,
         }
         for config in configs
     ]
@@ -614,7 +613,6 @@ def get_client_config(client_id: str, db: Session = Depends(get_db)):
             "api_secret": config.api_secret,
             "app_name_override": config.app_name_override,
             "is_active": config.is_active,
-            "created_at": config.created_at.isoformat() if config.created_at else None,
         }
     except Exception as e:
         return {
