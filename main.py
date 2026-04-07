@@ -23,6 +23,22 @@ from memory_manager import backfill_embeddings_in_background
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
+def _simplify_error_message(error_str: str) -> str:
+    """Masks technical tracebacks with user-friendly messages for the frontend."""
+    err = str(error_str).lower()
+    if "1054" in err or "unknown column" in err:
+        return "The query referenced a column that doesn't exist in the current schema. You may need to refresh the schema."
+    if "1146" in err or "table" in err and "doesn't exist" in err:
+        return "The query referenced a table that was not found in the database."
+    if "1064" in err or "syntax" in err:
+        return "There was a syntax error in the generated query. I've logged this for improvement."
+    if "access denied" in err or "1045" in err or "unauthorized" in err:
+        return "Database access denied. Please check your ERPNext credentials."
+    if "connection" in err or "refused" in err:
+        return "Could not connect to the ERPNext server. Please check the ERP URL."
+        
+    return "An error occurred while processing the report. The details have been logged for the developer."
+
 
 def _normalize_erp_base_url(url: str) -> str:
     normalized = (url or "").strip().rstrip("/")
@@ -239,7 +255,7 @@ async def generate_report(request: PromptRequest, background_tasks: BackgroundTa
             "sql": failed_sql,
             "data": None,
             "message": result.get("message"),
-            "error": str(e),
+            "error": _simplify_error_message(str(e)),
             "tokens_used": tokens_used
         }
 
@@ -378,7 +394,7 @@ async def execute_saved_report(report_id: int, db: Session = Depends(get_db)):
             "data": data
         }
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error executing report: {str(e)}")
+        raise HTTPException(status_code=500, detail=_simplify_error_message(str(e)))
 
 @app.get("/api/currency-info")
 async def get_currency_info(client_id: Optional[str] = None, db: Session = Depends(get_db)):
