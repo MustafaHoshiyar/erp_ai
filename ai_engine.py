@@ -507,6 +507,21 @@ def _parse_sql_response(raw_output, tokens_used, needs_forecast):
             "needs_forecast": needs_forecast if sql_text else False
         }
 
+    def _apply_safety_repairs(sql: str) -> str:
+        """Fixes common stubborn typos that the LLM makes regardless of prompt instructions."""
+        if not sql:
+            return sql
+        
+        # 1. Fix the famous 'DATE_FORMAT' trailing backtick error (e.g. '%Y-%m-01`)
+        sql = sql.replace("'%Y-%m-01`", "'%Y-%m-01'")
+        sql = sql.replace("'%Y-%m-d`", "'%Y-%m-%d'")
+        sql = sql.replace("'%Y-%m`", "'%Y-%m'")
+        
+        # 2. Fix cases where the AI might use double backticks on one side
+        sql = sql.replace("``", "`")
+        
+        return sql
+
     def extract_sql_candidate(text):
         if not text:
             return None
@@ -542,7 +557,7 @@ def _parse_sql_response(raw_output, tokens_used, needs_forecast):
 
     sql_candidate = extract_sql_candidate(raw_output)
     if sql_candidate:
-        return build_result(sql_candidate)
+        return build_result(_apply_safety_repairs(sql_candidate))
 
     return build_result(None)
 
