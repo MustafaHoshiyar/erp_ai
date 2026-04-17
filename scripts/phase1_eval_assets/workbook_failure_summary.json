@@ -1,0 +1,8 @@
+{
+  "reorder_schema_mismatch": 1,
+  "stock_runout_filtering": 3,
+  "numeric_sorting_formatting": 3,
+  "salesperson_field_selection": 2,
+  "payment_entry_semantics": 2,
+  "many_to_many_time_join": 1
+}

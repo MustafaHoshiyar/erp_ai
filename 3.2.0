@@ -1,0 +1,10 @@
+Collecting psycopg[binary]
+  Using cached psycopg-3.3.3-py3-none-any.whl.metadata (4.3 kB)
+Requirement already satisfied: tzdata in c:\laragon\bin\python\python-3.13\lib\site-packages (from psycopg[binary]) (2025.3)
+Collecting psycopg-binary==3.3.3 (from psycopg[binary])
+  Downloading psycopg_binary-3.3.3-cp313-cp313-win_amd64.whl.metadata (2.7 kB)
+Downloading psycopg_binary-3.3.3-cp313-cp313-win_amd64.whl (3.6 MB)
+   ---------------------------------------- 3.6/3.6 MB 3.3 MB/s eta 0:00:00
+Using cached psycopg-3.3.3-py3-none-any.whl (212 kB)
+Installing collected packages: psycopg-binary, psycopg
+Successfully installed psycopg-3.3.3 psycopg-binary-3.3.3

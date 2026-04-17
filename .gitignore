@@ -1,0 +1,9 @@
+.venv
+venv/
+.env
+*.log
+__pycache__/
+*.pyc
+.pytest_cache/
+erp_ai_memory.db
+.docx

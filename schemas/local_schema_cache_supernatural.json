@@ -1,0 +1,7570 @@
+{
+  "fetched_at": 1775134700.5947077,
+  "fetched_at_readable": "2026-04-02 18:28:20",
+  "available_doctypes": [
+    {
+      "name": "About Us Settings",
+      "module": "Website",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "About Us Team Member",
+      "module": "Website",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Access Log",
+      "module": "Core",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Account",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Account Closing Balance",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Accounting Dimension",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Accounting Dimension Detail",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Accounting Dimension Filter",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Accounting Period",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Accounts Settings",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Activity Cost",
+      "module": "Projects",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Activity Log",
+      "module": "Core",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Activity Type",
+      "module": "Projects",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Address",
+      "module": "Contacts",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Address Template",
+      "module": "Contacts",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Advance Payment",
+      "module": "Super Natural",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Advance Payment Ledger Entry",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Advance Tax",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Advance Taxes and Charges",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Allowed Dimension",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Allowed To Transact With",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Amended Document Naming Settings",
+      "module": "Core",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Applicable On Account",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Appointment",
+      "module": "CRM",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Appointment Booking Settings",
+      "module": "CRM",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Appointment Booking Slots",
+      "module": "CRM",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Area",
+      "module": "Super Natural",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Asset",
+      "module": "Assets",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Asset Activity",
+      "module": "Assets",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Asset Capitalization",
+      "module": "Assets",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Asset Capitalization Asset Item",
+      "module": "Assets",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Asset Capitalization Service Item",
+      "module": "Assets",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Asset Capitalization Stock Item",
+      "module": "Assets",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Asset Category",
+      "module": "Assets",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Asset Category Account",
+      "module": "Assets",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Asset Depreciation Schedule",
+      "module": "Assets",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Asset Finance Book",
+      "module": "Assets",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Asset Maintenance",
+      "module": "Assets",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Asset Maintenance Log",
+      "module": "Assets",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Asset Maintenance Task",
+      "module": "Assets",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Asset Maintenance Team",
+      "module": "Assets",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Asset Movement",
+      "module": "Assets",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Asset Movement Item",
+      "module": "Assets",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Asset Repair",
+      "module": "Assets",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Asset Repair Consumed Item",
+      "module": "Assets",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Asset Shift Allocation",
+      "module": "Assets",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Asset Shift Factor",
+      "module": "Assets",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Asset Value Adjustment",
+      "module": "Assets",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Assignment Rule",
+      "module": "Automation",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Assignment Rule Day",
+      "module": "Automation",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Assignment Rule User",
+      "module": "Automation",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Audit Trail",
+      "module": "Core",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Authorization Control",
+      "module": "Setup",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Authorization Rule",
+      "module": "Setup",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Auto Email Report",
+      "module": "Email",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Auto Repeat",
+      "module": "Automation",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Auto Repeat Day",
+      "module": "Automation",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Availability Of Slots",
+      "module": "CRM",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Bank",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Bank Account",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Bank Account Subtype",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Bank Account Type",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Bank Clearance",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Bank Clearance Detail",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Bank Guarantee",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Bank Reconciliation Tool",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Bank Statement Import",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Bank Transaction",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Bank Transaction Mapping",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Bank Transaction Payments",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Batch",
+      "module": "Stock",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Bin",
+      "module": "Stock",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Bisect Accounting Statements",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Bisect Nodes",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Blanket Order",
+      "module": "Manufacturing",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Blanket Order Item",
+      "module": "Manufacturing",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Block Module",
+      "module": "Core",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Blog Category",
+      "module": "Website",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Blog Post",
+      "module": "Website",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Blog Settings",
+      "module": "Website",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Blogger",
+      "module": "Website",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "BOM",
+      "module": "Manufacturing",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "BOM Creator",
+      "module": "Manufacturing",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "BOM Creator Item",
+      "module": "Manufacturing",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "BOM Explosion Item",
+      "module": "Manufacturing",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "BOM Item",
+      "module": "Manufacturing",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "BOM Operation",
+      "module": "Manufacturing",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "BOM Scrap Item",
+      "module": "Manufacturing",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "BOM Update Batch",
+      "module": "Manufacturing",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "BOM Update Log",
+      "module": "Manufacturing",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "BOM Update Tool",
+      "module": "Manufacturing",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "BOM Website Item",
+      "module": "Manufacturing",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "BOM Website Operation",
+      "module": "Manufacturing",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Branch",
+      "module": "Setup",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Brand",
+      "module": "Setup",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Budget",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Budget Account",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Bulk Lead Table",
+      "module": "Super Natural",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Bulk Transaction Log",
+      "module": "Bulk Transaction",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Bulk Transaction Log Detail",
+      "module": "Bulk Transaction",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Bulk Update",
+      "module": "Desk",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Buying Settings",
+      "module": "Buying",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Calendar View",
+      "module": "Desk",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Call Log",
+      "module": "Telephony",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Campaign",
+      "module": "CRM",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Campaign Email Schedule",
+      "module": "CRM",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Campaign Item",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Cashier Closing",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Cashier Closing Payments",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Changelog Feed",
+      "module": "Desk",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Chart of Accounts Importer",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Cheque Print Template",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Client Script",
+      "module": "Custom",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Closed Document",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Closing Stock Balance",
+      "module": "Stock",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Code List",
+      "module": "EDI",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Color",
+      "module": "Website",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Comment",
+      "module": "Core",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Common Code",
+      "module": "EDI",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Communication",
+      "module": "Core",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Communication Link",
+      "module": "Core",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Communication Medium",
+      "module": "Communication",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Communication Medium Timeslot",
+      "module": "Communication",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Company",
+      "module": "Setup",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Company History",
+      "module": "Website",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Competitor",
+      "module": "CRM",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Competitor Detail",
+      "module": "CRM",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Connected App",
+      "module": "Integrations",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Console Log",
+      "module": "Desk",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Contact",
+      "module": "Contacts",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Contact Email",
+      "module": "Contacts",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Contact Phone",
+      "module": "Contacts",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Contact Us Settings",
+      "module": "Website",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Contract",
+      "module": "CRM",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Contract Fulfilment Checklist",
+      "module": "CRM",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Contract Template",
+      "module": "CRM",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Contract Template Fulfilment Terms",
+      "module": "CRM",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Cost Center",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Cost Center Allocation",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Cost Center Allocation Percentage",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Country",
+      "module": "Geo",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Coupon Code",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "CRM Note",
+      "module": "CRM",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "CRM Settings",
+      "module": "CRM",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Currency",
+      "module": "Geo",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Currency Exchange",
+      "module": "Setup",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Currency Exchange Settings",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Currency Exchange Settings Details",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Currency Exchange Settings Result",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Custom DocPerm",
+      "module": "Core",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Custom Field",
+      "module": "Custom",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Custom HTML Block",
+      "module": "Desk",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Custom Role",
+      "module": "Core",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Customer",
+      "module": "Selling",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Customer Credit Limit",
+      "module": "Selling",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Customer Device Record",
+      "module": "Selling",
+      "custom": 1,
+      "istable": 0
+    },
+    {
+      "name": "Customer Group",
+      "module": "Setup",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Customer Group Item",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Customer Installment Invoice",
+      "module": "Super Natural",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Customer Installment Plan",
+      "module": "Super Natural",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Customer Item",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Customize Form",
+      "module": "Custom",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Customize Form Field",
+      "module": "Custom",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Customs Tariff Number",
+      "module": "Stock",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Dashboard",
+      "module": "Desk",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Dashboard Chart",
+      "module": "Desk",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Dashboard Chart Field",
+      "module": "Desk",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Dashboard Chart Link",
+      "module": "Desk",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Dashboard Chart Source",
+      "module": "Desk",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Dashboard Settings",
+      "module": "Desk",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Data Export",
+      "module": "Core",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Data Import",
+      "module": "Core",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Data Import Log",
+      "module": "Core",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "DefaultValue",
+      "module": "Core",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Deleted Document",
+      "module": "Core",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Delivery Note",
+      "module": "Stock",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Delivery Note Item",
+      "module": "Stock",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Delivery Settings",
+      "module": "Stock",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Delivery Stop",
+      "module": "Stock",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Delivery Trip",
+      "module": "Stock",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Department",
+      "module": "Setup",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Dependent Task",
+      "module": "Projects",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Depreciation Schedule",
+      "module": "Assets",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Designation",
+      "module": "Setup",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Desktop Icon",
+      "module": "Desk",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Discounted Invoice",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Discussion Reply",
+      "module": "Website",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Discussion Topic",
+      "module": "Website",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "DocField",
+      "module": "Core",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "DocPerm",
+      "module": "Core",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "DocShare",
+      "module": "Core",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "DocType",
+      "module": "Core",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "DocType Action",
+      "module": "Core",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "DocType Layout",
+      "module": "Custom",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "DocType Layout Field",
+      "module": "Custom",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "DocType Link",
+      "module": "Core",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "DocType State",
+      "module": "Core",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Document Follow",
+      "module": "Email",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Document Naming Rule",
+      "module": "Core",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Document Naming Rule Condition",
+      "module": "Core",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Document Naming Settings",
+      "module": "Core",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Document Share Key",
+      "module": "Core",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Domain",
+      "module": "Core",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Domain Settings",
+      "module": "Core",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Downtime Entry",
+      "module": "Manufacturing",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Driver",
+      "module": "Setup",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Driving License Category",
+      "module": "Setup",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Dropbox Settings",
+      "module": "Integrations",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Dunning",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Dunning Letter Text",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Dunning Type",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Dynamic Link",
+      "module": "Core",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Email Account",
+      "module": "Email",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Email Campaign",
+      "module": "CRM",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Email Digest",
+      "module": "Setup",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Email Digest Recipient",
+      "module": "Setup",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Email Domain",
+      "module": "Email",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Email Flag Queue",
+      "module": "Email",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Email Group",
+      "module": "Email",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Email Group Member",
+      "module": "Email",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Email Queue",
+      "module": "Email",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Email Queue Recipient",
+      "module": "Email",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Email Rule",
+      "module": "Email",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Email Template",
+      "module": "Email",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Email Unsubscribe",
+      "module": "Email",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Employee",
+      "module": "Setup",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Employee Education",
+      "module": "Setup",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Employee External Work History",
+      "module": "Setup",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Employee Group",
+      "module": "Setup",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Employee Group Table",
+      "module": "Setup",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Employee Internal Work History",
+      "module": "Setup",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Energy Point Log",
+      "module": "Social",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Energy Point Rule",
+      "module": "Social",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Energy Point Settings",
+      "module": "Social",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Error Log",
+      "module": "Core",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Event",
+      "module": "Desk",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Event Participants",
+      "module": "Desk",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Exchange Rate Revaluation",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Exchange Rate Revaluation Account",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "File",
+      "module": "Core",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Finance Book",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Fiscal Year",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Fiscal Year Company",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Form Tour",
+      "module": "Desk",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Form Tour Step",
+      "module": "Desk",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Gender",
+      "module": "Contacts",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "GL Entry",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Global Defaults",
+      "module": "Setup",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Global Search DocType",
+      "module": "Desk",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Global Search Settings",
+      "module": "Desk",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Google Calendar",
+      "module": "Integrations",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Google Contacts",
+      "module": "Integrations",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Google Drive",
+      "module": "Integrations",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Google Settings",
+      "module": "Integrations",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Has Domain",
+      "module": "Core",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Has Role",
+      "module": "Core",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Help Article",
+      "module": "Website",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Help Category",
+      "module": "Website",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Holiday",
+      "module": "Setup",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Holiday List",
+      "module": "Setup",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Homepage",
+      "module": "Portal",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Homepage Section",
+      "module": "Portal",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Homepage Section Card",
+      "module": "Portal",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "IMAP Folder",
+      "module": "Email",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Import Supplier Invoice",
+      "module": "Regional",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Incoming Call Handling Schedule",
+      "module": "Telephony",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Incoming Call Settings",
+      "module": "Telephony",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Incoterm",
+      "module": "Setup",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Industry Type",
+      "module": "Selling",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Insights Alert",
+      "module": "Insights",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Insights Chart",
+      "module": "Insights",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Insights Chart v3",
+      "module": "Insights",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Insights Dashboard",
+      "module": "Insights",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Insights Dashboard Chart v3",
+      "module": "Insights",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Insights Dashboard Item",
+      "module": "Insights",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Insights Dashboard v3",
+      "module": "Insights",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Insights Data Source",
+      "module": "Insights",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Insights Data Source v3",
+      "module": "Insights",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Insights Folder",
+      "module": "Insights",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Insights Notebook",
+      "module": "Insights",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Insights Notebook Page",
+      "module": "Insights",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Insights Query",
+      "module": "Insights",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Insights Query Chart",
+      "module": "Insights",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Insights Query Column",
+      "module": "Insights",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Insights Query Execution Log",
+      "module": "Insights",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Insights Query Result",
+      "module": "Insights",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Insights Query Table",
+      "module": "Insights",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Insights Query Transform",
+      "module": "Insights",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Insights Query v3",
+      "module": "Insights",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Insights Query Variable",
+      "module": "Insights",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Insights Resource Permission",
+      "module": "Insights",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Insights Secret Key",
+      "module": "Insights",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Insights Settings",
+      "module": "Insights",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Insights Table",
+      "module": "Insights",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Insights Table Column",
+      "module": "Insights",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Insights Table Import",
+      "module": "Insights",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Insights Table Import Job",
+      "module": "Insights",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Insights Table Import Log",
+      "module": "Insights",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Insights Table Link",
+      "module": "Insights",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Insights Table Link v3",
+      "module": "Insights",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Insights Table v3",
+      "module": "Insights",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Insights Team",
+      "module": "Insights",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Insights Team Member",
+      "module": "Insights",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Insights User Invitation",
+      "module": "Insights",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Insights Workbook",
+      "module": "Insights",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Installation Note",
+      "module": "Selling",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Installation Note Item",
+      "module": "Selling",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Installed Application",
+      "module": "Core",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Installed Applications",
+      "module": "Core",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Installment",
+      "module": "Super Natural",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Installment Rows",
+      "module": "Super Natural",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Integration Request",
+      "module": "Integrations",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Internal Transfer",
+      "module": "Super Natural",
+      "custom": 1,
+      "istable": 0
+    },
+    {
+      "name": "Inventory Dimension",
+      "module": "Stock",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Invoice Discounting",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Issue",
+      "module": "Support",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Issue Priority",
+      "module": "Support",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Issue Type",
+      "module": "Support",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Item",
+      "module": "Stock",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Item Alternative",
+      "module": "Stock",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Item Attribute",
+      "module": "Stock",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Item Attribute Value",
+      "module": "Stock",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Item Barcode",
+      "module": "Stock",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Item Customer Detail",
+      "module": "Stock",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Item Default",
+      "module": "Stock",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Item Detail",
+      "module": "Super Natural",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Item Group",
+      "module": "Setup",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Item Manufacturer",
+      "module": "Stock",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Item Price",
+      "module": "Stock",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Item Quality Inspection Parameter",
+      "module": "Stock",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Item Reorder",
+      "module": "Stock",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Item Supplier",
+      "module": "Stock",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Item Tax",
+      "module": "Stock",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Item Tax Template",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Item Tax Template Detail",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Item Variant",
+      "module": "Stock",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Item Variant Attribute",
+      "module": "Stock",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Item Variant Settings",
+      "module": "Stock",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Item Website Specification",
+      "module": "Stock",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Job Card",
+      "module": "Manufacturing",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Job Card Item",
+      "module": "Manufacturing",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Job Card Operation",
+      "module": "Manufacturing",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Job Card Scheduled Time",
+      "module": "Manufacturing",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Job Card Scrap Item",
+      "module": "Manufacturing",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Job Card Time Log",
+      "module": "Manufacturing",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Journal Entry",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Journal Entry Account",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Journal Entry Template",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Journal Entry Template Account",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Kanban Board",
+      "module": "Desk",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Kanban Board Column",
+      "module": "Desk",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Landed Cost Item",
+      "module": "Stock",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Landed Cost Purchase Receipt",
+      "module": "Stock",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Landed Cost Taxes and Charges",
+      "module": "Stock",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Landed Cost Voucher",
+      "module": "Stock",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Language",
+      "module": "Core",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "LDAP Group Mapping",
+      "module": "Integrations",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "LDAP Settings",
+      "module": "Integrations",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Lead",
+      "module": "CRM",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Lead Follow Up",
+      "module": "Super Natural",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Lead Pending Calls",
+      "module": "Super Natural",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Lead Pending Table",
+      "module": "Super Natural",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Lead Report",
+      "module": "Super Natural",
+      "custom": 1,
+      "istable": 1
+    },
+    {
+      "name": "Lead Result",
+      "module": "Super Natural",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Lead Results",
+      "module": "Super Natural",
+      "custom": 1,
+      "istable": 1
+    },
+    {
+      "name": "Lead Source",
+      "module": "CRM",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Ledger Health",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Ledger Health Monitor",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Ledger Health Monitor Company",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Ledger Merge",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Ledger Merge Accounts",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Letter Head",
+      "module": "Printing",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Linked Location",
+      "module": "Assets",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "List Filter",
+      "module": "Desk",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "List View Settings",
+      "module": "Desk",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Location",
+      "module": "Assets",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Log Setting User",
+      "module": "Core",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Log Settings",
+      "module": "Core",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Logs To Clear",
+      "module": "Core",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Lost Reason Detail",
+      "module": "CRM",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Lower Deduction Certificate",
+      "module": "Regional",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Loyalty Point Entry",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Loyalty Point Entry Redemption",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Loyalty Program",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Loyalty Program Collection",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Maintenance",
+      "module": "Super Natural",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Maintenance History",
+      "module": "Super Natural",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Maintenance Schedule",
+      "module": "Maintenance",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Maintenance Schedule Detail",
+      "module": "Maintenance",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Maintenance Schedule Item",
+      "module": "Maintenance",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Maintenance Team Member",
+      "module": "Assets",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Maintenance Visit",
+      "module": "Maintenance",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Maintenance Visit Purpose",
+      "module": "Maintenance",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Maintenance Visit Table",
+      "module": "Super Natural",
+      "custom": 1,
+      "istable": 1
+    },
+    {
+      "name": "Manufacturer",
+      "module": "Stock",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Manufacturing Settings",
+      "module": "Manufacturing",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Market Segment",
+      "module": "CRM",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Marketing Campaign",
+      "module": "Website",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Material Request",
+      "module": "Stock",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Material Request Item",
+      "module": "Stock",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Material Request Plan Item",
+      "module": "Manufacturing",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Meet-Up",
+      "module": "Super Natural",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Milestone",
+      "module": "Automation",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Milestone Tracker",
+      "module": "Automation",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Mode of Payment",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Mode of Payment Account",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Module Def",
+      "module": "Core",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Module Onboarding",
+      "module": "Desk",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Module Profile",
+      "module": "Core",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Monthly Distribution",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Monthly Distribution Percentage",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Nationality",
+      "module": "Super Natural",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Navbar Item",
+      "module": "Core",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Navbar Settings",
+      "module": "Core",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Network Printer Settings",
+      "module": "Printing",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Newsletter",
+      "module": "Email",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Newsletter Attachment",
+      "module": "Email",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Newsletter Email Group",
+      "module": "Email",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Non Conformance",
+      "module": "Quality Management",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Note",
+      "module": "Desk",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Note Seen By",
+      "module": "Desk",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Notification",
+      "module": "Email",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Notification Log",
+      "module": "Desk",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Notification Recipient",
+      "module": "Email",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Notification Settings",
+      "module": "Desk",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Notification Subscribed Document",
+      "module": "Desk",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Number Card",
+      "module": "Desk",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Number Card Link",
+      "module": "Desk",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "OAuth Authorization Code",
+      "module": "Integrations",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "OAuth Bearer Token",
+      "module": "Integrations",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "OAuth Client",
+      "module": "Integrations",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "OAuth Client Role",
+      "module": "Integrations",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "OAuth Provider Settings",
+      "module": "Integrations",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "OAuth Scope",
+      "module": "Integrations",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Onboarding Permission",
+      "module": "Desk",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Onboarding Step",
+      "module": "Desk",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Onboarding Step Map",
+      "module": "Desk",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Opening Invoice Creation Tool",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Opening Invoice Creation Tool Item",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Operation",
+      "module": "Manufacturing",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Opportunity",
+      "module": "CRM",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Opportunity Item",
+      "module": "CRM",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Opportunity Lost Reason",
+      "module": "CRM",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Opportunity Lost Reason Detail",
+      "module": "CRM",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Opportunity Type",
+      "module": "CRM",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Overdue Payment",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Package",
+      "module": "Core",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Package Import",
+      "module": "Core",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Package Release",
+      "module": "Core",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Packed Item",
+      "module": "Stock",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Packing Slip",
+      "module": "Stock",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Packing Slip Item",
+      "module": "Stock",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Page",
+      "module": "Core",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Party Account",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Party Link",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Party Specific Item",
+      "module": "Selling",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Party Type",
+      "module": "Setup",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Patch Log",
+      "module": "Core",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Pause SLA On Status",
+      "module": "Support",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Payment Entry",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Payment Entry Deduction",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Payment Entry Reference",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Payment Gateway Account",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Payment Ledger Entry",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Payment Order",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Payment Order Reference",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Payment Reconciliation",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Payment Reconciliation Allocation",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Payment Reconciliation Invoice",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Payment Reconciliation Payment",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Payment Request",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Payment Schedule",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Payment Term",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Payment Terms Template",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Payment Terms Template Detail",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Period Closing Voucher",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Permission Inspector",
+      "module": "Core",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Personal Data Deletion Request",
+      "module": "Website",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Personal Data Deletion Step",
+      "module": "Website",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Personal Data Download Request",
+      "module": "Website",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Pick List",
+      "module": "Stock",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Pick List Item",
+      "module": "Stock",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Plaid Settings",
+      "module": "ERPNext Integrations",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Plant Floor",
+      "module": "Manufacturing",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Portal Menu Item",
+      "module": "Website",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Portal Settings",
+      "module": "Website",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Portal User",
+      "module": "Utilities",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "POS Closing Entry",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "POS Closing Entry Detail",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "POS Closing Entry Taxes",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "POS Customer Group",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "POS Field",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "POS Invoice",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "POS Invoice Item",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "POS Invoice Merge Log",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "POS Invoice Reference",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "POS Item Group",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "POS Opening Entry",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "POS Opening Entry Detail",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "POS Payment Method",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "POS Profile",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "POS Profile User",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "POS Search Fields",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "POS Settings",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Prepared Report",
+      "module": "Core",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Previous Lead",
+      "module": "Super Natural",
+      "custom": 1,
+      "istable": 0
+    },
+    {
+      "name": "Price List",
+      "module": "Stock",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Price List Country",
+      "module": "Stock",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Pricing Rule",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Pricing Rule Brand",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Pricing Rule Detail",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Pricing Rule Item Code",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Pricing Rule Item Group",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Print Format",
+      "module": "Printing",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Print Format Field Template",
+      "module": "Printing",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Print Heading",
+      "module": "Setup",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Print Settings",
+      "module": "Printing",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Print Style",
+      "module": "Printing",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Process Deferred Accounting",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Process Payment Reconciliation",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Process Payment Reconciliation Log",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Process Payment Reconciliation Log Allocations",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Process Statement Of Accounts",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Process Statement Of Accounts CC",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Process Statement Of Accounts Customer",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Process Subscription",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Product Bundle",
+      "module": "Selling",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Product Bundle Item",
+      "module": "Selling",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Production Plan",
+      "module": "Manufacturing",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Production Plan Item",
+      "module": "Manufacturing",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Production Plan Item Reference",
+      "module": "Manufacturing",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Production Plan Material Request",
+      "module": "Manufacturing",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Production Plan Material Request Warehouse",
+      "module": "Manufacturing",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Production Plan Sales Order",
+      "module": "Manufacturing",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Production Plan Sub Assembly Item",
+      "module": "Manufacturing",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Project",
+      "module": "Projects",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Project Template",
+      "module": "Projects",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Project Template Task",
+      "module": "Projects",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Project Type",
+      "module": "Projects",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Project Update",
+      "module": "Projects",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Project User",
+      "module": "Projects",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Projects Settings",
+      "module": "Projects",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Promotional Scheme",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Promotional Scheme Price Discount",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Promotional Scheme Product Discount",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Property Setter",
+      "module": "Custom",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Prospect",
+      "module": "CRM",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Prospect Lead",
+      "module": "CRM",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Prospect Opportunity",
+      "module": "CRM",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "PSOA Cost Center",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "PSOA Project",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Purchase Invoice",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Purchase Invoice Advance",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Purchase Invoice Item",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Purchase Order",
+      "module": "Buying",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Purchase Order Item",
+      "module": "Buying",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Purchase Order Item Supplied",
+      "module": "Buying",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Purchase Receipt",
+      "module": "Stock",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Purchase Receipt Item",
+      "module": "Stock",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Purchase Receipt Item Supplied",
+      "module": "Buying",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Purchase Taxes and Charges",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Purchase Taxes and Charges Template",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Push Notification Settings",
+      "module": "Integrations",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Putaway Rule",
+      "module": "Stock",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Quality Action",
+      "module": "Quality Management",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Quality Action Resolution",
+      "module": "Quality Management",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Quality Feedback",
+      "module": "Quality Management",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Quality Feedback Parameter",
+      "module": "Quality Management",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Quality Feedback Template",
+      "module": "Quality Management",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Quality Feedback Template Parameter",
+      "module": "Quality Management",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Quality Goal",
+      "module": "Quality Management",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Quality Goal Objective",
+      "module": "Quality Management",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Quality Inspection",
+      "module": "Stock",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Quality Inspection Parameter",
+      "module": "Stock",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Quality Inspection Parameter Group",
+      "module": "Stock",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Quality Inspection Reading",
+      "module": "Stock",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Quality Inspection Template",
+      "module": "Stock",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Quality Meeting",
+      "module": "Quality Management",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Quality Meeting Agenda",
+      "module": "Quality Management",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Quality Meeting Minutes",
+      "module": "Quality Management",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Quality Procedure",
+      "module": "Quality Management",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Quality Procedure Process",
+      "module": "Quality Management",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Quality Review",
+      "module": "Quality Management",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Quality Review Objective",
+      "module": "Quality Management",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Query Parameters",
+      "module": "Integrations",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Quick Stock Balance",
+      "module": "Stock",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "QuickBooks Migrator",
+      "module": "ERPNext Integrations",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Quotation",
+      "module": "Selling",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Quotation Item",
+      "module": "Selling",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Quotation Lost Reason",
+      "module": "Setup",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Quotation Lost Reason Detail",
+      "module": "Setup",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Recorder",
+      "module": "Core",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Recorder Query",
+      "module": "Core",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Recorder Suggested Index",
+      "module": "Core",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Referral Form",
+      "module": "Super Natural",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Reminder",
+      "module": "Automation",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Rename Tool",
+      "module": "Utilities",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Report",
+      "module": "Core",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Report Column",
+      "module": "Core",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Report Filter",
+      "module": "Core",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Repost Accounting Ledger",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Repost Accounting Ledger Items",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Repost Accounting Ledger Settings",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Repost Allowed Types",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Repost Item Valuation",
+      "module": "Stock",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Repost Payment Ledger",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Repost Payment Ledger Items",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Request for Quotation",
+      "module": "Buying",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Request for Quotation Item",
+      "module": "Buying",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Request for Quotation Supplier",
+      "module": "Buying",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Results",
+      "module": "Super Natural",
+      "custom": 1,
+      "istable": 0
+    },
+    {
+      "name": "Review Level",
+      "module": "Social",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Role",
+      "module": "Core",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Role Permission for Page and Report",
+      "module": "Core",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Role Profile",
+      "module": "Core",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Route History",
+      "module": "Desk",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Routing",
+      "module": "Manufacturing",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "RQ Job",
+      "module": "Core",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "RQ Worker",
+      "module": "Core",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "S3 Backup Settings",
+      "module": "Integrations",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Sales Invoice",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Sales Invoice Advance",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Sales Invoice Item",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Sales Invoice Payment",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Sales Invoice Timesheet",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Sales Order",
+      "module": "Super Natural",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Sales Order Item",
+      "module": "Selling",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Sales Partner",
+      "module": "Setup",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Sales Partner Item",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Sales Partner Type",
+      "module": "Selling",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Sales Person",
+      "module": "Setup",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Sales Stage",
+      "module": "CRM",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Sales Taxes and Charges",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Sales Taxes and Charges Template",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Sales Team",
+      "module": "Selling",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Salutation",
+      "module": "Contacts",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Schedule History",
+      "module": "Super Natural",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Scheduled Job Log",
+      "module": "Core",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Scheduled Job Type",
+      "module": "Core",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Selling Settings",
+      "module": "Selling",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Serial and Batch Bundle",
+      "module": "Stock",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Serial and Batch Entry",
+      "module": "Stock",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Serial No",
+      "module": "Stock",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Server Script",
+      "module": "Core",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Service Day",
+      "module": "Support",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Service Level Agreement",
+      "module": "Support",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Service Level Priority",
+      "module": "Support",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Session Default",
+      "module": "Core",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Session Default Settings",
+      "module": "Core",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Share Balance",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Share Transfer",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Share Type",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Shareholder",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Shipment",
+      "module": "Stock",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Shipment Delivery Note",
+      "module": "Stock",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Shipment Parcel",
+      "module": "Stock",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Shipment Parcel Template",
+      "module": "Stock",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Shipping Rule",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Shipping Rule Condition",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Shipping Rule Country",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "SLA Fulfilled On Status",
+      "module": "Support",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Slack Webhook URL",
+      "module": "Integrations",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "SMS Center",
+      "module": "Selling",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "SMS Log",
+      "module": "Utilities",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "SMS Parameter",
+      "module": "Core",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "SMS Settings",
+      "module": "Core",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Social Link Settings",
+      "module": "Website",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Social Login Key",
+      "module": "Integrations",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "South Africa VAT Account",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "South Africa VAT Settings",
+      "module": "Regional",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Stock Entry",
+      "module": "Stock",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Stock Entry Detail",
+      "module": "Stock",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Stock Entry Type",
+      "module": "Stock",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Stock Ledger Entry",
+      "module": "Stock",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Stock Reconciliation",
+      "module": "Stock",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Stock Reconciliation Item",
+      "module": "Stock",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Stock Reposting Settings",
+      "module": "Stock",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Stock Reservation Entry",
+      "module": "Stock",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Stock Settings",
+      "module": "Stock",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Sub Operation",
+      "module": "Manufacturing",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Subcontracting BOM",
+      "module": "Subcontracting",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Subcontracting Order",
+      "module": "Subcontracting",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Subcontracting Order Item",
+      "module": "Subcontracting",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Subcontracting Order Service Item",
+      "module": "Subcontracting",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Subcontracting Order Supplied Item",
+      "module": "Subcontracting",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Subcontracting Receipt",
+      "module": "Subcontracting",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Subcontracting Receipt Item",
+      "module": "Subcontracting",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Subcontracting Receipt Supplied Item",
+      "module": "Subcontracting",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Submission Queue",
+      "module": "Core",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Subscription",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Subscription Invoice",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Subscription Plan",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Subscription Plan Detail",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Subscription Settings",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Success Action",
+      "module": "Core",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Supplier",
+      "module": "Buying",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Supplier Group",
+      "module": "Setup",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Supplier Group Item",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Supplier Item",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Supplier Quotation",
+      "module": "Buying",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Supplier Quotation Item",
+      "module": "Buying",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Supplier Scorecard",
+      "module": "Buying",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Supplier Scorecard Criteria",
+      "module": "Buying",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Supplier Scorecard Period",
+      "module": "Buying",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Supplier Scorecard Scoring Criteria",
+      "module": "Buying",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Supplier Scorecard Scoring Standing",
+      "module": "Buying",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Supplier Scorecard Scoring Variable",
+      "module": "Buying",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Supplier Scorecard Standing",
+      "module": "Buying",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Supplier Scorecard Variable",
+      "module": "Buying",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Support Search Source",
+      "module": "Support",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Support Settings",
+      "module": "Support",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "System Console",
+      "module": "Desk",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "System Health Report",
+      "module": "Desk",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "System Health Report Errors",
+      "module": "Desk",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "System Health Report Failing Jobs",
+      "module": "Desk",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "System Health Report Queue",
+      "module": "Desk",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "System Health Report Tables",
+      "module": "Desk",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "System Health Report Workers",
+      "module": "Desk",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "System Settings",
+      "module": "Core",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Tag",
+      "module": "Desk",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Tag Link",
+      "module": "Desk",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Tally Migration",
+      "module": "ERPNext Integrations",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Target Detail",
+      "module": "Setup",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Task",
+      "module": "Projects",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Task Depends On",
+      "module": "Projects",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Task Type",
+      "module": "Projects",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Tax Category",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Tax Rule",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Tax Withheld Vouchers",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Tax Withholding Account",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Tax Withholding Category",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Tax Withholding Rate",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Telephony Call Type",
+      "module": "Telephony",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Terms and Conditions",
+      "module": "Setup",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Territory",
+      "module": "Setup",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Territory Item",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Timesheet",
+      "module": "Projects",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Timesheet Detail",
+      "module": "Projects",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "ToDo",
+      "module": "Desk",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Token Cache",
+      "module": "Integrations",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Top Bar Item",
+      "module": "Website",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Transaction Deletion Record",
+      "module": "Setup",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Transaction Deletion Record Details",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Transaction Deletion Record Item",
+      "module": "Setup",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Transaction Log",
+      "module": "Core",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Translation",
+      "module": "Core",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "UAE VAT Account",
+      "module": "Regional",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "UAE VAT Settings",
+      "module": "Regional",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Unhandled Email",
+      "module": "Email",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Unreconcile Payment",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Unreconcile Payment Entries",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "UOM",
+      "module": "Setup",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "UOM Category",
+      "module": "Stock",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "UOM Conversion Detail",
+      "module": "Stock",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "UOM Conversion Factor",
+      "module": "Setup",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "User",
+      "module": "Core",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "User Document Type",
+      "module": "Core",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "User Email",
+      "module": "Core",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "User Group",
+      "module": "Core",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "User Group Member",
+      "module": "Core",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "User Permission",
+      "module": "Core",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "User Select Document Type",
+      "module": "Core",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "User Social Login",
+      "module": "Core",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "User Type",
+      "module": "Core",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "User Type Module",
+      "module": "Core",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Variant Field",
+      "module": "Stock",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Vehicle",
+      "module": "Setup",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Version",
+      "module": "Core",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Video",
+      "module": "Utilities",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Video Settings",
+      "module": "Utilities",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "View Log",
+      "module": "Core",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Voice Call Settings",
+      "module": "Telephony",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Warehouse",
+      "module": "Stock",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Warehouse Type",
+      "module": "Stock",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Warranty Claim",
+      "module": "Support",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Web Form",
+      "module": "Website",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Web Form Field",
+      "module": "Website",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Web Form List Column",
+      "module": "Website",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Web Page",
+      "module": "Website",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Web Page Block",
+      "module": "Website",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Web Page View",
+      "module": "Website",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Web Template",
+      "module": "Website",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Web Template Field",
+      "module": "Website",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Webhook",
+      "module": "Integrations",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Webhook Data",
+      "module": "Integrations",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Webhook Header",
+      "module": "Integrations",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Webhook Request Log",
+      "module": "Integrations",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Website Attribute",
+      "module": "Portal",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Website Filter Field",
+      "module": "Portal",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Website Item Group",
+      "module": "Setup",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Website Meta Tag",
+      "module": "Website",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Website Route Meta",
+      "module": "Website",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Website Route Redirect",
+      "module": "Website",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Website Script",
+      "module": "Website",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Website Settings",
+      "module": "Website",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Website Sidebar",
+      "module": "Website",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Website Sidebar Item",
+      "module": "Website",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Website Slideshow",
+      "module": "Website",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Website Slideshow Item",
+      "module": "Website",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Website Theme",
+      "module": "Website",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Website Theme Ignore App",
+      "module": "Website",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Work Order",
+      "module": "Manufacturing",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Work Order Item",
+      "module": "Manufacturing",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Work Order Operation",
+      "module": "Manufacturing",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Workflow",
+      "module": "Workflow",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Workflow Action",
+      "module": "Workflow",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Workflow Action Master",
+      "module": "Workflow",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Workflow Action Permitted Role",
+      "module": "Workflow",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Workflow Document State",
+      "module": "Workflow",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Workflow State",
+      "module": "Workflow",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Workflow Transition",
+      "module": "Workflow",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Workspace",
+      "module": "Desk",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Workspace Chart",
+      "module": "Desk",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Workspace Custom Block",
+      "module": "Desk",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Workspace Link",
+      "module": "Desk",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Workspace Number Card",
+      "module": "Desk",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Workspace Quick List",
+      "module": "Desk",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Workspace Shortcut",
+      "module": "Desk",
+      "custom": 0,
+      "istable": 1
+    },
+    {
+      "name": "Workstation",
+      "module": "Manufacturing",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Workstation Type",
+      "module": "Manufacturing",
+      "custom": 0,
+      "istable": 0
+    },
+    {
+      "name": "Workstation Working Hour",
+      "module": "Manufacturing",
+      "custom": 0,
+      "istable": 1
+    }
+  ],
+  "custom_doctypes": [
+    {
+      "name": "Customer Device Record",
+      "module": "Selling",
+      "custom": 1,
+      "istable": 0,
+      "fields": [
+        {
+          "fieldname": "naming_series",
+          "fieldtype": "Select",
+          "label": "Naming series",
+          "options": null
+        },
+        {
+          "fieldname": "date",
+          "fieldtype": "Date",
+          "label": "Date",
+          "options": null
+        },
+        {
+          "fieldname": "customer",
+          "fieldtype": "Link",
+          "label": "Customer",
+          "options": "Customer"
+        },
+        {
+          "fieldname": "customer_name",
+          "fieldtype": "Data",
+          "label": "Customer Name",
+          "options": null
+        },
+        {
+          "fieldname": "civil_id",
+          "fieldtype": "Data",
+          "label": "Civil Id",
+          "options": null
+        },
+        {
+          "fieldname": "date_of_birth",
+          "fieldtype": "Data",
+          "label": "Date of Birth",
+          "options": null
+        },
+        {
+          "fieldname": "file_no",
+          "fieldtype": "Data",
+          "label": "File no.",
+          "options": null
+        },
+        {
+          "fieldname": "mobile_no",
+          "fieldtype": "Data",
+          "label": "Mobile No",
+          "options": null
+        },
+        {
+          "fieldname": "area",
+          "fieldtype": "Link",
+          "label": "Area",
+          "options": "Area"
+        },
+        {
+          "fieldname": "address",
+          "fieldtype": "Data",
+          "label": "Address",
+          "options": null
+        },
+        {
+          "fieldname": "device_no",
+          "fieldtype": "Data",
+          "label": "Device No",
+          "options": null
+        },
+        {
+          "fieldname": "device_type",
+          "fieldtype": "Data",
+          "label": "Device type",
+          "options": null
+        },
+        {
+          "fieldname": "salesman",
+          "fieldtype": "Data",
+          "label": "Salesman",
+          "options": ""
+        },
+        {
+          "fieldname": "supervisor",
+          "fieldtype": "Data",
+          "label": "Supervisor",
+          "options": null
+        },
+        {
+          "fieldname": "telemarketer",
+          "fieldtype": "Data",
+          "label": "Telemarketer",
+          "options": null
+        },
+        {
+          "fieldname": "assist_with",
+          "fieldtype": "Data",
+          "label": "Assist with",
+          "options": null
+        },
+        {
+          "fieldname": "trade_in",
+          "fieldtype": "Data",
+          "label": "Trade In",
+          "options": null
+        },
+        {
+          "fieldname": "sales_amt",
+          "fieldtype": "Data",
+          "label": "Sales Amt",
+          "options": null
+        },
+        {
+          "fieldname": "down_payment",
+          "fieldtype": "Data",
+          "label": "Down Payment",
+          "options": null
+        },
+        {
+          "fieldname": "remaining_balance",
+          "fieldtype": "Data",
+          "label": "Remaining Balance",
+          "options": null
+        },
+        {
+          "fieldname": "amended_from",
+          "fieldtype": "Link",
+          "label": "Amended From",
+          "options": "Customer Device Record"
+        }
+      ],
+      "child_tables": []
+    },
+    {
+      "name": "Internal Transfer",
+      "module": "Super Natural",
+      "custom": 1,
+      "istable": 0,
+      "fields": [],
+      "child_tables": []
+    },
+    {
+      "name": "Lead Report",
+      "module": "Super Natural",
+      "custom": 1,
+      "istable": 1,
+      "fields": [
+        {
+          "fieldname": "referral_number",
+          "fieldtype": "Data",
+          "label": "Referral Number",
+          "options": null
+        },
+        {
+          "fieldname": "referred_by_customer",
+          "fieldtype": "Data",
+          "label": "Referred By Customer",
+          "options": null
+        },
+        {
+          "fieldname": "mobile_no",
+          "fieldtype": "Data",
+          "label": "Mobile No",
+          "options": null
+        },
+        {
+          "fieldname": "date",
+          "fieldtype": "Date",
+          "label": "Date",
+          "options": null
+        },
+        {
+          "fieldname": "assigned_to",
+          "fieldtype": "Data",
+          "label": "Assigned To",
+          "options": null
+        },
+        {
+          "fieldname": "description",
+          "fieldtype": "Small Text",
+          "label": "Description",
+          "options": null
+        },
+        {
+          "fieldname": "status",
+          "fieldtype": "Data",
+          "label": "Status",
+          "options": null
+        },
+        {
+          "fieldname": "result",
+          "fieldtype": "Data",
+          "label": "Result",
+          "options": null
+        }
+      ],
+      "child_tables": []
+    },
+    {
+      "name": "Lead Results",
+      "module": "Super Natural",
+      "custom": 1,
+      "istable": 1,
+      "fields": [
+        {
+          "fieldname": "date",
+          "fieldtype": "Date",
+          "label": "Date",
+          "options": null
+        },
+        {
+          "fieldname": "description",
+          "fieldtype": "Data",
+          "label": "Description",
+          "options": null
+        },
+        {
+          "fieldname": "result",
+          "fieldtype": "Link",
+          "label": "Result",
+          "options": "Results"
+        },
+        {
+          "fieldname": "assign_to",
+          "fieldtype": "Link",
+          "label": "Assign To",
+          "options": "User"
+        }
+      ],
+      "child_tables": []
+    },
+    {
+      "name": "Maintenance Visit Table",
+      "module": "Super Natural",
+      "custom": 1,
+      "istable": 1,
+      "fields": [
+        {
+          "fieldname": "item_code",
+          "fieldtype": "Link",
+          "label": "Item Code",
+          "options": "Item"
+        },
+        {
+          "fieldname": "item_name",
+          "fieldtype": "Data",
+          "label": "Item Name",
+          "options": null
+        },
+        {
+          "fieldname": "qty",
+          "fieldtype": "Int",
+          "label": "Quantity",
+          "options": null
+        },
+        {
+          "fieldname": "rate",
+          "fieldtype": "Currency",
+          "label": "Rate",
+          "options": null
+        },
+        {
+          "fieldname": "amount",
+          "fieldtype": "Currency",
+          "label": "Amount",
+          "options": null
+        }
+      ],
+      "child_tables": []
+    },
+    {
+      "name": "Previous Lead",
+      "module": "Super Natural",
+      "custom": 1,
+      "istable": 0,
+      "fields": [
+        {
+          "fieldname": "naming_series",
+          "fieldtype": "Select",
+          "label": "series",
+          "options": "PRV-LEAD-.YYYY.-"
+        },
+        {
+          "fieldname": "lead_name",
+          "fieldtype": "Data",
+          "label": "Lead Name",
+          "options": null
+        },
+        {
+          "fieldname": "lead_type",
+          "fieldtype": "Select",
+          "label": "Lead Type",
+          "options": "\nFOP\nOffie\nOwn\nPersonal"
+        },
+        {
+          "fieldname": "phone",
+          "fieldtype": "Data",
+          "label": "Phone",
+          "options": null
+        },
+        {
+          "fieldname": "address",
+          "fieldtype": "Text",
+          "label": "Address",
+          "options": null
+        },
+        {
+          "fieldname": "referred_by",
+          "fieldtype": "Data",
+          "label": "Referred By",
+          "options": null
+        },
+        {
+          "fieldname": "result",
+          "fieldtype": "Data",
+          "label": "Result",
+          "options": null
+        },
+        {
+          "fieldname": "cb_date",
+          "fieldtype": "Date",
+          "label": "CB Date",
+          "options": null
+        },
+        {
+          "fieldname": "telemarketer",
+          "fieldtype": "Data",
+          "label": "Telemarketer",
+          "options": null
+        },
+        {
+          "fieldname": "last_date",
+          "fieldtype": "Date",
+          "label": "Last Date",
+          "options": null
+        },
+        {
+          "fieldname": "last_notes",
+          "fieldtype": "Small Text",
+          "label": "Last Notes",
+          "options": null
+        },
+        {
+          "fieldname": "last_result",
+          "fieldtype": "Data",
+          "label": "Last Result",
+          "options": null
+        },
+        {
+          "fieldname": "notes",
+          "fieldtype": "Small Text",
+          "label": "Notes",
+          "options": null
+        },
+        {
+          "fieldname": "ref_number",
+          "fieldtype": "Data",
+          "label": "Ref. Number",
+          "options": null
+        },
+        {
+          "fieldname": "sales_person",
+          "fieldtype": "Link",
+          "label": "Sales Person",
+          "options": "Sales Person"
+        }
+      ],
+      "child_tables": []
+    },
+    {
+      "name": "Results",
+      "module": "Super Natural",
+      "custom": 1,
+      "istable": 0,
+      "fields": [
+        {
+          "fieldname": "result",
+          "fieldtype": "Data",
+          "label": "Result",
+          "options": null
+        }
+      ],
+      "child_tables": []
+    }
+  ],
+  "custom_fields": [
+    {
+      "name": "Address-custom_apartment",
+      "dt": "Address",
+      "fieldname": "custom_apartment",
+      "fieldtype": "Data",
+      "label": "Apartment",
+      "options": null
+    },
+    {
+      "name": "Address-custom_area_n",
+      "dt": "Address",
+      "fieldname": "custom_area_n",
+      "fieldtype": "Link",
+      "label": "Area",
+      "options": "Area"
+    },
+    {
+      "name": "Address-custom_block",
+      "dt": "Address",
+      "fieldname": "custom_block",
+      "fieldtype": "Data",
+      "label": "Block",
+      "options": null
+    },
+    {
+      "name": "Address-custom_building",
+      "dt": "Address",
+      "fieldname": "custom_building",
+      "fieldtype": "Data",
+      "label": "Building",
+      "options": null
+    },
+    {
+      "name": "Address-custom_floor",
+      "dt": "Address",
+      "fieldname": "custom_floor",
+      "fieldtype": "Data",
+      "label": "Floor",
+      "options": null
+    },
+    {
+      "name": "Address-custom_street",
+      "dt": "Address",
+      "fieldname": "custom_street",
+      "fieldtype": "Data",
+      "label": "Street",
+      "options": ""
+    },
+    {
+      "name": "Address-is_your_company_address",
+      "dt": "Address",
+      "fieldname": "is_your_company_address",
+      "fieldtype": "Check",
+      "label": "Is Your Company Address",
+      "options": null
+    },
+    {
+      "name": "Address-tax_category",
+      "dt": "Address",
+      "fieldname": "tax_category",
+      "fieldtype": "Link",
+      "label": "Tax Category",
+      "options": "Tax Category"
+    },
+    {
+      "name": "Advance Payment-custom_sales_invoice_status",
+      "dt": "Advance Payment",
+      "fieldname": "custom_sales_invoice_status",
+      "fieldtype": "Data",
+      "label": "Sales Invoice Status",
+      "options": null
+    },
+    {
+      "name": "Communication-company",
+      "dt": "Communication",
+      "fieldname": "company",
+      "fieldtype": "Link",
+      "label": "Company",
+      "options": "Company"
+    },
+    {
+      "name": "Contact-is_billing_contact",
+      "dt": "Contact",
+      "fieldname": "is_billing_contact",
+      "fieldtype": "Check",
+      "label": "Is Billing Contact",
+      "options": null
+    },
+    {
+      "name": "Customer-custom_civil_id_number",
+      "dt": "Customer",
+      "fieldname": "custom_civil_id_number",
+      "fieldtype": "Data",
+      "label": "Civil Id Number",
+      "options": null
+    },
+    {
+      "name": "Customer-custom_date_of_birth",
+      "dt": "Customer",
+      "fieldname": "custom_date_of_birth",
+      "fieldtype": "Date",
+      "label": "Date of Birth",
+      "options": null
+    },
+    {
+      "name": "Customer-custom_file_number",
+      "dt": "Customer",
+      "fieldname": "custom_file_number",
+      "fieldtype": "Data",
+      "label": "File Number",
+      "options": null
+    },
+    {
+      "name": "Customer-custom_nationality",
+      "dt": "Customer",
+      "fieldname": "custom_nationality",
+      "fieldtype": "Link",
+      "label": "Nationality",
+      "options": "Nationality"
+    },
+    {
+      "name": "Customer-custom_status",
+      "dt": "Customer",
+      "fieldname": "custom_status",
+      "fieldtype": "Select",
+      "label": "Status",
+      "options": "M.I.A\nACTIVE\nLAW SUIT\nCANCELLED\nSETTLED\nNOT INSTALLED"
+    },
+    {
+      "name": "Email Account-company",
+      "dt": "Email Account",
+      "fieldname": "company",
+      "fieldtype": "Link",
+      "label": "Company",
+      "options": "Company"
+    },
+    {
+      "name": "Installment-custom_sales_invoice_status",
+      "dt": "Installment",
+      "fieldname": "custom_sales_invoice_status",
+      "fieldtype": "Data",
+      "label": "Sales Invoice Status",
+      "options": null
+    },
+    {
+      "name": "Item-custom_is_maintenance_item",
+      "dt": "Item",
+      "fieldname": "custom_is_maintenance_item",
+      "fieldtype": "Check",
+      "label": "Is Maintenance Item",
+      "options": null
+    },
+    {
+      "name": "Journal Entry-custom_is_commission_entry",
+      "dt": "Journal Entry",
+      "fieldname": "custom_is_commission_entry",
+      "fieldtype": "Check",
+      "label": "Is_Commission_Entry",
+      "options": null
+    },
+    {
+      "name": "Lead Pending Calls-custom_history",
+      "dt": "Lead Pending Calls",
+      "fieldname": "custom_history",
+      "fieldtype": "Table",
+      "label": "History",
+      "options": "Lead Results"
+    },
+    {
+      "name": "Lead Pending Calls-custom_history_table",
+      "dt": "Lead Pending Calls",
+      "fieldname": "custom_history_table",
+      "fieldtype": "Section Break",
+      "label": "History Table",
+      "options": null
+    },
+    {
+      "name": "Lead-custom_area",
+      "dt": "Lead",
+      "fieldname": "custom_area",
+      "fieldtype": "Link",
+      "label": "Area",
+      "options": "Area"
+    },
+    {
+      "name": "Lead-custom_column_break_gszax",
+      "dt": "Lead",
+      "fieldname": "custom_column_break_gszax",
+      "fieldtype": "Column Break",
+      "label": "",
+      "options": null
+    },
+    {
+      "name": "Lead-custom_final_lead_result",
+      "dt": "Lead",
+      "fieldname": "custom_final_lead_result",
+      "fieldtype": "Data",
+      "label": "Final Lead Result",
+      "options": null
+    },
+    {
+      "name": "Lead-custom_from_referral_form",
+      "dt": "Lead",
+      "fieldname": "custom_from_referral_form",
+      "fieldtype": "Link",
+      "label": "From Referral Form",
+      "options": "Referral Form"
+    },
+    {
+      "name": "Lead-custom_lead_date",
+      "dt": "Lead",
+      "fieldname": "custom_lead_date",
+      "fieldtype": "Date",
+      "label": "Lead Date",
+      "options": null
+    },
+    {
+      "name": "Lead-custom_lead_report",
+      "dt": "Lead",
+      "fieldname": "custom_lead_report",
+      "fieldtype": "Table",
+      "label": "Lead Report",
+      "options": "Lead Report"
+    },
+    {
+      "name": "Lead-custom_lead_result",
+      "dt": "Lead",
+      "fieldname": "custom_lead_result",
+      "fieldtype": "Table",
+      "label": "Lead Result",
+      "options": "Lead Results"
+    },
+    {
+      "name": "Lead-custom_lead_type",
+      "dt": "Lead",
+      "fieldname": "custom_lead_type",
+      "fieldtype": "Select",
+      "label": "Lead Type",
+      "options": "\nFOP\nOffice\nOwn\nPersonal"
+    },
+    {
+      "name": "Lead-custom_manual_customer_name",
+      "dt": "Lead",
+      "fieldname": "custom_manual_customer_name",
+      "fieldtype": "Data",
+      "label": "Manual Customer Name",
+      "options": null
+    },
+    {
+      "name": "Lead-custom_mobileno",
+      "dt": "Lead",
+      "fieldname": "custom_mobileno",
+      "fieldtype": "Data",
+      "label": "Mobile No",
+      "options": null
+    },
+    {
+      "name": "Lead-custom_name",
+      "dt": "Lead",
+      "fieldname": "custom_name",
+      "fieldtype": "Data",
+      "label": "Name",
+      "options": null
+    },
+    {
+      "name": "Lead-custom_nationality",
+      "dt": "Lead",
+      "fieldname": "custom_nationality",
+      "fieldtype": "Link",
+      "label": "Nationality",
+      "options": "Nationality"
+    },
+    {
+      "name": "Lead-custom_note",
+      "dt": "Lead",
+      "fieldname": "custom_note",
+      "fieldtype": "Small Text",
+      "label": "Note",
+      "options": null
+    },
+    {
+      "name": "Lead-custom_referral_",
+      "dt": "Lead",
+      "fieldname": "custom_referral_",
+      "fieldtype": "Data",
+      "label": "Referral Number",
+      "options": null
+    },
+    {
+      "name": "Lead-custom_referral_number",
+      "dt": "Lead",
+      "fieldname": "custom_referral_number",
+      "fieldtype": "Data",
+      "label": "Referral Number",
+      "options": null
+    },
+    {
+      "name": "Lead-custom_referred_by_customer",
+      "dt": "Lead",
+      "fieldname": "custom_referred_by_customer",
+      "fieldtype": "Link",
+      "label": "Referred By Customer",
+      "options": "Customer"
+    },
+    {
+      "name": "Lead-custom_referred_by_customer_name",
+      "dt": "Lead",
+      "fieldname": "custom_referred_by_customer_name",
+      "fieldtype": "Data",
+      "label": "Referred By Customer Name",
+      "options": null
+    },
+    {
+      "name": "Lead-custom_referred_customer",
+      "dt": "Lead",
+      "fieldname": "custom_referred_customer",
+      "fieldtype": "Data",
+      "label": "Referred by Customer",
+      "options": null
+    },
+    {
+      "name": "Lead-custom_report",
+      "dt": "Lead",
+      "fieldname": "custom_report",
+      "fieldtype": "Tab Break",
+      "label": "Report",
+      "options": null
+    },
+    {
+      "name": "Lead-custom_sales_person",
+      "dt": "Lead",
+      "fieldname": "custom_sales_person",
+      "fieldtype": "Link",
+      "label": "Sales Person",
+      "options": "Sales Person"
+    },
+    {
+      "name": "Lead-custom_section_break_dzip5",
+      "dt": "Lead",
+      "fieldname": "custom_section_break_dzip5",
+      "fieldtype": "Section Break",
+      "label": "",
+      "options": null
+    },
+    {
+      "name": "Lead-custom_section_break_qm8gj",
+      "dt": "Lead",
+      "fieldname": "custom_section_break_qm8gj",
+      "fieldtype": "Section Break",
+      "label": "",
+      "options": null
+    },
+    {
+      "name": "Lead-custom_telemarketer_id",
+      "dt": "Lead",
+      "fieldname": "custom_telemarketer_id",
+      "fieldtype": "Link",
+      "label": "Telemarketer Id",
+      "options": "Sales Person"
+    },
+    {
+      "name": "Maintenance Schedule Item-custom_perriodicity",
+      "dt": "Maintenance Schedule Item",
+      "fieldname": "custom_perriodicity",
+      "fieldtype": "Select",
+      "label": "Periodicity",
+      "options": "1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12"
+    },
+    {
+      "name": "Maintenance Schedule-custom_history",
+      "dt": "Maintenance Schedule",
+      "fieldname": "custom_history",
+      "fieldtype": "Table",
+      "label": "History",
+      "options": "Schedule History"
+    },
+    {
+      "name": "Maintenance Schedule-custom_installation_date",
+      "dt": "Maintenance Schedule",
+      "fieldname": "custom_installation_date",
+      "fieldtype": "Data",
+      "label": "Installation Date",
+      "options": null
+    },
+    {
+      "name": "Maintenance Schedule-custom_maintenance_type",
+      "dt": "Maintenance Schedule",
+      "fieldname": "custom_maintenance_type",
+      "fieldtype": "Select",
+      "label": "Maintenance Type",
+      "options": "\nPlanned Maintenance\nMaintenance Call"
+    },
+    {
+      "name": "Maintenance Schedule-custom_mobile_no",
+      "dt": "Maintenance Schedule",
+      "fieldname": "custom_mobile_no",
+      "fieldtype": "Link",
+      "label": "Mobile No",
+      "options": "Customer"
+    },
+    {
+      "name": "Maintenance Schedule-custom_schedule_history",
+      "dt": "Maintenance Schedule",
+      "fieldname": "custom_schedule_history",
+      "fieldtype": "Section Break",
+      "label": "Schedule History",
+      "options": null
+    },
+    {
+      "name": "Maintenance Visit-custom_replace_item",
+      "dt": "Maintenance Visit",
+      "fieldname": "custom_replace_item",
+      "fieldtype": "Table",
+      "label": "Replace Item",
+      "options": "Maintenance Visit Table"
+    },
+    {
+      "name": "Maintenance Visit-custom_sales_invoice_ref",
+      "dt": "Maintenance Visit",
+      "fieldname": "custom_sales_invoice_ref",
+      "fieldtype": "Data",
+      "label": "Sales Invoice Ref",
+      "options": null
+    },
+    {
+      "name": "Maintenance Visit-custom_section_break_yoc18",
+      "dt": "Maintenance Visit",
+      "fieldname": "custom_section_break_yoc18",
+      "fieldtype": "Section Break",
+      "label": "",
+      "options": null
+    },
+    {
+      "name": "Maintenance Visit-custom_total_",
+      "dt": "Maintenance Visit",
+      "fieldname": "custom_total_",
+      "fieldtype": "Currency",
+      "label": "Total ",
+      "options": null
+    },
+    {
+      "name": "Maintenance Visit-custom_warehouse",
+      "dt": "Maintenance Visit",
+      "fieldname": "custom_warehouse",
+      "fieldtype": "Link",
+      "label": "Warehouse",
+      "options": "Warehouse"
+    },
+    {
+      "name": "Maintenance-custom_address_dropdown",
+      "dt": "Maintenance",
+      "fieldname": "custom_address_dropdown",
+      "fieldtype": "Link",
+      "label": "Select Address",
+      "options": "Address"
+    },
+    {
+      "name": "Maintenance-custom_column_break_eeogj",
+      "dt": "Maintenance",
+      "fieldname": "custom_column_break_eeogj",
+      "fieldtype": "Column Break",
+      "label": "",
+      "options": null
+    },
+    {
+      "name": "Maintenance-custom_new_maintenance_id",
+      "dt": "Maintenance",
+      "fieldname": "custom_new_maintenance_id",
+      "fieldtype": "Link",
+      "label": "New Maintenance ID",
+      "options": "Maintenance"
+    },
+    {
+      "name": "Payment Entry-custom_is_partial",
+      "dt": "Payment Entry",
+      "fieldname": "custom_is_partial",
+      "fieldtype": "Check",
+      "label": "Is Partial?",
+      "options": null
+    },
+    {
+      "name": "Payment Entry-custom_linked_payment_entry",
+      "dt": "Payment Entry",
+      "fieldname": "custom_linked_payment_entry",
+      "fieldtype": "Link",
+      "label": "Linked Payment Entry",
+      "options": "Payment Entry"
+    },
+    {
+      "name": "Payment Entry-custom_manual_voucher_number",
+      "dt": "Payment Entry",
+      "fieldname": "custom_manual_voucher_number",
+      "fieldtype": "Data",
+      "label": "Manual Voucher Number",
+      "options": null
+    },
+    {
+      "name": "Payment Entry-custom_party_status",
+      "dt": "Payment Entry",
+      "fieldname": "custom_party_status",
+      "fieldtype": "Data",
+      "label": "Party Status",
+      "options": null
+    },
+    {
+      "name": "Payment Entry-custom_payment_purpose",
+      "dt": "Payment Entry",
+      "fieldname": "custom_payment_purpose",
+      "fieldtype": "Select",
+      "label": "Payment Purpose",
+      "options": "\nDown Payment\nInstallment\nMaintenance"
+    },
+    {
+      "name": "Payment Entry-custom_sales_order_id",
+      "dt": "Payment Entry",
+      "fieldname": "custom_sales_order_id",
+      "fieldtype": "Link",
+      "label": "Sales Order Id",
+      "options": "Sales Order"
+    },
+    {
+      "name": "Print Settings-compact_item_print",
+      "dt": "Print Settings",
+      "fieldname": "compact_item_print",
+      "fieldtype": "Check",
+      "label": "Compact Item Print",
+      "options": null
+    },
+    {
+      "name": "Print Settings-print_taxes_with_zero_amount",
+      "dt": "Print Settings",
+      "fieldname": "print_taxes_with_zero_amount",
+      "fieldtype": "Check",
+      "label": "Print taxes with zero amount",
+      "options": null
+    },
+    {
+      "name": "Print Settings-print_uom_after_quantity",
+      "dt": "Print Settings",
+      "fieldname": "print_uom_after_quantity",
+      "fieldtype": "Check",
+      "label": "Print UOM after Quantity",
+      "options": null
+    },
+    {
+      "name": "Referral Form-custom_customer_name",
+      "dt": "Referral Form",
+      "fieldname": "custom_customer_name",
+      "fieldtype": "Data",
+      "label": "Referred Customer Name",
+      "options": null
+    },
+    {
+      "name": "Sales Invoice-custom_column_break_5fsfa",
+      "dt": "Sales Invoice",
+      "fieldname": "custom_column_break_5fsfa",
+      "fieldtype": "Column Break",
+      "label": "",
+      "options": null
+    },
+    {
+      "name": "Sales Invoice-custom_column_break_subfx",
+      "dt": "Sales Invoice",
+      "fieldname": "custom_column_break_subfx",
+      "fieldtype": "Column Break",
+      "label": "",
+      "options": null
+    },
+    {
+      "name": "Sales Invoice-custom_commission_details",
+      "dt": "Sales Invoice",
+      "fieldname": "custom_commission_details",
+      "fieldtype": "Section Break",
+      "label": "Commission Details",
+      "options": null
+    },
+    {
+      "name": "Sales Invoice-custom_invoice_type",
+      "dt": "Sales Invoice",
+      "fieldname": "custom_invoice_type",
+      "fieldtype": "Select",
+      "label": "Invoice Type",
+      "options": "\nSales\nMaintenance"
+    },
+    {
+      "name": "Sales Invoice-custom_jv_entry",
+      "dt": "Sales Invoice",
+      "fieldname": "custom_jv_entry",
+      "fieldtype": "Link",
+      "label": "Jv Entry",
+      "options": "Journal Entry"
+    },
+    {
+      "name": "Sales Invoice-custom_maintenance_id",
+      "dt": "Sales Invoice",
+      "fieldname": "custom_maintenance_id",
+      "fieldtype": "Link",
+      "label": "Maintenance ID",
+      "options": "Maintenance"
+    },
+    {
+      "name": "Sales Invoice-custom_maintenance_visit_ref",
+      "dt": "Sales Invoice",
+      "fieldname": "custom_maintenance_visit_ref",
+      "fieldtype": "Data",
+      "label": "Maintenance Visit Ref",
+      "options": null
+    },
+    {
+      "name": "Sales Invoice-custom_maintenance_voucher_details",
+      "dt": "Sales Invoice",
+      "fieldname": "custom_maintenance_voucher_details",
+      "fieldtype": "Section Break",
+      "label": "Maintenance Voucher Details",
+      "options": null
+    },
+    {
+      "name": "Sales Invoice-custom_make_commission",
+      "dt": "Sales Invoice",
+      "fieldname": "custom_make_commission",
+      "fieldtype": "Button",
+      "label": "Make Commission",
+      "options": null
+    },
+    {
+      "name": "Sales Invoice-custom_manual_contract_no",
+      "dt": "Sales Invoice",
+      "fieldname": "custom_manual_contract_no",
+      "fieldtype": "Data",
+      "label": "Manual Contract No",
+      "options": null
+    },
+    {
+      "name": "Sales Invoice-custom_manual_voucher_number",
+      "dt": "Sales Invoice",
+      "fieldname": "custom_manual_voucher_number",
+      "fieldtype": "Data",
+      "label": "Manual Voucher Number",
+      "options": null
+    },
+    {
+      "name": "Sales Invoice-custom_sales_commission",
+      "dt": "Sales Invoice",
+      "fieldname": "custom_sales_commission",
+      "fieldtype": "Float",
+      "label": "Sales Commission",
+      "options": null
+    },
+    {
+      "name": "Sales Invoice-custom_sales_order_id",
+      "dt": "Sales Invoice",
+      "fieldname": "custom_sales_order_id",
+      "fieldtype": "Data",
+      "label": "Sales Order ID",
+      "options": null
+    },
+    {
+      "name": "Sales Invoice-custom_sales_person",
+      "dt": "Sales Invoice",
+      "fieldname": "custom_sales_person",
+      "fieldtype": "Link",
+      "label": "Sales Person",
+      "options": "Sales Person"
+    },
+    {
+      "name": "Sales Invoice-custom_section_break_cbrsu",
+      "dt": "Sales Invoice",
+      "fieldname": "custom_section_break_cbrsu",
+      "fieldtype": "Section Break",
+      "label": "",
+      "options": null
+    },
+    {
+      "name": "Sales Invoice-custom_sold_item_details",
+      "dt": "Sales Invoice",
+      "fieldname": "custom_sold_item_details",
+      "fieldtype": "Table",
+      "label": "Sold item Details",
+      "options": "Item Detail"
+    },
+    {
+      "name": "Sales Invoice-custom_supervisior",
+      "dt": "Sales Invoice",
+      "fieldname": "custom_supervisior",
+      "fieldtype": "Link",
+      "label": "Supervisior",
+      "options": "Sales Person"
+    },
+    {
+      "name": "Sales Invoice-custom_supervisior_commission",
+      "dt": "Sales Invoice",
+      "fieldname": "custom_supervisior_commission",
+      "fieldtype": "Float",
+      "label": "Supervisior Commission",
+      "options": null
+    },
+    {
+      "name": "Sales Invoice-custom_telemarketer",
+      "dt": "Sales Invoice",
+      "fieldname": "custom_telemarketer",
+      "fieldtype": "Link",
+      "label": "Telemarketer",
+      "options": "Sales Person"
+    },
+    {
+      "name": "Sales Invoice-custom_telemarketer_commission",
+      "dt": "Sales Invoice",
+      "fieldname": "custom_telemarketer_commission",
+      "fieldtype": "Float",
+      "label": "Telemarketer Commission",
+      "options": null
+    },
+    {
+      "name": "Sales Order Item-custom_is_maintenance_item",
+      "dt": "Sales Order Item",
+      "fieldname": "custom_is_maintenance_item",
+      "fieldtype": "Check",
+      "label": "Is Maintenance Item",
+      "options": null
+    },
+    {
+      "name": "Sales Order-custom_column_break_aspdc",
+      "dt": "Sales Order",
+      "fieldname": "custom_column_break_aspdc",
+      "fieldtype": "Column Break",
+      "label": "",
+      "options": null
+    },
+    {
+      "name": "Sales Order-custom_column_break_zzfyc",
+      "dt": "Sales Order",
+      "fieldname": "custom_column_break_zzfyc",
+      "fieldtype": "Column Break",
+      "label": "",
+      "options": null
+    },
+    {
+      "name": "Sales Order-custom_commission_details",
+      "dt": "Sales Order",
+      "fieldname": "custom_commission_details",
+      "fieldtype": "Section Break",
+      "label": "Commission Details",
+      "options": null
+    },
+    {
+      "name": "Sales Order-custom_contract_type",
+      "dt": "Sales Order",
+      "fieldname": "custom_contract_type",
+      "fieldtype": "Select",
+      "label": "Contract Type",
+      "options": "\nSigned\nUnsigned"
+    },
+    {
+      "name": "Sales Order-custom_discount_account",
+      "dt": "Sales Order",
+      "fieldname": "custom_discount_account",
+      "fieldtype": "Link",
+      "label": "Discount Account",
+      "options": "Account"
+    },
+    {
+      "name": "Sales Order-custom_down_payment_amount",
+      "dt": "Sales Order",
+      "fieldname": "custom_down_payment_amount",
+      "fieldtype": "Data",
+      "label": "Down Payment Amount",
+      "options": null
+    },
+    {
+      "name": "Sales Order-custom_from_lead",
+      "dt": "Sales Order",
+      "fieldname": "custom_from_lead",
+      "fieldtype": "Data",
+      "label": "From Lead",
+      "options": null
+    },
+    {
+      "name": "Sales Order-custom_jv_entry",
+      "dt": "Sales Order",
+      "fieldname": "custom_jv_entry",
+      "fieldtype": "Link",
+      "label": "Jv Entry",
+      "options": "Journal Entry"
+    },
+    {
+      "name": "Sales Order-custom_make_commission",
+      "dt": "Sales Order",
+      "fieldname": "custom_make_commission",
+      "fieldtype": "Button",
+      "label": "Make Commission",
+      "options": null
+    },
+    {
+      "name": "Sales Order-custom_make_payment_entry",
+      "dt": "Sales Order",
+      "fieldname": "custom_make_payment_entry",
+      "fieldtype": "Button",
+      "label": "Make Payment Entry",
+      "options": null
+    },
+    {
+      "name": "Sales Order-custom_make_sales_invoice",
+      "dt": "Sales Order",
+      "fieldname": "custom_make_sales_invoice",
+      "fieldtype": "Button",
+      "label": "Make Sales Invoice",
+      "options": null
+    },
+    {
+      "name": "Sales Order-custom_sales_commission",
+      "dt": "Sales Order",
+      "fieldname": "custom_sales_commission",
+      "fieldtype": "Float",
+      "label": "Sales Commission",
+      "options": null
+    },
+    {
+      "name": "Sales Order-custom_sales_invoice_id",
+      "dt": "Sales Order",
+      "fieldname": "custom_sales_invoice_id",
+      "fieldtype": "Link",
+      "label": "Sales Invoice ID",
+      "options": "Sales Invoice"
+    },
+    {
+      "name": "Sales Order-custom_sales_person",
+      "dt": "Sales Order",
+      "fieldname": "custom_sales_person",
+      "fieldtype": "Link",
+      "label": "Sales Person",
+      "options": "Sales Person"
+    },
+    {
+      "name": "Sales Order-custom_serial_no",
+      "dt": "Sales Order",
+      "fieldname": "custom_serial_no",
+      "fieldtype": "Data",
+      "label": "Serial No",
+      "options": null
+    },
+    {
+      "name": "Sales Order-custom_supervisior",
+      "dt": "Sales Order",
+      "fieldname": "custom_supervisior",
+      "fieldtype": "Link",
+      "label": "Supervisior",
+      "options": "Sales Person"
+    },
+    {
+      "name": "Sales Order-custom_supervisior_commission",
+      "dt": "Sales Order",
+      "fieldname": "custom_supervisior_commission",
+      "fieldtype": "Float",
+      "label": "Supervisior Commission",
+      "options": null
+    },
+    {
+      "name": "Sales Order-custom_telemarketer",
+      "dt": "Sales Order",
+      "fieldname": "custom_telemarketer",
+      "fieldtype": "Link",
+      "label": "Telemarketer",
+      "options": "Sales Person"
+    },
+    {
+      "name": "Sales Order-custom_telemarketer_commission",
+      "dt": "Sales Order",
+      "fieldname": "custom_telemarketer_commission",
+      "fieldtype": "Float",
+      "label": "Telemarketer Commission",
+      "options": null
+    },
+    {
+      "name": "Sales Person-custom_sales_person_commission_ac",
+      "dt": "Sales Person",
+      "fieldname": "custom_sales_person_commission_ac",
+      "fieldtype": "Link",
+      "label": "Sales Person Commission A/C",
+      "options": "Account"
+    },
+    {
+      "name": "ToDo-custom_result",
+      "dt": "ToDo",
+      "fieldname": "custom_result",
+      "fieldtype": "Link",
+      "label": "Result",
+      "options": "Results"
+    }
+  ],
+  "doctype_details": {
+    "Customer Device Record": {
+      "name": "Customer Device Record",
+      "module": "Selling",
+      "custom": 1,
+      "istable": 0,
+      "fields": [
+        {
+          "fieldname": "naming_series",
+          "fieldtype": "Select",
+          "label": "Naming series",
+          "options": null
+        },
+        {
+          "fieldname": "date",
+          "fieldtype": "Date",
+          "label": "Date",
+          "options": null
+        },
+        {
+          "fieldname": "customer",
+          "fieldtype": "Link",
+          "label": "Customer",
+          "options": "Customer"
+        },
+        {
+          "fieldname": "customer_name",
+          "fieldtype": "Data",
+          "label": "Customer Name",
+          "options": null
+        },
+        {
+          "fieldname": "civil_id",
+          "fieldtype": "Data",
+          "label": "Civil Id",
+          "options": null
+        },
+        {
+          "fieldname": "date_of_birth",
+          "fieldtype": "Data",
+          "label": "Date of Birth",
+          "options": null
+        },
+        {
+          "fieldname": "file_no",
+          "fieldtype": "Data",
+          "label": "File no.",
+          "options": null
+        },
+        {
+          "fieldname": "mobile_no",
+          "fieldtype": "Data",
+          "label": "Mobile No",
+          "options": null
+        },
+        {
+          "fieldname": "area",
+          "fieldtype": "Link",
+          "label": "Area",
+          "options": "Area"
+        },
+        {
+          "fieldname": "address",
+          "fieldtype": "Data",
+          "label": "Address",
+          "options": null
+        },
+        {
+          "fieldname": "device_no",
+          "fieldtype": "Data",
+          "label": "Device No",
+          "options": null
+        },
+        {
+          "fieldname": "device_type",
+          "fieldtype": "Data",
+          "label": "Device type",
+          "options": null
+        },
+        {
+          "fieldname": "salesman",
+          "fieldtype": "Data",
+          "label": "Salesman",
+          "options": ""
+        },
+        {
+          "fieldname": "supervisor",
+          "fieldtype": "Data",
+          "label": "Supervisor",
+          "options": null
+        },
+        {
+          "fieldname": "telemarketer",
+          "fieldtype": "Data",
+          "label": "Telemarketer",
+          "options": null
+        },
+        {
+          "fieldname": "assist_with",
+          "fieldtype": "Data",
+          "label": "Assist with",
+          "options": null
+        },
+        {
+          "fieldname": "trade_in",
+          "fieldtype": "Data",
+          "label": "Trade In",
+          "options": null
+        },
+        {
+          "fieldname": "sales_amt",
+          "fieldtype": "Data",
+          "label": "Sales Amt",
+          "options": null
+        },
+        {
+          "fieldname": "down_payment",
+          "fieldtype": "Data",
+          "label": "Down Payment",
+          "options": null
+        },
+        {
+          "fieldname": "remaining_balance",
+          "fieldtype": "Data",
+          "label": "Remaining Balance",
+          "options": null
+        },
+        {
+          "fieldname": "amended_from",
+          "fieldtype": "Link",
+          "label": "Amended From",
+          "options": "Customer Device Record"
+        }
+      ],
+      "child_tables": []
+    },
+    "Internal Transfer": {
+      "name": "Internal Transfer",
+      "module": "Super Natural",
+      "custom": 1,
+      "istable": 0,
+      "fields": [],
+      "child_tables": []
+    },
+    "Lead Report": {
+      "name": "Lead Report",
+      "module": "Super Natural",
+      "custom": 1,
+      "istable": 1,
+      "fields": [
+        {
+          "fieldname": "referral_number",
+          "fieldtype": "Data",
+          "label": "Referral Number",
+          "options": null
+        },
+        {
+          "fieldname": "referred_by_customer",
+          "fieldtype": "Data",
+          "label": "Referred By Customer",
+          "options": null
+        },
+        {
+          "fieldname": "mobile_no",
+          "fieldtype": "Data",
+          "label": "Mobile No",
+          "options": null
+        },
+        {
+          "fieldname": "date",
+          "fieldtype": "Date",
+          "label": "Date",
+          "options": null
+        },
+        {
+          "fieldname": "assigned_to",
+          "fieldtype": "Data",
+          "label": "Assigned To",
+          "options": null
+        },
+        {
+          "fieldname": "description",
+          "fieldtype": "Small Text",
+          "label": "Description",
+          "options": null
+        },
+        {
+          "fieldname": "status",
+          "fieldtype": "Data",
+          "label": "Status",
+          "options": null
+        },
+        {
+          "fieldname": "result",
+          "fieldtype": "Data",
+          "label": "Result",
+          "options": null
+        }
+      ],
+      "child_tables": []
+    },
+    "Lead Results": {
+      "name": "Lead Results",
+      "module": "Super Natural",
+      "custom": 1,
+      "istable": 1,
+      "fields": [
+        {
+          "fieldname": "date",
+          "fieldtype": "Date",
+          "label": "Date",
+          "options": null
+        },
+        {
+          "fieldname": "description",
+          "fieldtype": "Data",
+          "label": "Description",
+          "options": null
+        },
+        {
+          "fieldname": "result",
+          "fieldtype": "Link",
+          "label": "Result",
+          "options": "Results"
+        },
+        {
+          "fieldname": "assign_to",
+          "fieldtype": "Link",
+          "label": "Assign To",
+          "options": "User"
+        }
+      ],
+      "child_tables": []
+    },
+    "Maintenance Visit Table": {
+      "name": "Maintenance Visit Table",
+      "module": "Super Natural",
+      "custom": 1,
+      "istable": 1,
+      "fields": [
+        {
+          "fieldname": "item_code",
+          "fieldtype": "Link",
+          "label": "Item Code",
+          "options": "Item"
+        },
+        {
+          "fieldname": "item_name",
+          "fieldtype": "Data",
+          "label": "Item Name",
+          "options": null
+        },
+        {
+          "fieldname": "qty",
+          "fieldtype": "Int",
+          "label": "Quantity",
+          "options": null
+        },
+        {
+          "fieldname": "rate",
+          "fieldtype": "Currency",
+          "label": "Rate",
+          "options": null
+        },
+        {
+          "fieldname": "amount",
+          "fieldtype": "Currency",
+          "label": "Amount",
+          "options": null
+        }
+      ],
+      "child_tables": []
+    },
+    "Previous Lead": {
+      "name": "Previous Lead",
+      "module": "Super Natural",
+      "custom": 1,
+      "istable": 0,
+      "fields": [
+        {
+          "fieldname": "naming_series",
+          "fieldtype": "Select",
+          "label": "series",
+          "options": "PRV-LEAD-.YYYY.-"
+        },
+        {
+          "fieldname": "lead_name",
+          "fieldtype": "Data",
+          "label": "Lead Name",
+          "options": null
+        },
+        {
+          "fieldname": "lead_type",
+          "fieldtype": "Select",
+          "label": "Lead Type",
+          "options": "\nFOP\nOffie\nOwn\nPersonal"
+        },
+        {
+          "fieldname": "phone",
+          "fieldtype": "Data",
+          "label": "Phone",
+          "options": null
+        },
+        {
+          "fieldname": "address",
+          "fieldtype": "Text",
+          "label": "Address",
+          "options": null
+        },
+        {
+          "fieldname": "referred_by",
+          "fieldtype": "Data",
+          "label": "Referred By",
+          "options": null
+        },
+        {
+          "fieldname": "result",
+          "fieldtype": "Data",
+          "label": "Result",
+          "options": null
+        },
+        {
+          "fieldname": "cb_date",
+          "fieldtype": "Date",
+          "label": "CB Date",
+          "options": null
+        },
+        {
+          "fieldname": "telemarketer",
+          "fieldtype": "Data",
+          "label": "Telemarketer",
+          "options": null
+        },
+        {
+          "fieldname": "last_date",
+          "fieldtype": "Date",
+          "label": "Last Date",
+          "options": null
+        },
+        {
+          "fieldname": "last_notes",
+          "fieldtype": "Small Text",
+          "label": "Last Notes",
+          "options": null
+        },
+        {
+          "fieldname": "last_result",
+          "fieldtype": "Data",
+          "label": "Last Result",
+          "options": null
+        },
+        {
+          "fieldname": "notes",
+          "fieldtype": "Small Text",
+          "label": "Notes",
+          "options": null
+        },
+        {
+          "fieldname": "ref_number",
+          "fieldtype": "Data",
+          "label": "Ref. Number",
+          "options": null
+        },
+        {
+          "fieldname": "sales_person",
+          "fieldtype": "Link",
+          "label": "Sales Person",
+          "options": "Sales Person"
+        }
+      ],
+      "child_tables": []
+    },
+    "Results": {
+      "name": "Results",
+      "module": "Super Natural",
+      "custom": 1,
+      "istable": 0,
+      "fields": [
+        {
+          "fieldname": "result",
+          "fieldtype": "Data",
+          "label": "Result",
+          "options": null
+        }
+      ],
+      "child_tables": []
+    },
+    "Sales Invoice": {
+      "name": "Sales Invoice",
+      "module": "Accounts",
+      "custom": 0,
+      "istable": 0,
+      "fields": [
+        {
+          "fieldname": "title",
+          "fieldtype": "Data",
+          "label": "Title",
+          "options": null
+        },
+        {
+          "fieldname": "naming_series",
+          "fieldtype": "Select",
+          "label": "Series",
+          "options": "ACC-SINV-.YYYY.-\nACC-SINV-RET-.YYYY.-"
+        },
+        {
+          "fieldname": "customer",
+          "fieldtype": "Link",
+          "label": "Customer",
+          "options": "Customer"
+        },
+        {
+          "fieldname": "customer_name",
+          "fieldtype": "Small Text",
+          "label": "Customer Name",
+          "options": null
+        },
+        {
+          "fieldname": "tax_id",
+          "fieldtype": "Data",
+          "label": "Tax Id",
+          "options": null
+        },
+        {
+          "fieldname": "company",
+          "fieldtype": "Link",
+          "label": "Company",
+          "options": "Company"
+        },
+        {
+          "fieldname": "company_tax_id",
+          "fieldtype": "Data",
+          "label": "Company Tax ID",
+          "options": null
+        },
+        {
+          "fieldname": "posting_date",
+          "fieldtype": "Date",
+          "label": "Date",
+          "options": null
+        },
+        {
+          "fieldname": "posting_time",
+          "fieldtype": "Time",
+          "label": "Posting Time",
+          "options": null
+        },
+        {
+          "fieldname": "set_posting_time",
+          "fieldtype": "Check",
+          "label": "Edit Posting Date and Time",
+          "options": null
+        },
+        {
+          "fieldname": "due_date",
+          "fieldtype": "Date",
+          "label": "Payment Due Date",
+          "options": null
+        },
+        {
+          "fieldname": "is_pos",
+          "fieldtype": "Check",
+          "label": "Include Payment (POS)",
+          "options": null
+        },
+        {
+          "fieldname": "pos_profile",
+          "fieldtype": "Link",
+          "label": "POS Profile",
+          "options": "POS Profile"
+        },
+        {
+          "fieldname": "is_consolidated",
+          "fieldtype": "Check",
+          "label": "Is Consolidated",
+          "options": null
+        },
+        {
+          "fieldname": "is_return",
+          "fieldtype": "Check",
+          "label": "Is Return (Credit Note)",
+          "options": null
+        },
+        {
+          "fieldname": "return_against",
+          "fieldtype": "Link",
+          "label": "Return Against",
+          "options": "Sales Invoice"
+        },
+        {
+          "fieldname": "update_outstanding_for_self",
+          "fieldtype": "Check",
+          "label": "Update Outstanding for Self",
+          "options": null
+        },
+        {
+          "fieldname": "update_billed_amount_in_sales_order",
+          "fieldtype": "Check",
+          "label": "Update Billed Amount in Sales Order",
+          "options": null
+        },
+        {
+          "fieldname": "update_billed_amount_in_delivery_note",
+          "fieldtype": "Check",
+          "label": "Update Billed Amount in Delivery Note",
+          "options": null
+        },
+        {
+          "fieldname": "is_debit_note",
+          "fieldtype": "Check",
+          "label": "Is Rate Adjustment Entry (Debit Note)",
+          "options": null
+        },
+        {
+          "fieldname": "amended_from",
+          "fieldtype": "Link",
+          "label": "Amended From",
+          "options": "Sales Invoice"
+        },
+        {
+          "fieldname": "cost_center",
+          "fieldtype": "Link",
+          "label": "Cost Center",
+          "options": "Cost Center"
+        },
+        {
+          "fieldname": "project",
+          "fieldtype": "Link",
+          "label": "Project",
+          "options": "Project"
+        },
+        {
+          "fieldname": "currency",
+          "fieldtype": "Link",
+          "label": "Currency",
+          "options": "Currency"
+        },
+        {
+          "fieldname": "conversion_rate",
+          "fieldtype": "Float",
+          "label": "Exchange Rate",
+          "options": null
+        },
+        {
+          "fieldname": "selling_price_list",
+          "fieldtype": "Link",
+          "label": "Price List",
+          "options": "Price List"
+        },
+        {
+          "fieldname": "price_list_currency",
+          "fieldtype": "Link",
+          "label": "Price List Currency",
+          "options": "Currency"
+        },
+        {
+          "fieldname": "plc_conversion_rate",
+          "fieldtype": "Float",
+          "label": "Price List Exchange Rate",
+          "options": null
+        },
+        {
+          "fieldname": "ignore_pricing_rule",
+          "fieldtype": "Check",
+          "label": "Ignore Pricing Rule",
+          "options": null
+        },
+        {
+          "fieldname": "scan_barcode",
+          "fieldtype": "Data",
+          "label": "Scan Barcode",
+          "options": "Barcode"
+        },
+        {
+          "fieldname": "update_stock",
+          "fieldtype": "Check",
+          "label": "Update Stock",
+          "options": null
+        },
+        {
+          "fieldname": "set_warehouse",
+          "fieldtype": "Link",
+          "label": "Source Warehouse",
+          "options": "Warehouse"
+        },
+        {
+          "fieldname": "set_target_warehouse",
+          "fieldtype": "Link",
+          "label": "Set Target Warehouse",
+          "options": "Warehouse"
+        },
+        {
+          "fieldname": "items",
+          "fieldtype": "Table",
+          "label": "Items",
+          "options": "Sales Invoice Item"
+        },
+        {
+          "fieldname": "total_qty",
+          "fieldtype": "Float",
+          "label": "Total Quantity",
+          "options": null
+        },
+        {
+          "fieldname": "total_net_weight",
+          "fieldtype": "Float",
+          "label": "Total Net Weight",
+          "options": null
+        },
+        {
+          "fieldname": "base_total",
+          "fieldtype": "Currency",
+          "label": "Total (Company Currency)",
+          "options": "Company:company:default_currency"
+        },
+        {
+          "fieldname": "base_net_total",
+          "fieldtype": "Currency",
+          "label": "Net Total (Company Currency)",
+          "options": "Company:company:default_currency"
+        },
+        {
+          "fieldname": "total",
+          "fieldtype": "Currency",
+          "label": "Total",
+          "options": "currency"
+        },
+        {
+          "fieldname": "net_total",
+          "fieldtype": "Currency",
+          "label": "Net Total",
+          "options": "currency"
+        },
+        {
+          "fieldname": "tax_category",
+          "fieldtype": "Link",
+          "label": "Tax Category",
+          "options": "Tax Category"
+        },
+        {
+          "fieldname": "taxes_and_charges",
+          "fieldtype": "Link",
+          "label": "Sales Taxes and Charges Template",
+          "options": "Sales Taxes and Charges Template"
+        },
+        {
+          "fieldname": "shipping_rule",
+          "fieldtype": "Link",
+          "label": "Shipping Rule",
+          "options": "Shipping Rule"
+        },
+        {
+          "fieldname": "incoterm",
+          "fieldtype": "Link",
+          "label": "Incoterm",
+          "options": "Incoterm"
+        },
+        {
+          "fieldname": "named_place",
+          "fieldtype": "Data",
+          "label": "Named Place",
+          "options": null
+        },
+        {
+          "fieldname": "taxes",
+          "fieldtype": "Table",
+          "label": "Sales Taxes and Charges",
+          "options": "Sales Taxes and Charges"
+        },
+        {
+          "fieldname": "base_total_taxes_and_charges",
+          "fieldtype": "Currency",
+          "label": "Total Taxes and Charges (Company Currency)",
+          "options": "Company:company:default_currency"
+        },
+        {
+          "fieldname": "total_taxes_and_charges",
+          "fieldtype": "Currency",
+          "label": "Total Taxes and Charges",
+          "options": "currency"
+        },
+        {
+          "fieldname": "base_grand_total",
+          "fieldtype": "Currency",
+          "label": "Grand Total (Company Currency)",
+          "options": "Company:company:default_currency"
+        },
+        {
+          "fieldname": "base_rounding_adjustment",
+          "fieldtype": "Currency",
+          "label": "Rounding Adjustment (Company Currency)",
+          "options": "Company:company:default_currency"
+        },
+        {
+          "fieldname": "base_rounded_total",
+          "fieldtype": "Currency",
+          "label": "Rounded Total (Company Currency)",
+          "options": "Company:company:default_currency"
+        },
+        {
+          "fieldname": "base_in_words",
+          "fieldtype": "Small Text",
+          "label": "In Words (Company Currency)",
+          "options": null
+        },
+        {
+          "fieldname": "grand_total",
+          "fieldtype": "Currency",
+          "label": "Grand Total",
+          "options": "currency"
+        },
+        {
+          "fieldname": "rounding_adjustment",
+          "fieldtype": "Currency",
+          "label": "Rounding Adjustment",
+          "options": "currency"
+        },
+        {
+          "fieldname": "use_company_roundoff_cost_center",
+          "fieldtype": "Check",
+          "label": "Use Company default Cost Center for Round off",
+          "options": null
+        },
+        {
+          "fieldname": "rounded_total",
+          "fieldtype": "Currency",
+          "label": "Rounded Total",
+          "options": "currency"
+        },
+        {
+          "fieldname": "in_words",
+          "fieldtype": "Small Text",
+          "label": "In Words",
+          "options": null
+        },
+        {
+          "fieldname": "total_advance",
+          "fieldtype": "Currency",
+          "label": "Total Advance",
+          "options": "party_account_currency"
+        },
+        {
+          "fieldname": "outstanding_amount",
+          "fieldtype": "Currency",
+          "label": "Outstanding Amount",
+          "options": "party_account_currency"
+        },
+        {
+          "fieldname": "disable_rounded_total",
+          "fieldtype": "Check",
+          "label": "Disable Rounded Total",
+          "options": null
+        },
+        {
+          "fieldname": "apply_discount_on",
+          "fieldtype": "Select",
+          "label": "Apply Additional Discount On",
+          "options": "\nGrand Total\nNet Total"
+        },
+        {
+          "fieldname": "base_discount_amount",
+          "fieldtype": "Currency",
+          "label": "Additional Discount Amount (Company Currency)",
+          "options": "Company:company:default_currency"
+        },
+        {
+          "fieldname": "is_cash_or_non_trade_discount",
+          "fieldtype": "Check",
+          "label": "Is Cash or Non Trade Discount",
+          "options": null
+        },
+        {
+          "fieldname": "additional_discount_account",
+          "fieldtype": "Link",
+          "label": "Discount Account",
+          "options": "Account"
+        },
+        {
+          "fieldname": "additional_discount_percentage",
+          "fieldtype": "Float",
+          "label": "Additional Discount Percentage",
+          "options": null
+        },
+        {
+          "fieldname": "discount_amount",
+          "fieldtype": "Currency",
+          "label": "Additional Discount Amount",
+          "options": "currency"
+        },
+        {
+          "fieldname": "other_charges_calculation",
+          "fieldtype": "Text Editor",
+          "label": "Taxes and Charges Calculation",
+          "options": null
+        },
+        {
+          "fieldname": "pricing_rules",
+          "fieldtype": "Table",
+          "label": "Pricing Rule Detail",
+          "options": "Pricing Rule Detail"
+        },
+        {
+          "fieldname": "packed_items",
+          "fieldtype": "Table",
+          "label": "Packed Items",
+          "options": "Packed Item"
+        },
+        {
+          "fieldname": "timesheets",
+          "fieldtype": "Table",
+          "label": "Time Sheets",
+          "options": "Sales Invoice Timesheet"
+        },
+        {
+          "fieldname": "total_billing_hours",
+          "fieldtype": "Float",
+          "label": "Total Billing Hours",
+          "options": null
+        },
+        {
+          "fieldname": "total_billing_amount",
+          "fieldtype": "Currency",
+          "label": "Total Billing Amount",
+          "options": "currency"
+        },
+        {
+          "fieldname": "cash_bank_account",
+          "fieldtype": "Link",
+          "label": "Cash/Bank Account",
+          "options": "Account"
+        },
+        {
+          "fieldname": "payments",
+          "fieldtype": "Table",
+          "label": "Sales Invoice Payment",
+          "options": "Sales Invoice Payment"
+        },
+        {
+          "fieldname": "base_paid_amount",
+          "fieldtype": "Currency",
+          "label": "Paid Amount (Company Currency)",
+          "options": "Company:company:default_currency"
+        },
+        {
+          "fieldname": "paid_amount",
+          "fieldtype": "Currency",
+          "label": "Paid Amount",
+          "options": "currency"
+        },
+        {
+          "fieldname": "base_change_amount",
+          "fieldtype": "Currency",
+          "label": "Base Change Amount (Company Currency)",
+          "options": "Company:company:default_currency"
+        },
+        {
+          "fieldname": "change_amount",
+          "fieldtype": "Currency",
+          "label": "Change Amount",
+          "options": "currency"
+        },
+        {
+          "fieldname": "account_for_change_amount",
+          "fieldtype": "Link",
+          "label": "Account for Change Amount",
+          "options": "Account"
+        },
+        {
+          "fieldname": "allocate_advances_automatically",
+          "fieldtype": "Check",
+          "label": "Allocate Advances Automatically (FIFO)",
+          "options": null
+        },
+        {
+          "fieldname": "only_include_allocated_payments",
+          "fieldtype": "Check",
+          "label": "Only Include Allocated Payments",
+          "options": null
+        },
+        {
+          "fieldname": "advances",
+          "fieldtype": "Table",
+          "label": "Advances",
+          "options": "Sales Invoice Advance"
+        },
+        {
+          "fieldname": "write_off_amount",
+          "fieldtype": "Currency",
+          "label": "Write Off Amount",
+          "options": "currency"
+        },
+        {
+          "fieldname": "base_write_off_amount",
+          "fieldtype": "Currency",
+          "label": "Write Off Amount (Company Currency)",
+          "options": "Company:company:default_currency"
+        },
+        {
+          "fieldname": "write_off_outstanding_amount_automatically",
+          "fieldtype": "Check",
+          "label": "Write Off Outstanding Amount",
+          "options": null
+        },
+        {
+          "fieldname": "write_off_account",
+          "fieldtype": "Link",
+          "label": "Write Off Account",
+          "options": "Account"
+        },
+        {
+          "fieldname": "write_off_cost_center",
+          "fieldtype": "Link",
+          "label": "Write Off Cost Center",
+          "options": "Cost Center"
+        },
+        {
+          "fieldname": "redeem_loyalty_points",
+          "fieldtype": "Check",
+          "label": "Redeem Loyalty Points",
+          "options": null
+        },
+        {
+          "fieldname": "loyalty_points",
+          "fieldtype": "Int",
+          "label": "Loyalty Points",
+          "options": null
+        },
+        {
+          "fieldname": "loyalty_amount",
+          "fieldtype": "Currency",
+          "label": "Loyalty Amount",
+          "options": "Company:company:default_currency"
+        },
+        {
+          "fieldname": "loyalty_program",
+          "fieldtype": "Link",
+          "label": "Loyalty Program",
+          "options": "Loyalty Program"
+        },
+        {
+          "fieldname": "loyalty_redemption_account",
+          "fieldtype": "Link",
+          "label": "Redemption Account",
+          "options": "Account"
+        },
+        {
+          "fieldname": "loyalty_redemption_cost_center",
+          "fieldtype": "Link",
+          "label": "Redemption Cost Center",
+          "options": "Cost Center"
+        },
+        {
+          "fieldname": "customer_address",
+          "fieldtype": "Link",
+          "label": "Customer Address",
+          "options": "Address"
+        },
+        {
+          "fieldname": "address_display",
+          "fieldtype": "Small Text",
+          "label": "Address",
+          "options": null
+        },
+        {
+          "fieldname": "contact_person",
+          "fieldtype": "Link",
+          "label": "Contact Person",
+          "options": "Contact"
+        },
+        {
+          "fieldname": "contact_display",
+          "fieldtype": "Small Text",
+          "label": "Contact",
+          "options": null
+        },
+        {
+          "fieldname": "contact_mobile",
+          "fieldtype": "Small Text",
+          "label": "Mobile No",
+          "options": "Phone"
+        },
+        {
+          "fieldname": "contact_email",
+          "fieldtype": "Data",
+          "label": "Contact Email",
+          "options": "Email"
+        },
+        {
+          "fieldname": "territory",
+          "fieldtype": "Link",
+          "label": "Territory",
+          "options": "Territory"
+        },
+        {
+          "fieldname": "shipping_address_name",
+          "fieldtype": "Link",
+          "label": "Shipping Address Name",
+          "options": "Address"
+        },
+        {
+          "fieldname": "shipping_address",
+          "fieldtype": "Small Text",
+          "label": "Shipping Address",
+          "options": null
+        },
+        {
+          "fieldname": "dispatch_address_name",
+          "fieldtype": "Link",
+          "label": "Dispatch Address Name",
+          "options": "Address"
+        },
+        {
+          "fieldname": "dispatch_address",
+          "fieldtype": "Small Text",
+          "label": "Dispatch Address",
+          "options": null
+        },
+        {
+          "fieldname": "company_address",
+          "fieldtype": "Link",
+          "label": "Company Address Name",
+          "options": "Address"
+        },
+        {
+          "fieldname": "company_address_display",
+          "fieldtype": "Small Text",
+          "label": "Company Address",
+          "options": null
+        },
+        {
+          "fieldname": "company_contact_person",
+          "fieldtype": "Link",
+          "label": "Company Contact Person",
+          "options": "Contact"
+        },
+        {
+          "fieldname": "ignore_default_payment_terms_template",
+          "fieldtype": "Check",
+          "label": "Ignore Default Payment Terms Template",
+          "options": null
+        },
+        {
+          "fieldname": "payment_terms_template",
+          "fieldtype": "Link",
+          "label": "Payment Terms Template",
+          "options": "Payment Terms Template"
+        },
+        {
+          "fieldname": "payment_schedule",
+          "fieldtype": "Table",
+          "label": "Payment Schedule",
+          "options": "Payment Schedule"
+        },
+        {
+          "fieldname": "tc_name",
+          "fieldtype": "Link",
+          "label": "Terms",
+          "options": "Terms and Conditions"
+        },
+        {
+          "fieldname": "terms",
+          "fieldtype": "Text Editor",
+          "label": "Terms and Conditions Details",
+          "options": null
+        },
+        {
+          "fieldname": "po_no",
+          "fieldtype": "Data",
+          "label": "Customer's Purchase Order",
+          "options": null
+        },
+        {
+          "fieldname": "po_date",
+          "fieldtype": "Date",
+          "label": "Customer's Purchase Order Date",
+          "options": null
+        },
+        {
+          "fieldname": "debit_to",
+          "fieldtype": "Link",
+          "label": "Debit To",
+          "options": "Account"
+        },
+        {
+          "fieldname": "party_account_currency",
+          "fieldtype": "Link",
+          "label": "Party Account Currency",
+          "options": "Currency"
+        },
+        {
+          "fieldname": "is_opening",
+          "fieldtype": "Select",
+          "label": "Is Opening Entry",
+          "options": "No\nYes"
+        },
+        {
+          "fieldname": "unrealized_profit_loss_account",
+          "fieldtype": "Link",
+          "label": "Unrealized Profit / Loss Account",
+          "options": "Account"
+        },
+        {
+          "fieldname": "against_income_account",
+          "fieldtype": "Small Text",
+          "label": "Against Income Account",
+          "options": null
+        },
+        {
+          "fieldname": "sales_partner",
+          "fieldtype": "Link",
+          "label": "Sales Partner",
+          "options": "Sales Partner"
+        },
+        {
+          "fieldname": "amount_eligible_for_commission",
+          "fieldtype": "Currency",
+          "label": "Amount Eligible for Commission",
+          "options": null
+        },
+        {
+          "fieldname": "commission_rate",
+          "fieldtype": "Float",
+          "label": "Commission Rate (%)",
+          "options": null
+        },
+        {
+          "fieldname": "total_commission",
+          "fieldtype": "Currency",
+          "label": "Total Commission",
+          "options": "Company:company:default_currency"
+        },
+        {
+          "fieldname": "sales_team",
+          "fieldtype": "Table",
+          "label": "Sales Contributions and Incentives",
+          "options": "Sales Team"
+        },
+        {
+          "fieldname": "letter_head",
+          "fieldtype": "Link",
+          "label": "Letter Head",
+          "options": "Letter Head"
+        },
+        {
+          "fieldname": "group_same_items",
+          "fieldtype": "Check",
+          "label": "Group same items",
+          "options": null
+        },
+        {
+          "fieldname": "select_print_heading",
+          "fieldtype": "Link",
+          "label": "Print Heading",
+          "options": "Print Heading"
+        },
+        {
+          "fieldname": "language",
+          "fieldtype": "Data",
+          "label": "Print Language",
+          "options": null
+        },
+        {
+          "fieldname": "subscription",
+          "fieldtype": "Link",
+          "label": "Subscription",
+          "options": "Subscription"
+        },
+        {
+          "fieldname": "from_date",
+          "fieldtype": "Date",
+          "label": "From Date",
+          "options": null
+        },
+        {
+          "fieldname": "auto_repeat",
+          "fieldtype": "Link",
+          "label": "Auto Repeat",
+          "options": "Auto Repeat"
+        },
+        {
+          "fieldname": "to_date",
+          "fieldtype": "Date",
+          "label": "To Date",
+          "options": null
+        },
+        {
+          "fieldname": "status",
+          "fieldtype": "Select",
+          "label": "Status",
+          "options": "\nDraft\nReturn\nCredit Note Issued\nSubmitted\nPaid\nPartly Paid\nUnpaid\nUnpaid and Discounted\nPartly Paid and Discounted\nOverdue and Discounted\nOverdue\nCancelled\nInternal Transfer"
+        },
+        {
+          "fieldname": "inter_company_invoice_reference",
+          "fieldtype": "Link",
+          "label": "Inter Company Invoice Reference",
+          "options": "Purchase Invoice"
+        },
+        {
+          "fieldname": "campaign",
+          "fieldtype": "Link",
+          "label": "Campaign",
+          "options": "Campaign"
+        },
+        {
+          "fieldname": "represents_company",
+          "fieldtype": "Link",
+          "label": "Represents Company",
+          "options": "Company"
+        },
+        {
+          "fieldname": "source",
+          "fieldtype": "Link",
+          "label": "Source",
+          "options": "Lead Source"
+        },
+        {
+          "fieldname": "customer_group",
+          "fieldtype": "Link",
+          "label": "Customer Group",
+          "options": "Customer Group"
+        },
+        {
+          "fieldname": "is_internal_customer",
+          "fieldtype": "Check",
+          "label": "Is Internal Customer",
+          "options": null
+        },
+        {
+          "fieldname": "is_discounted",
+          "fieldtype": "Check",
+          "label": "Is Discounted",
+          "options": null
+        },
+        {
+          "fieldname": "remarks",
+          "fieldtype": "Small Text",
+          "label": "Remarks",
+          "options": null
+        }
+      ],
+      "child_tables": [
+        {
+          "child_doctype": "Sales Invoice Item",
+          "fieldname": "items"
+        },
+        {
+          "child_doctype": "Sales Taxes and Charges",
+          "fieldname": "taxes"
+        },
+        {
+          "child_doctype": "Pricing Rule Detail",
+          "fieldname": "pricing_rules"
+        },
+        {
+          "child_doctype": "Packed Item",
+          "fieldname": "packed_items"
+        },
+        {
+          "child_doctype": "Sales Invoice Timesheet",
+          "fieldname": "timesheets"
+        },
+        {
+          "child_doctype": "Sales Invoice Payment",
+          "fieldname": "payments"
+        },
+        {
+          "child_doctype": "Sales Invoice Advance",
+          "fieldname": "advances"
+        },
+        {
+          "child_doctype": "Payment Schedule",
+          "fieldname": "payment_schedule"
+        },
+        {
+          "child_doctype": "Sales Team",
+          "fieldname": "sales_team"
+        }
+      ]
+    },
+    "Sales Person": {
+      "name": "Sales Person",
+      "module": "Setup",
+      "custom": 0,
+      "istable": 0,
+      "fields": [
+        {
+          "fieldname": "sales_person_name",
+          "fieldtype": "Data",
+          "label": "Sales Person Name",
+          "options": null
+        },
+        {
+          "fieldname": "parent_sales_person",
+          "fieldtype": "Link",
+          "label": "Parent Sales Person",
+          "options": "Sales Person"
+        },
+        {
+          "fieldname": "commission_rate",
+          "fieldtype": "Data",
+          "label": "Commission Rate",
+          "options": null
+        },
+        {
+          "fieldname": "is_group",
+          "fieldtype": "Check",
+          "label": "Is Group",
+          "options": null
+        },
+        {
+          "fieldname": "enabled",
+          "fieldtype": "Check",
+          "label": "Enabled",
+          "options": null
+        },
+        {
+          "fieldname": "employee",
+          "fieldtype": "Link",
+          "label": "Employee",
+          "options": "Employee"
+        },
+        {
+          "fieldname": "department",
+          "fieldtype": "Link",
+          "label": "Department",
+          "options": "Department"
+        },
+        {
+          "fieldname": "lft",
+          "fieldtype": "Int",
+          "label": "lft",
+          "options": null
+        },
+        {
+          "fieldname": "rgt",
+          "fieldtype": "Int",
+          "label": "rgt",
+          "options": null
+        },
+        {
+          "fieldname": "old_parent",
+          "fieldtype": "Data",
+          "label": "old_parent",
+          "options": null
+        },
+        {
+          "fieldname": "targets",
+          "fieldtype": "Table",
+          "label": "Targets",
+          "options": "Target Detail"
+        }
+      ],
+      "child_tables": [
+        {
+          "child_doctype": "Target Detail",
+          "fieldname": "targets"
+        }
+      ]
+    }
+  }
+}

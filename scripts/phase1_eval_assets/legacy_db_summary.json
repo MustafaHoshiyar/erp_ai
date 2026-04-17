@@ -1,0 +1,58 @@
+{
+  "conversation_count": 205,
+  "message_count": 205,
+  "saved_report_count": 9,
+  "status_counts": {
+    "null": 2,
+    "error": 23,
+    "success": 180
+  },
+  "feedback_counts": {
+    "null": 181,
+    "-1": 5,
+    "1": 19
+  },
+  "client_ids": [
+    "Administrator",
+    "DEMO_CLIENT_123"
+  ],
+  "format_in_sql_count": 65,
+  "chat_false_failure_count": 13,
+  "negative_feedback_samples": [
+    {
+      "id": 126,
+      "client_id": "Administrator",
+      "prompt": "remove the company name and email id from the table , add status to 3rd column",
+      "execution_status": "success",
+      "error_message": null
+    },
+    {
+      "id": 155,
+      "client_id": "Administrator",
+      "prompt": "Show items whose current stock quantity is below their reorder level",
+      "execution_status": "success",
+      "error_message": null
+    },
+    {
+      "id": 173,
+      "client_id": "Administrator",
+      "prompt": "Identify items whose current stock will be exhausted within the next 30 days based on average daily sales",
+      "execution_status": "success",
+      "error_message": null
+    },
+    {
+      "id": 174,
+      "client_id": "Administrator",
+      "prompt": "Predict which items will run out of stock in the next 30 days using average sales of the past 3 months.",
+      "execution_status": "success",
+      "error_message": null
+    },
+    {
+      "id": 182,
+      "client_id": "Administrator",
+      "prompt": "List the top 10 performing products based on total sales revenue.",
+      "execution_status": "success",
+      "error_message": null
+    }
+  ]
+}

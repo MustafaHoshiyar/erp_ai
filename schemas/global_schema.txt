@@ -1,0 +1,163 @@
+### GLOBAL ERPNEXT SCHEMA ###
+# This file contains the standard ERPNext table schema organized by module.
+# The AI uses this to understand table names, key columns, and relationships.
+# Format: TABLE_NAME: column1 (type), column2 (type), ... | CHILD OF: parent_table
+
+## ============================================================
+## MODULE: SELLING
+## WARNING: Only include standard ERPNext fields here. 
+## Custom fields (like custom_sales_person) MUST be handled via dynamic prompts or context overrides.
+## ============================================================
+
+`tabCustomer`: name (PK), customer_name (Data), customer_type (Select), customer_group (Link), territory (Link), default_currency (Link), default_price_list (Link), tax_id (Data), disabled (Check)
+
+`tabSales Order`: name (PK), customer (Link→Customer), customer_name (Data), transaction_date (Date), delivery_date (Date), company (Link), currency (Link), grand_total (Currency), net_total (Currency), total_qty (Float), status (Select), per_delivered (Percent), per_billed (Percent), territory (Link), sales_partner (Link)
+
+`tabSales Order Item`: name (PK), parent (Link→Sales Order), item_code (Link→Item), item_name (Data), qty (Float), rate (Currency), amount (Currency), delivery_date (Date), warehouse (Link→Warehouse), uom (Link), net_amount (Currency) | CHILD OF: `tabSales Order`
+
+`tabSales Invoice`: name (PK), customer (Link→Customer), customer_name (Data), posting_date (Date), due_date (Date), company (Link), currency (Link), grand_total (Currency), net_total (Currency), outstanding_amount (Currency), total_qty (Float), status (Select), is_return (Check), return_against (Link), territory (Link), cost_center (Link), sales_partner (Link)
+
+`tabSales Invoice Item`: name (PK), parent (Link→Sales Invoice), item_code (Link→Item), item_name (Data), qty (Float), rate (Currency), amount (Currency), warehouse (Link→Warehouse), uom (Link), net_amount (Currency), cost_center (Link), income_account (Link) | CHILD OF: `tabSales Invoice`
+
+`tabQuotation`: name (PK), quotation_to (Select), party_name (Link), transaction_date (Date), valid_till (Date), company (Link), grand_total (Currency), status (Select), order_type (Select)
+
+`tabQuotation Item`: name (PK), parent (Link→Quotation), item_code (Link→Item), qty (Float), rate (Currency), amount (Currency) | CHILD OF: `tabQuotation`
+
+`tabDelivery Note`: name (PK), customer (Link→Customer), posting_date (Date), company (Link), grand_total (Currency), status (Select), is_return (Check), per_billed (Percent)
+
+`tabDelivery Note Item`: name (PK), parent (Link→Delivery Note), item_code (Link→Item), qty (Float), rate (Currency), amount (Currency), warehouse (Link→Warehouse), against_sales_order (Link), against_sales_invoice (Link) | CHILD OF: `tabDelivery Note`
+
+## ============================================================
+## MODULE: BUYING
+## ============================================================
+
+`tabSupplier`: name (PK), supplier_name (Data), supplier_type (Select), supplier_group (Link), country (Link), default_currency (Link), disabled (Check)
+
+`tabPurchase Order`: name (PK), supplier (Link→Supplier), supplier_name (Data), transaction_date (Date), schedule_date (Date), company (Link), grand_total (Currency), net_total (Currency), status (Select), per_received (Percent), per_billed (Percent)
+
+`tabPurchase Order Item`: name (PK), parent (Link→Purchase Order), item_code (Link→Item), qty (Float), rate (Currency), amount (Currency), warehouse (Link→Warehouse), schedule_date (Date) | CHILD OF: `tabPurchase Order`
+
+`tabPurchase Invoice`: name (PK), supplier (Link→Supplier), supplier_name (Data), posting_date (Date), due_date (Date), company (Link), grand_total (Currency), net_total (Currency), outstanding_amount (Currency), status (Select), is_return (Check)
+
+`tabPurchase Invoice Item`: name (PK), parent (Link→Purchase Invoice), item_code (Link→Item), qty (Float), rate (Currency), amount (Currency), warehouse (Link→Warehouse), expense_account (Link) | CHILD OF: `tabPurchase Invoice`
+
+`tabPurchase Receipt`: name (PK), supplier (Link→Supplier), posting_date (Date), company (Link), grand_total (Currency), status (Select), per_billed (Percent)
+
+`tabPurchase Receipt Item`: name (PK), parent (Link→Purchase Receipt), item_code (Link→Item), qty (Float), rate (Currency), amount (Currency), warehouse (Link→Warehouse), rejected_qty (Float) | CHILD OF: `tabPurchase Receipt`
+
+## ============================================================
+## MODULE: STOCK / INVENTORY
+## ============================================================
+
+`tabItem`: name (PK), item_code (Data), item_name (Data), item_group (Link), stock_uom (Link), has_variants (Check), variant_of (Link), is_stock_item (Check), is_fixed_asset (Check), disabled (Check), description (Text), brand (Link), valuation_method (Select)
+
+`tabItem Price`: name (PK), item_code (Link→Item), price_list (Link), price_list_rate (Currency), currency (Link), uom (Link), valid_from (Date), valid_upto (Date)
+
+`tabWarehouse`: name (PK), warehouse_name (Data), company (Link), city (Data), state (Data), is_group (Check), parent_warehouse (Link), disabled (Check)
+
+`tabBin`: name (PK), item_code (Link→Item), warehouse (Link→Warehouse), actual_qty (Float), planned_qty (Float), reserved_qty (Float), ordered_qty (Float), projected_qty (Float), valuation_rate (Currency), stock_value (Currency)
+
+`tabStock Ledger Entry`: name (PK), item_code (Link→Item), warehouse (Link→Warehouse), posting_date (Date), posting_time (Time), actual_qty (Float), qty_after_transaction (Float), valuation_rate (Currency), stock_value (Currency), stock_value_difference (Currency), voucher_type (Data), voucher_no (Data), batch_no (Data), serial_no (Text), company (Link)
+
+`tabStock Entry`: name (PK), stock_entry_type (Link), purpose (Select), posting_date (Date), company (Link), from_warehouse (Link→Warehouse), to_warehouse (Link→Warehouse), total_amount (Currency), docstatus (Int)
+
+`tabStock Entry Detail`: name (PK), parent (Link→Stock Entry), item_code (Link→Item), qty (Float), basic_rate (Currency), basic_amount (Currency), s_warehouse (Link→Warehouse), t_warehouse (Link→Warehouse), batch_no (Data) | CHILD OF: `tabStock Entry`
+
+`tabBatch`: name (PK), item (Link→Item), batch_qty (Float), expiry_date (Date), manufacturing_date (Date), disabled (Check)
+
+`tabSerial No`: name (PK), item_code (Link→Item), warehouse (Link→Warehouse), company (Link), status (Select), purchase_document_no (Data), delivery_document_no (Data)
+
+`tabItem Group`: name (PK), item_group_name (Data), parent_item_group (Link), is_group (Check)
+
+## ============================================================
+## MODULE: ACCOUNTS
+## ============================================================
+
+`tabGL Entry`: name (PK), posting_date (Date), account (Link→Account), party_type (Data), party (Data), debit (Currency), credit (Currency), debit_in_account_currency (Currency), credit_in_account_currency (Currency), voucher_type (Data), voucher_no (Data), cost_center (Link), company (Link), is_cancelled (Check)
+
+`tabAccount`: name (PK), account_name (Data), parent_account (Link), root_type (Select: Asset/Liability/Income/Expense/Equity), report_type (Select: Balance Sheet/Profit and Loss), account_type (Select), is_group (Check), company (Link)
+
+`tabJournal Entry`: name (PK), posting_date (Date), company (Link), total_debit (Currency), total_credit (Currency), voucher_type (Select), cheque_no (Data), cheque_date (Date), remark (Text)
+
+`tabJournal Entry Account`: name (PK), parent (Link→Journal Entry), account (Link→Account), debit_in_account_currency (Currency), credit_in_account_currency (Currency), party_type (Data), party (Data) | CHILD OF: `tabJournal Entry`
+
+`tabPayment Entry`: name (PK), payment_type (Select: Receive/Pay/Internal Transfer), posting_date (Date), party_type (Data), party (Data), party_name (Data), paid_amount (Currency), received_amount (Currency), paid_from (Link→Account), paid_to (Link→Account), mode_of_payment (Link), reference_no (Data), company (Link), status (Select)
+
+`tabPayment Entry Reference`: name (PK), parent (Link→Payment Entry), reference_doctype (Data), reference_name (Data), total_amount (Currency), outstanding_amount (Currency), allocated_amount (Currency) | CHILD OF: `tabPayment Entry`
+
+`tabCost Center`: name (PK), cost_center_name (Data), parent_cost_center (Link), company (Link), is_group (Check)
+
+`tabMode of Payment`: name (PK), mode_of_payment (Data), type (Select: Cash/Bank/General)
+
+## ============================================================
+## MODULE: HR / PAYROLL
+## ============================================================
+
+`tabEmployee`: name (PK), employee_name (Data), first_name (Data), last_name (Data), company (Link), department (Link), designation (Link), status (Select: Active/Inactive/Suspended/Left), date_of_joining (Date), date_of_birth (Date), gender (Select), branch (Link), employment_type (Link), reports_to (Link→Employee)
+
+`tabDepartment`: name (PK), department_name (Data), company (Link), parent_department (Link), is_group (Check)
+
+`tabDesignation`: name (PK), designation (Data)
+
+`tabAttendance`: name (PK), employee (Link→Employee), attendance_date (Date), status (Select: Present/Absent/Half Day/On Leave), company (Link), leave_type (Link)
+
+`tabLeave Application`: name (PK), employee (Link→Employee), leave_type (Link), from_date (Date), to_date (Date), total_leave_days (Float), status (Select), leave_approver (Link)
+
+`tabSalary Slip`: name (PK), employee (Link→Employee), employee_name (Data), posting_date (Date), start_date (Date), end_date (Date), company (Link), gross_pay (Currency), net_pay (Currency), total_deduction (Currency), department (Link), designation (Link)
+
+`tabSalary Detail`: name (PK), parent (Link→Salary Slip), salary_component (Link), amount (Currency), parentfield (Data: earnings/deductions) | CHILD OF: `tabSalary Slip`
+
+## ============================================================
+## MODULE: MANUFACTURING
+## ============================================================
+
+`tabBOM`: name (PK), item (Link→Item), quantity (Float), company (Link), is_active (Check), is_default (Check), operating_cost (Currency), raw_material_cost (Currency), total_cost (Currency)
+
+`tabBOM Item`: name (PK), parent (Link→BOM), item_code (Link→Item), qty (Float), rate (Currency), amount (Currency), stock_uom (Link) | CHILD OF: `tabBOM`
+
+`tabWork Order`: name (PK), production_item (Link→Item), bom_no (Link→BOM), qty (Float), produced_qty (Float), company (Link), status (Select), planned_start_date (Datetime), actual_start_date (Datetime), fg_warehouse (Link→Warehouse), wip_warehouse (Link→Warehouse)
+
+## ============================================================
+## MODULE: CRM
+## ============================================================
+
+`tabLead`: name (PK), lead_name (Data), company_name (Data), email_id (Data), mobile_no (Data), source (Link), status (Select), territory (Link), lead_owner (Link)
+
+`tabOpportunity`: name (PK), opportunity_from (Select), party_name (Link), opportunity_type (Select), status (Select), expected_closing (Date), company (Link), probability (Percent), opportunity_amount (Currency)
+
+## ============================================================
+## MODULE: PROJECTS
+## ============================================================
+
+`tabProject`: name (PK), project_name (Data), status (Select), company (Link), expected_start_date (Date), expected_end_date (Date), percent_complete (Percent), estimated_costing (Currency), total_costing_amount (Currency)
+
+`tabTask`: name (PK), subject (Data), project (Link→Project), status (Select), priority (Select), exp_start_date (Date), exp_end_date (Date), completed_by (Link), progress (Percent)
+
+`tabTimesheet`: name (PK), employee (Link→Employee), company (Link), total_hours (Float), total_billed_hours (Float), total_billed_amount (Currency), status (Select)
+
+## ============================================================
+## KEY RELATIONSHIPS & JOIN PATTERNS
+## ============================================================
+
+# Sales Flow: Customer → Quotation → Sales Order → Delivery Note → Sales Invoice → Payment Entry
+# Purchase Flow: Supplier → Purchase Order → Purchase Receipt → Purchase Invoice → Payment Entry
+# Stock: All stock movements tracked in `tabStock Ledger Entry` via voucher_type + voucher_no
+# Accounting: All financial transactions tracked in `tabGL Entry` via voucher_type + voucher_no
+# Maintenance: Standard ERPNext schedules are in `tabMaintenance Schedule`, visits in `tabMaintenance Visit`.
+# Client-specific rule: for prompts about maintenance that is "scheduled", "upcoming", "next week", or date-windowed maintenance schedules,
+# prefer `tabMaintenance` when fields like `scheduled_date` or `customer_id` are needed.
+# Child tables always join via: child.parent = parent.name
+# Stock Ledger to Invoice: sle.voucher_no = si.name AND sle.item_code = sii.item_code
+# Maintenance Schedule to Visit: mv.maintenance_schedule = ms.name
+
+## ============================================================
+## MODULE: MAINTENANCE
+## ============================================================
+
+`tabMaintenance Schedule`: name (PK), customer (Link→Customer), transaction_date (Date), company (Link), status (Select), period (Select), start_date (Date), end_date (Date)
+`tabMaintenance Schedule Item`: name (PK), parent (Link→Maintenance Schedule), item_code (Link→Item), start_date (Date), periodicity (Select) | CHILD OF: `tabMaintenance Schedule`
+
+`tabMaintenance Visit`: name (PK), customer (Link→Customer), maintenance_schedule (Link→Maintenance Schedule), posting_date (Date), posting_time (Time), company (Link), maintenance_type (Select), status (Select), completion_status (Select)
+`tabMaintenance Visit Table`: name (PK), parent (Link→Maintenance Visit), item_code (Link→Item), item_name (Data), qty (Float), rate (Currency), amount (Currency) | CHILD OF: `tabMaintenance Visit`
+
+`tabMaintenance`: name (PK), customer_id (Link→Customer), scheduled_date (Date), transaction_date (Date), status (Select)

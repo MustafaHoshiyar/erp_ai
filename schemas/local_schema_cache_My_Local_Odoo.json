@@ -1,0 +1,2593 @@
+{
+  "fetched_at": 1776414509.649834,
+  "fetched_at_readable": "2026-04-17 13:58:29",
+  "erp_type": "odoo",
+  "available_doctypes": [
+    {
+      "name": "crm_team_member",
+      "label": {
+        "en_US": "Sales Team Member"
+      },
+      "original_model": "crm.team.member"
+    },
+    {
+      "name": "crm_team",
+      "label": {
+        "en_US": "Sales Team"
+      },
+      "original_model": "crm.team"
+    },
+    {
+      "name": "crm_tag",
+      "label": {
+        "en_US": "CRM Tag"
+      },
+      "original_model": "crm.tag"
+    },
+    {
+      "name": "iap_autocomplete_api",
+      "label": {
+        "en_US": "IAP Partner Autocomplete API"
+      },
+      "original_model": "iap.autocomplete.api"
+    },
+    {
+      "name": "res_partner_autocomplete_sync",
+      "label": {
+        "en_US": "Partner Autocomplete Sync"
+      },
+      "original_model": "res.partner.autocomplete.sync"
+    },
+    {
+      "name": "portal_mixin",
+      "label": {
+        "en_US": "Portal Mixin"
+      },
+      "original_model": "portal.mixin"
+    },
+    {
+      "name": "mail_message",
+      "label": {
+        "en_US": "Message"
+      },
+      "original_model": "mail.message"
+    },
+    {
+      "name": "res_partner",
+      "label": {
+        "en_US": "Contact"
+      },
+      "original_model": "res.partner"
+    },
+    {
+      "name": "sms_sms",
+      "label": {
+        "en_US": "Outgoing SMS"
+      },
+      "original_model": "sms.sms"
+    },
+    {
+      "name": "sms_template",
+      "label": {
+        "en_US": "SMS Templates"
+      },
+      "original_model": "sms.template"
+    },
+    {
+      "name": "sms_tracker",
+      "label": {
+        "en_US": "Link SMS to mailing/sms tracking models"
+      },
+      "original_model": "sms.tracker"
+    },
+    {
+      "name": "base",
+      "label": {
+        "en_US": "Base"
+      },
+      "original_model": "base"
+    },
+    {
+      "name": "_unknown",
+      "label": {
+        "en_US": "Unknown"
+      },
+      "original_model": "_unknown"
+    },
+    {
+      "name": "ir_actions_server",
+      "label": {
+        "en_US": "Server Action"
+      },
+      "original_model": "ir.actions.server"
+    },
+    {
+      "name": "link_tracker",
+      "label": {
+        "en_US": "Link Tracker"
+      },
+      "original_model": "link.tracker"
+    },
+    {
+      "name": "link_tracker_code",
+      "label": {
+        "en_US": "Link Tracker Code"
+      },
+      "original_model": "link.tracker.code"
+    },
+    {
+      "name": "link_tracker_click",
+      "label": {
+        "en_US": "Link Tracker Click"
+      },
+      "original_model": "link.tracker.click"
+    },
+    {
+      "name": "rating_rating",
+      "label": {
+        "en_US": "Rating"
+      },
+      "original_model": "rating.rating"
+    },
+    {
+      "name": "rating_mixin",
+      "label": {
+        "en_US": "Rating Mixin"
+      },
+      "original_model": "rating.mixin"
+    },
+    {
+      "name": "rating_parent_mixin",
+      "label": {
+        "en_US": "Rating Parent Mixin"
+      },
+      "original_model": "rating.parent.mixin"
+    },
+    {
+      "name": "hr_contract_type",
+      "label": {
+        "en_US": "Contract Type"
+      },
+      "original_model": "hr.contract.type"
+    },
+    {
+      "name": "hr_employee_base",
+      "label": {
+        "en_US": "Basic Employee"
+      },
+      "original_model": "hr.employee.base"
+    },
+    {
+      "name": "hr_employee",
+      "label": {
+        "en_US": "Employee"
+      },
+      "original_model": "hr.employee"
+    },
+    {
+      "name": "hr_employee_category",
+      "label": {
+        "en_US": "Employee Category"
+      },
+      "original_model": "hr.employee.category"
+    },
+    {
+      "name": "hr_employee_public",
+      "label": {
+        "en_US": "Public Employee"
+      },
+      "original_model": "hr.employee.public"
+    },
+    {
+      "name": "hr_department",
+      "label": {
+        "en_US": "Department"
+      },
+      "original_model": "hr.department"
+    },
+    {
+      "name": "hr_departure_reason",
+      "label": {
+        "en_US": "Departure Reason"
+      },
+      "original_model": "hr.departure.reason"
+    },
+    {
+      "name": "hr_job",
+      "label": {
+        "en_US": "Job Position"
+      },
+      "original_model": "hr.job"
+    },
+    {
+      "name": "hr_work_location",
+      "label": {
+        "en_US": "Work Location"
+      },
+      "original_model": "hr.work.location"
+    },
+    {
+      "name": "ir_config_parameter",
+      "label": {
+        "en_US": "System Parameter"
+      },
+      "original_model": "ir.config_parameter"
+    },
+    {
+      "name": "ir_cron",
+      "label": {
+        "en_US": "Scheduled Actions"
+      },
+      "original_model": "ir.cron"
+    },
+    {
+      "name": "snailmail_letter",
+      "label": {
+        "en_US": "Snailmail Letter"
+      },
+      "original_model": "snailmail.letter"
+    },
+    {
+      "name": "digest_digest",
+      "label": {
+        "en_US": "Digest"
+      },
+      "original_model": "digest.digest"
+    },
+    {
+      "name": "digest_tip",
+      "label": {
+        "en_US": "Digest Tips"
+      },
+      "original_model": "digest.tip"
+    },
+    {
+      "name": "payment_method",
+      "label": {
+        "en_US": "Payment Method"
+      },
+      "original_model": "payment.method"
+    },
+    {
+      "name": "payment_provider",
+      "label": {
+        "en_US": "Payment Provider"
+      },
+      "original_model": "payment.provider"
+    },
+    {
+      "name": "payment_token",
+      "label": {
+        "en_US": "Payment Token"
+      },
+      "original_model": "payment.token"
+    },
+    {
+      "name": "payment_transaction",
+      "label": {
+        "en_US": "Payment Transaction"
+      },
+      "original_model": "payment.transaction"
+    },
+    {
+      "name": "spreadsheet_mixin",
+      "label": {
+        "en_US": "Spreadsheet mixin"
+      },
+      "original_model": "spreadsheet.mixin"
+    },
+    {
+      "name": "sequence_mixin",
+      "label": {
+        "en_US": "Automatic sequence"
+      },
+      "original_model": "sequence.mixin"
+    },
+    {
+      "name": "account_move",
+      "label": {
+        "en_US": "Journal Entry"
+      },
+      "original_model": "account.move"
+    },
+    {
+      "name": "account_fiscal_position",
+      "label": {
+        "en_US": "Fiscal Position"
+      },
+      "original_model": "account.fiscal.position"
+    },
+    {
+      "name": "account_fiscal_position_tax",
+      "label": {
+        "en_US": "Tax Mapping of Fiscal Position"
+      },
+      "original_model": "account.fiscal.position.tax"
+    },
+    {
+      "name": "ir_sequence",
+      "label": {
+        "en_US": "Sequence"
+      },
+      "original_model": "ir.sequence"
+    },
+    {
+      "name": "ir_qweb_field_image",
+      "label": {
+        "en_US": "Qweb Field Image"
+      },
+      "original_model": "ir.qweb.field.image"
+    },
+    {
+      "name": "account_fiscal_position_account",
+      "label": {
+        "en_US": "Accounts Mapping of Fiscal Position"
+      },
+      "original_model": "account.fiscal.position.account"
+    },
+    {
+      "name": "sale_edi_common",
+      "label": {
+        "en_US": "Common functions for EDI orders"
+      },
+      "original_model": "sale.edi.common"
+    },
+    {
+      "name": "sale_edi_xml_ubl_bis3",
+      "label": {
+        "en_US": "UBL BIS Ordering 3.0"
+      },
+      "original_model": "sale.edi.xml.ubl_bis3"
+    },
+    {
+      "name": "stock_valuation_layer",
+      "label": {
+        "en_US": "Stock Valuation Layer"
+      },
+      "original_model": "stock.valuation.layer"
+    },
+    {
+      "name": "res_partner_bank",
+      "label": {
+        "en_US": "Bank Accounts"
+      },
+      "original_model": "res.partner.bank"
+    },
+    {
+      "name": "account_account_tag",
+      "label": {
+        "en_US": "Account Tag"
+      },
+      "original_model": "account.account.tag"
+    },
+    {
+      "name": "account_account",
+      "label": {
+        "en_US": "Account"
+      },
+      "original_model": "account.account"
+    },
+    {
+      "name": "account_group",
+      "label": {
+        "en_US": "Account Group"
+      },
+      "original_model": "account.group"
+    },
+    {
+      "name": "account_code_mapping",
+      "label": {
+        "en_US": "Mapping of account codes per company"
+      },
+      "original_model": "account.code.mapping"
+    },
+    {
+      "name": "account_root",
+      "label": {
+        "en_US": "Account codes first 2 digits"
+      },
+      "original_model": "account.root"
+    },
+    {
+      "name": "account_journal_group",
+      "label": {
+        "en_US": "Account Journal Group"
+      },
+      "original_model": "account.journal.group"
+    },
+    {
+      "name": "account_journal",
+      "label": {
+        "en_US": "Journal"
+      },
+      "original_model": "account.journal"
+    },
+    {
+      "name": "res_company",
+      "label": {
+        "en_US": "Companies"
+      },
+      "original_model": "res.company"
+    },
+    {
+      "name": "account_lock_exception",
+      "label": {
+        "en_US": "Account Lock Exception"
+      },
+      "original_model": "account.lock_exception"
+    },
+    {
+      "name": "account_tax_group",
+      "label": {
+        "en_US": "Tax Group"
+      },
+      "original_model": "account.tax.group"
+    },
+    {
+      "name": "account_tax",
+      "label": {
+        "en_US": "Tax"
+      },
+      "original_model": "account.tax"
+    },
+    {
+      "name": "account_tax_repartition_line",
+      "label": {
+        "en_US": "Tax Repartition Line"
+      },
+      "original_model": "account.tax.repartition.line"
+    },
+    {
+      "name": "account_reconcile_model_partner_mapping",
+      "label": {
+        "en_US": "Partner mapping for reconciliation models"
+      },
+      "original_model": "account.reconcile.model.partner.mapping"
+    },
+    {
+      "name": "account_reconcile_model_line",
+      "label": {
+        "en_US": "Rules for the reconciliation model"
+      },
+      "original_model": "account.reconcile.model.line"
+    },
+    {
+      "name": "account_reconcile_model",
+      "label": {
+        "en_US": "Preset to create journal entries during a invoices and payments matching"
+      },
+      "original_model": "account.reconcile.model"
+    },
+    {
+      "name": "account_payment_term",
+      "label": {
+        "en_US": "Payment Terms"
+      },
+      "original_model": "account.payment.term"
+    },
+    {
+      "name": "account_payment_term_line",
+      "label": {
+        "en_US": "Payment Terms Line"
+      },
+      "original_model": "account.payment.term.line"
+    },
+    {
+      "name": "account_move_line",
+      "label": {
+        "en_US": "Journal Item"
+      },
+      "original_model": "account.move.line"
+    },
+    {
+      "name": "account_move_send",
+      "label": {
+        "en_US": "Account Move Send"
+      },
+      "original_model": "account.move.send"
+    },
+    {
+      "name": "account_partial_reconcile",
+      "label": {
+        "en_US": "Partial Reconcile"
+      },
+      "original_model": "account.partial.reconcile"
+    },
+    {
+      "name": "account_full_reconcile",
+      "label": {
+        "en_US": "Full Reconcile"
+      },
+      "original_model": "account.full.reconcile"
+    },
+    {
+      "name": "account_payment",
+      "label": {
+        "en_US": "Payments"
+      },
+      "original_model": "account.payment"
+    },
+    {
+      "name": "account_payment_method",
+      "label": {
+        "en_US": "Payment Methods"
+      },
+      "original_model": "account.payment.method"
+    },
+    {
+      "name": "account_payment_method_line",
+      "label": {
+        "en_US": "Payment Methods"
+      },
+      "original_model": "account.payment.method.line"
+    },
+    {
+      "name": "account_bank_statement",
+      "label": {
+        "en_US": "Bank Statement"
+      },
+      "original_model": "account.bank.statement"
+    },
+    {
+      "name": "account_bank_statement_line",
+      "label": {
+        "en_US": "Bank Statement Line"
+      },
+      "original_model": "account.bank.statement.line"
+    },
+    {
+      "name": "account_chart_template",
+      "label": {
+        "en_US": "Account Chart Template"
+      },
+      "original_model": "account.chart.template"
+    },
+    {
+      "name": "account_cash_rounding",
+      "label": {
+        "en_US": "Account Cash Rounding"
+      },
+      "original_model": "account.cash.rounding"
+    },
+    {
+      "name": "account_incoterms",
+      "label": {
+        "en_US": "Incoterms"
+      },
+      "original_model": "account.incoterms"
+    },
+    {
+      "name": "account_report",
+      "label": {
+        "en_US": "Accounting Report"
+      },
+      "original_model": "account.report"
+    },
+    {
+      "name": "account_report_line",
+      "label": {
+        "en_US": "Accounting Report Line"
+      },
+      "original_model": "account.report.line"
+    },
+    {
+      "name": "account_report_expression",
+      "label": {
+        "en_US": "Accounting Report Expression"
+      },
+      "original_model": "account.report.expression"
+    },
+    {
+      "name": "account_report_column",
+      "label": {
+        "en_US": "Accounting Report Column"
+      },
+      "original_model": "account.report.column"
+    },
+    {
+      "name": "account_report_external_value",
+      "label": {
+        "en_US": "Accounting Report External Value"
+      },
+      "original_model": "account.report.external.value"
+    },
+    {
+      "name": "account_invoice_report",
+      "label": {
+        "en_US": "Invoices Statistics"
+      },
+      "original_model": "account.invoice.report"
+    },
+    {
+      "name": "report_account_report_invoice",
+      "label": {
+        "en_US": "Account report without payment lines"
+      },
+      "original_model": "report.account.report_invoice"
+    },
+    {
+      "name": "report_account_report_invoice_with_payments",
+      "label": {
+        "en_US": "Account report with payment lines"
+      },
+      "original_model": "report.account.report_invoice_with_payments"
+    },
+    {
+      "name": "report_account_report_hash_integrity",
+      "label": {
+        "en_US": "Get hash integrity result as PDF."
+      },
+      "original_model": "report.account.report_hash_integrity"
+    },
+    {
+      "name": "res_users_apikeys_show",
+      "label": {
+        "en_US": "Show API Key"
+      },
+      "original_model": "res.users.apikeys.show"
+    },
+    {
+      "name": "gamification_badge",
+      "label": {
+        "en_US": "Gamification Badge"
+      },
+      "original_model": "gamification.badge"
+    },
+    {
+      "name": "gamification_badge_user",
+      "label": {
+        "en_US": "Gamification User Badge"
+      },
+      "original_model": "gamification.badge.user"
+    },
+    {
+      "name": "spreadsheet_dashboard_group",
+      "label": {
+        "en_US": "Group of dashboards"
+      },
+      "original_model": "spreadsheet.dashboard.group"
+    },
+    {
+      "name": "spreadsheet_dashboard",
+      "label": {
+        "en_US": "Spreadsheet Dashboard"
+      },
+      "original_model": "spreadsheet.dashboard"
+    },
+    {
+      "name": "spreadsheet_dashboard_share",
+      "label": {
+        "en_US": "Copy of a shared dashboard"
+      },
+      "original_model": "spreadsheet.dashboard.share"
+    },
+    {
+      "name": "gamification_challenge",
+      "label": {
+        "en_US": "Gamification Challenge"
+      },
+      "original_model": "gamification.challenge"
+    },
+    {
+      "name": "gamification_challenge_line",
+      "label": {
+        "en_US": "Gamification generic goal for challenge"
+      },
+      "original_model": "gamification.challenge.line"
+    },
+    {
+      "name": "gamification_goal",
+      "label": {
+        "en_US": "Gamification Goal"
+      },
+      "original_model": "gamification.goal"
+    },
+    {
+      "name": "gamification_goal_definition",
+      "label": {
+        "en_US": "Gamification Goal Definition"
+      },
+      "original_model": "gamification.goal.definition"
+    },
+    {
+      "name": "gamification_karma_rank",
+      "label": {
+        "en_US": "Rank based on karma"
+      },
+      "original_model": "gamification.karma.rank"
+    },
+    {
+      "name": "gamification_karma_tracking",
+      "label": {
+        "en_US": "Track Karma Changes"
+      },
+      "original_model": "gamification.karma.tracking"
+    },
+    {
+      "name": "survey_survey",
+      "label": {
+        "en_US": "Survey"
+      },
+      "original_model": "survey.survey"
+    },
+    {
+      "name": "survey_question",
+      "label": {
+        "en_US": "Survey Question"
+      },
+      "original_model": "survey.question"
+    },
+    {
+      "name": "survey_question_answer",
+      "label": {
+        "en_US": "Survey Label"
+      },
+      "original_model": "survey.question.answer"
+    },
+    {
+      "name": "survey_user_input",
+      "label": {
+        "en_US": "Survey User Input"
+      },
+      "original_model": "survey.user_input"
+    },
+    {
+      "name": "survey_user_input_line",
+      "label": {
+        "en_US": "Survey User Input Line"
+      },
+      "original_model": "survey.user_input.line"
+    },
+    {
+      "name": "ir_websocket",
+      "label": {
+        "en_US": "websocket message handling"
+      },
+      "original_model": "ir.websocket"
+    },
+    {
+      "name": "account_edi_common",
+      "label": {
+        "en_US": "Common functions for EDI documents: generate the data, the constraints, etc"
+      },
+      "original_model": "account.edi.common"
+    },
+    {
+      "name": "account_edi_ubl",
+      "label": {
+        "en_US": "Base helpers for UBL"
+      },
+      "original_model": "account.edi.ubl"
+    },
+    {
+      "name": "account_edi_xml_cii",
+      "label": {
+        "en_US": "Factur-x/XRechnung CII 2.2.0"
+      },
+      "original_model": "account.edi.xml.cii"
+    },
+    {
+      "name": "account_edi_xml_ubl_20",
+      "label": {
+        "en_US": "UBL 2.0"
+      },
+      "original_model": "account.edi.xml.ubl_20"
+    },
+    {
+      "name": "account_edi_xml_ubl_21",
+      "label": {
+        "en_US": "UBL 2.1"
+      },
+      "original_model": "account.edi.xml.ubl_21"
+    },
+    {
+      "name": "account_edi_xml_ubl_bis3",
+      "label": {
+        "en_US": "UBL BIS Billing 3.0.12"
+      },
+      "original_model": "account.edi.xml.ubl_bis3"
+    },
+    {
+      "name": "account_edi_xml_ubl_de",
+      "label": {
+        "en_US": "BIS3 DE (XRechnung)"
+      },
+      "original_model": "account.edi.xml.ubl_de"
+    },
+    {
+      "name": "account_edi_xml_ubl_nl",
+      "label": {
+        "en_US": "SI-UBL 2.0 (NLCIUS)"
+      },
+      "original_model": "account.edi.xml.ubl_nl"
+    },
+    {
+      "name": "account_edi_xml_ubl_efff",
+      "label": {
+        "en_US": "E-FFF (BE)"
+      },
+      "original_model": "account.edi.xml.ubl_efff"
+    },
+    {
+      "name": "account_edi_xml_ubl_a_nz",
+      "label": {
+        "en_US": "A-NZ BIS Billing 3.0"
+      },
+      "original_model": "account.edi.xml.ubl_a_nz"
+    },
+    {
+      "name": "account_edi_xml_ubl_sg",
+      "label": {
+        "en_US": "SG BIS Billing 3.0"
+      },
+      "original_model": "account.edi.xml.ubl_sg"
+    },
+    {
+      "name": "sale_order",
+      "label": {
+        "en_US": "Sales Order"
+      },
+      "original_model": "sale.order"
+    },
+    {
+      "name": "sale_order_line",
+      "label": {
+        "en_US": "Sales Order Line"
+      },
+      "original_model": "sale.order.line"
+    },
+    {
+      "name": "sale_report",
+      "label": {
+        "en_US": "Sales Analysis Report"
+      },
+      "original_model": "sale.report"
+    },
+    {
+      "name": "mail_alias",
+      "label": {
+        "en_US": "Email Aliases"
+      },
+      "original_model": "mail.alias"
+    },
+    {
+      "name": "mail_alias_domain",
+      "label": {
+        "en_US": "Email Domain"
+      },
+      "original_model": "mail.alias.domain"
+    },
+    {
+      "name": "bus_listener_mixin",
+      "label": {
+        "en_US": "Can send messages via bus.bus"
+      },
+      "original_model": "bus.listener.mixin"
+    },
+    {
+      "name": "mail_activity",
+      "label": {
+        "en_US": "Activity"
+      },
+      "original_model": "mail.activity"
+    },
+    {
+      "name": "mail_activity_plan",
+      "label": {
+        "en_US": "Activity Plan"
+      },
+      "original_model": "mail.activity.plan"
+    },
+    {
+      "name": "mail_activity_mixin",
+      "label": {
+        "en_US": "Activity Mixin"
+      },
+      "original_model": "mail.activity.mixin"
+    },
+    {
+      "name": "mail_alias_mixin_optional",
+      "label": {
+        "en_US": "Email Aliases Mixin (light)"
+      },
+      "original_model": "mail.alias.mixin.optional"
+    },
+    {
+      "name": "mail_alias_mixin",
+      "label": {
+        "en_US": "Email Aliases Mixin"
+      },
+      "original_model": "mail.alias.mixin"
+    },
+    {
+      "name": "mail_render_mixin",
+      "label": {
+        "en_US": "Mail Render Mixin"
+      },
+      "original_model": "mail.render.mixin"
+    },
+    {
+      "name": "mail_composer_mixin",
+      "label": {
+        "en_US": "Mail Composer Mixin"
+      },
+      "original_model": "mail.composer.mixin"
+    },
+    {
+      "name": "mail_thread_blacklist",
+      "label": {
+        "en_US": "Mail Blacklist mixin"
+      },
+      "original_model": "mail.thread.blacklist"
+    },
+    {
+      "name": "mail_thread_main_attachment",
+      "label": {
+        "en_US": "Mail Main Attachment management"
+      },
+      "original_model": "mail.thread.main.attachment"
+    },
+    {
+      "name": "mail_tracking_duration_mixin",
+      "label": {
+        "en_US": "Mixin to compute the time a record has spent in each value a many2one field can take"
+      },
+      "original_model": "mail.tracking.duration.mixin"
+    },
+    {
+      "name": "template_reset_mixin",
+      "label": {
+        "en_US": "Template Reset Mixin"
+      },
+      "original_model": "template.reset.mixin"
+    },
+    {
+      "name": "fetchmail_server",
+      "label": {
+        "en_US": "Incoming Mail Server"
+      },
+      "original_model": "fetchmail.server"
+    },
+    {
+      "name": "mail_notification",
+      "label": {
+        "en_US": "Message Notifications"
+      },
+      "original_model": "mail.notification"
+    },
+    {
+      "name": "mail_activity_type",
+      "label": {
+        "en_US": "Activity Type"
+      },
+      "original_model": "mail.activity.type"
+    },
+    {
+      "name": "mail_activity_plan_template",
+      "label": {
+        "en_US": "Activity plan template"
+      },
+      "original_model": "mail.activity.plan.template"
+    },
+    {
+      "name": "mail_blacklist",
+      "label": {
+        "en_US": "Mail Blacklist"
+      },
+      "original_model": "mail.blacklist"
+    },
+    {
+      "name": "mail_followers",
+      "label": {
+        "en_US": "Document Followers"
+      },
+      "original_model": "mail.followers"
+    },
+    {
+      "name": "mail_gateway_allowed",
+      "label": {
+        "en_US": "Mail Gateway Allowed"
+      },
+      "original_model": "mail.gateway.allowed"
+    },
+    {
+      "name": "mail_link_preview",
+      "label": {
+        "en_US": "Store link preview data"
+      },
+      "original_model": "mail.link.preview"
+    },
+    {
+      "name": "mail_message_reaction",
+      "label": {
+        "en_US": "Message Reaction"
+      },
+      "original_model": "mail.message.reaction"
+    },
+    {
+      "name": "mail_message_schedule",
+      "label": {
+        "en_US": "Scheduled Messages"
+      },
+      "original_model": "mail.message.schedule"
+    },
+    {
+      "name": "mail_message_subtype",
+      "label": {
+        "en_US": "Message subtypes"
+      },
+      "original_model": "mail.message.subtype"
+    },
+    {
+      "name": "mail_message_translation",
+      "label": {
+        "en_US": "Message Translation"
+      },
+      "original_model": "mail.message.translation"
+    },
+    {
+      "name": "mail_push",
+      "label": {
+        "en_US": "Push Notifications"
+      },
+      "original_model": "mail.push"
+    },
+    {
+      "name": "mail_push_device",
+      "label": {
+        "en_US": "Push Notification Device"
+      },
+      "original_model": "mail.push.device"
+    },
+    {
+      "name": "mail_scheduled_message",
+      "label": {
+        "en_US": "Scheduled Message"
+      },
+      "original_model": "mail.scheduled.message"
+    },
+    {
+      "name": "mail_tracking_value",
+      "label": {
+        "en_US": "Mail Tracking Value"
+      },
+      "original_model": "mail.tracking.value"
+    },
+    {
+      "name": "mail_template",
+      "label": {
+        "en_US": "Email Templates"
+      },
+      "original_model": "mail.template"
+    },
+    {
+      "name": "web_editor_assets",
+      "label": {
+        "en_US": "Assets Utils"
+      },
+      "original_model": "web_editor.assets"
+    },
+    {
+      "name": "mail_mail",
+      "label": {
+        "en_US": "Outgoing Mails"
+      },
+      "original_model": "mail.mail"
+    },
+    {
+      "name": "mail_ice_server",
+      "label": {
+        "en_US": "ICE server"
+      },
+      "original_model": "mail.ice.server"
+    },
+    {
+      "name": "mail_canned_response",
+      "label": {
+        "en_US": "Canned Response"
+      },
+      "original_model": "mail.canned.response"
+    },
+    {
+      "name": "res_users_settings",
+      "label": {
+        "en_US": "User Settings"
+      },
+      "original_model": "res.users.settings"
+    },
+    {
+      "name": "res_users_settings_volumes",
+      "label": {
+        "en_US": "User Settings Volumes"
+      },
+      "original_model": "res.users.settings.volumes"
+    },
+    {
+      "name": "bus_presence",
+      "label": {
+        "en_US": "User Presence"
+      },
+      "original_model": "bus.presence"
+    },
+    {
+      "name": "ir_actions_act_window_view",
+      "label": {
+        "en_US": "Action Window View"
+      },
+      "original_model": "ir.actions.act_window.view"
+    },
+    {
+      "name": "ir_attachment",
+      "label": {
+        "en_US": "Attachment"
+      },
+      "original_model": "ir.attachment"
+    },
+    {
+      "name": "ir_http",
+      "label": {
+        "en_US": "HTTP Routing"
+      },
+      "original_model": "ir.http"
+    },
+    {
+      "name": "ir_mail_server",
+      "label": {
+        "en_US": "Mail Server"
+      },
+      "original_model": "ir.mail_server"
+    },
+    {
+      "name": "ir_model",
+      "label": {
+        "en_US": "Models"
+      },
+      "original_model": "ir.model"
+    },
+    {
+      "name": "ir_model_fields",
+      "label": {
+        "en_US": "Fields"
+      },
+      "original_model": "ir.model.fields"
+    },
+    {
+      "name": "ir_ui_menu",
+      "label": {
+        "en_US": "Menu"
+      },
+      "original_model": "ir.ui.menu"
+    },
+    {
+      "name": "ir_ui_view",
+      "label": {
+        "en_US": "View"
+      },
+      "original_model": "ir.ui.view"
+    },
+    {
+      "name": "ir_qweb",
+      "label": {
+        "en_US": "Qweb"
+      },
+      "original_model": "ir.qweb"
+    },
+    {
+      "name": "res_users",
+      "label": {
+        "en_US": "User"
+      },
+      "original_model": "res.users"
+    },
+    {
+      "name": "publisher_warranty_contract",
+      "label": {
+        "en_US": "Publisher Warranty Contract"
+      },
+      "original_model": "publisher_warranty.contract"
+    },
+    {
+      "name": "discuss_channel_member",
+      "label": {
+        "en_US": "Channel Member"
+      },
+      "original_model": "discuss.channel.member"
+    },
+    {
+      "name": "discuss_channel_rtc_session",
+      "label": {
+        "en_US": "Mail RTC session"
+      },
+      "original_model": "discuss.channel.rtc.session"
+    },
+    {
+      "name": "discuss_channel",
+      "label": {
+        "en_US": "Discussion Channel"
+      },
+      "original_model": "discuss.channel"
+    },
+    {
+      "name": "discuss_gif_favorite",
+      "label": {
+        "en_US": "Save favorite GIF from Tenor API"
+      },
+      "original_model": "discuss.gif.favorite"
+    },
+    {
+      "name": "discuss_voice_metadata",
+      "label": {
+        "en_US": "Metadata for voice attachments"
+      },
+      "original_model": "discuss.voice.metadata"
+    },
+    {
+      "name": "mail_guest",
+      "label": {
+        "en_US": "Guest"
+      },
+      "original_model": "mail.guest"
+    },
+    {
+      "name": "res_groups",
+      "label": {
+        "en_US": "Access Groups"
+      },
+      "original_model": "res.groups"
+    },
+    {
+      "name": "ir_model_inherit",
+      "label": {
+        "en_US": "Model Inheritance Tree"
+      },
+      "original_model": "ir.model.inherit"
+    },
+    {
+      "name": "ir_model_fields_selection",
+      "label": {
+        "en_US": "Fields Selection"
+      },
+      "original_model": "ir.model.fields.selection"
+    },
+    {
+      "name": "ir_model_constraint",
+      "label": {
+        "en_US": "Model Constraint"
+      },
+      "original_model": "ir.model.constraint"
+    },
+    {
+      "name": "ir_model_relation",
+      "label": {
+        "en_US": "Relation Model"
+      },
+      "original_model": "ir.model.relation"
+    },
+    {
+      "name": "ir_model_access",
+      "label": {
+        "en_US": "Model Access"
+      },
+      "original_model": "ir.model.access"
+    },
+    {
+      "name": "ir_model_data",
+      "label": {
+        "en_US": "Model Data"
+      },
+      "original_model": "ir.model.data"
+    },
+    {
+      "name": "ir_sequence_date_range",
+      "label": {
+        "en_US": "Sequence Date Range"
+      },
+      "original_model": "ir.sequence.date_range"
+    },
+    {
+      "name": "ir_ui_view_custom",
+      "label": {
+        "en_US": "Custom View"
+      },
+      "original_model": "ir.ui.view.custom"
+    },
+    {
+      "name": "ir_asset",
+      "label": {
+        "en_US": "Asset"
+      },
+      "original_model": "ir.asset"
+    },
+    {
+      "name": "ir_actions_actions",
+      "label": {
+        "en_US": "Actions"
+      },
+      "original_model": "ir.actions.actions"
+    },
+    {
+      "name": "ir_actions_act_window",
+      "label": {
+        "en_US": "Action Window"
+      },
+      "original_model": "ir.actions.act_window"
+    },
+    {
+      "name": "ir_actions_act_window_close",
+      "label": {
+        "en_US": "Action Window Close"
+      },
+      "original_model": "ir.actions.act_window_close"
+    },
+    {
+      "name": "ir_actions_act_url",
+      "label": {
+        "en_US": "Action URL"
+      },
+      "original_model": "ir.actions.act_url"
+    },
+    {
+      "name": "ir_actions_todo",
+      "label": {
+        "en_US": "Configuration Wizards"
+      },
+      "original_model": "ir.actions.todo"
+    },
+    {
+      "name": "ir_actions_client",
+      "label": {
+        "en_US": "Client Action"
+      },
+      "original_model": "ir.actions.client"
+    },
+    {
+      "name": "ir_embedded_actions",
+      "label": {
+        "en_US": "Embedded Actions"
+      },
+      "original_model": "ir.embedded.actions"
+    },
+    {
+      "name": "ir_actions_report",
+      "label": {
+        "en_US": "Report Action"
+      },
+      "original_model": "ir.actions.report"
+    },
+    {
+      "name": "ir_binary",
+      "label": {
+        "en_US": "File streaming helper model for controllers"
+      },
+      "original_model": "ir.binary"
+    },
+    {
+      "name": "ir_cron_trigger",
+      "label": {
+        "en_US": "Triggered actions"
+      },
+      "original_model": "ir.cron.trigger"
+    },
+    {
+      "name": "ir_cron_progress",
+      "label": {
+        "en_US": "Progress of Scheduled Actions"
+      },
+      "original_model": "ir.cron.progress"
+    },
+    {
+      "name": "ir_filters",
+      "label": {
+        "en_US": "Filters"
+      },
+      "original_model": "ir.filters"
+    },
+    {
+      "name": "ir_default",
+      "label": {
+        "en_US": "Default Values"
+      },
+      "original_model": "ir.default"
+    },
+    {
+      "name": "ir_exports",
+      "label": {
+        "en_US": "Exports"
+      },
+      "original_model": "ir.exports"
+    },
+    {
+      "name": "ir_exports_line",
+      "label": {
+        "en_US": "Exports Line"
+      },
+      "original_model": "ir.exports.line"
+    },
+    {
+      "name": "ir_rule",
+      "label": {
+        "en_US": "Record Rule"
+      },
+      "original_model": "ir.rule"
+    },
+    {
+      "name": "ir_autovacuum",
+      "label": {
+        "en_US": "Automatic Vacuum"
+      },
+      "original_model": "ir.autovacuum"
+    },
+    {
+      "name": "ir_fields_converter",
+      "label": {
+        "en_US": "Fields Converter"
+      },
+      "original_model": "ir.fields.converter"
+    },
+    {
+      "name": "ir_qweb_field",
+      "label": {
+        "en_US": "Qweb Field"
+      },
+      "original_model": "ir.qweb.field"
+    },
+    {
+      "name": "ir_qweb_field_integer",
+      "label": {
+        "en_US": "Qweb Field Integer"
+      },
+      "original_model": "ir.qweb.field.integer"
+    },
+    {
+      "name": "ir_qweb_field_float",
+      "label": {
+        "en_US": "Qweb Field Float"
+      },
+      "original_model": "ir.qweb.field.float"
+    },
+    {
+      "name": "ir_qweb_field_date",
+      "label": {
+        "en_US": "Qweb Field Date"
+      },
+      "original_model": "ir.qweb.field.date"
+    },
+    {
+      "name": "ir_qweb_field_datetime",
+      "label": {
+        "en_US": "Qweb Field Datetime"
+      },
+      "original_model": "ir.qweb.field.datetime"
+    },
+    {
+      "name": "ir_qweb_field_text",
+      "label": {
+        "en_US": "Qweb Field Text"
+      },
+      "original_model": "ir.qweb.field.text"
+    },
+    {
+      "name": "ir_qweb_field_selection",
+      "label": {
+        "en_US": "Qweb Field Selection"
+      },
+      "original_model": "ir.qweb.field.selection"
+    },
+    {
+      "name": "ir_qweb_field_many2one",
+      "label": {
+        "en_US": "Qweb Field Many to One"
+      },
+      "original_model": "ir.qweb.field.many2one"
+    },
+    {
+      "name": "ir_qweb_field_many2many",
+      "label": {
+        "en_US": "Qweb field many2many"
+      },
+      "original_model": "ir.qweb.field.many2many"
+    },
+    {
+      "name": "ir_qweb_field_one2many",
+      "label": {
+        "en_US": "Qweb field one2many"
+      },
+      "original_model": "ir.qweb.field.one2many"
+    },
+    {
+      "name": "ir_qweb_field_html",
+      "label": {
+        "en_US": "Qweb Field HTML"
+      },
+      "original_model": "ir.qweb.field.html"
+    },
+    {
+      "name": "ir_qweb_field_image_url",
+      "label": {
+        "en_US": "Qweb Field Image"
+      },
+      "original_model": "ir.qweb.field.image_url"
+    },
+    {
+      "name": "ir_qweb_field_monetary",
+      "label": {
+        "en_US": "Qweb Field Monetary"
+      },
+      "original_model": "ir.qweb.field.monetary"
+    },
+    {
+      "name": "ir_qweb_field_float_time",
+      "label": {
+        "en_US": "Qweb Field Float Time"
+      },
+      "original_model": "ir.qweb.field.float_time"
+    },
+    {
+      "name": "ir_qweb_field_time",
+      "label": {
+        "en_US": "QWeb Field Time"
+      },
+      "original_model": "ir.qweb.field.time"
+    },
+    {
+      "name": "ir_qweb_field_duration",
+      "label": {
+        "en_US": "Qweb Field Duration"
+      },
+      "original_model": "ir.qweb.field.duration"
+    },
+    {
+      "name": "ir_qweb_field_relative",
+      "label": {
+        "en_US": "Qweb Field Relative"
+      },
+      "original_model": "ir.qweb.field.relative"
+    },
+    {
+      "name": "ir_qweb_field_barcode",
+      "label": {
+        "en_US": "Qweb Field Barcode"
+      },
+      "original_model": "ir.qweb.field.barcode"
+    },
+    {
+      "name": "ir_qweb_field_contact",
+      "label": {
+        "en_US": "Qweb Field Contact"
+      },
+      "original_model": "ir.qweb.field.contact"
+    },
+    {
+      "name": "ir_qweb_field_qweb",
+      "label": {
+        "en_US": "Qweb Field qweb"
+      },
+      "original_model": "ir.qweb.field.qweb"
+    },
+    {
+      "name": "ir_logging",
+      "label": {
+        "en_US": "Logging"
+      },
+      "original_model": "ir.logging"
+    },
+    {
+      "name": "ir_module_category",
+      "label": {
+        "en_US": "Application"
+      },
+      "original_model": "ir.module.category"
+    },
+    {
+      "name": "ir_module_module",
+      "label": {
+        "en_US": "Module"
+      },
+      "original_model": "ir.module.module"
+    },
+    {
+      "name": "ir_module_module_dependency",
+      "label": {
+        "en_US": "Module dependency"
+      },
+      "original_model": "ir.module.module.dependency"
+    },
+    {
+      "name": "ir_module_module_exclusion",
+      "label": {
+        "en_US": "Module exclusion"
+      },
+      "original_model": "ir.module.module.exclusion"
+    },
+    {
+      "name": "report_layout",
+      "label": {
+        "en_US": "Report Layout"
+      },
+      "original_model": "report.layout"
+    },
+    {
+      "name": "report_paperformat",
+      "label": {
+        "en_US": "Paper Format Config"
+      },
+      "original_model": "report.paperformat"
+    },
+    {
+      "name": "ir_profile",
+      "label": {
+        "en_US": "Profiling results"
+      },
+      "original_model": "ir.profile"
+    },
+    {
+      "name": "image_mixin",
+      "label": {
+        "en_US": "Image Mixin"
+      },
+      "original_model": "image.mixin"
+    },
+    {
+      "name": "avatar_mixin",
+      "label": {
+        "en_US": "Avatar Mixin"
+      },
+      "original_model": "avatar.mixin"
+    },
+    {
+      "name": "res_country",
+      "label": {
+        "en_US": "Country"
+      },
+      "original_model": "res.country"
+    },
+    {
+      "name": "res_country_group",
+      "label": {
+        "en_US": "Country Group"
+      },
+      "original_model": "res.country.group"
+    },
+    {
+      "name": "res_country_state",
+      "label": {
+        "en_US": "Country state"
+      },
+      "original_model": "res.country.state"
+    },
+    {
+      "name": "res_lang",
+      "label": {
+        "en_US": "Languages"
+      },
+      "original_model": "res.lang"
+    },
+    {
+      "name": "format_vat_label_mixin",
+      "label": {
+        "en_US": "Country Specific VAT Label"
+      },
+      "original_model": "format.vat.label.mixin"
+    },
+    {
+      "name": "format_address_mixin",
+      "label": {
+        "en_US": "Address Format"
+      },
+      "original_model": "format.address.mixin"
+    },
+    {
+      "name": "res_partner_category",
+      "label": {
+        "en_US": "Partner Tags"
+      },
+      "original_model": "res.partner.category"
+    },
+    {
+      "name": "res_partner_title",
+      "label": {
+        "en_US": "Partner Title"
+      },
+      "original_model": "res.partner.title"
+    },
+    {
+      "name": "res_partner_industry",
+      "label": {
+        "en_US": "Industry"
+      },
+      "original_model": "res.partner.industry"
+    },
+    {
+      "name": "res_bank",
+      "label": {
+        "en_US": "Bank"
+      },
+      "original_model": "res.bank"
+    },
+    {
+      "name": "res_currency",
+      "label": {
+        "en_US": "Currency"
+      },
+      "original_model": "res.currency"
+    },
+    {
+      "name": "res_currency_rate",
+      "label": {
+        "en_US": "Currency Rate"
+      },
+      "original_model": "res.currency.rate"
+    },
+    {
+      "name": "res_users_log",
+      "label": {
+        "en_US": "Users Log"
+      },
+      "original_model": "res.users.log"
+    },
+    {
+      "name": "res_users_apikeys",
+      "label": {
+        "en_US": "Users API Keys"
+      },
+      "original_model": "res.users.apikeys"
+    },
+    {
+      "name": "res_users_deletion",
+      "label": {
+        "en_US": "Users Deletion Request"
+      },
+      "original_model": "res.users.deletion"
+    },
+    {
+      "name": "res_device_log",
+      "label": {
+        "en_US": "Device Log"
+      },
+      "original_model": "res.device.log"
+    },
+    {
+      "name": "res_device",
+      "label": {
+        "en_US": "Devices"
+      },
+      "original_model": "res.device"
+    },
+    {
+      "name": "decimal_precision",
+      "label": {
+        "en_US": "Decimal Precision"
+      },
+      "original_model": "decimal.precision"
+    },
+    {
+      "name": "report_base_report_irmodulereference",
+      "label": {
+        "en_US": "Module Reference Report (base)"
+      },
+      "original_model": "report.base.report_irmodulereference"
+    },
+    {
+      "name": "iap_service",
+      "label": {
+        "en_US": "IAP Service"
+      },
+      "original_model": "iap.service"
+    },
+    {
+      "name": "auth_totp_device",
+      "label": {
+        "en_US": "Authentication Device"
+      },
+      "original_model": "auth_totp.device"
+    },
+    {
+      "name": "base_import_mapping",
+      "label": {
+        "en_US": "Base Import Mapping"
+      },
+      "original_model": "base_import.mapping"
+    },
+    {
+      "name": "kpi_provider",
+      "label": {
+        "en_US": "KPI Provider"
+      },
+      "original_model": "kpi.provider"
+    },
+    {
+      "name": "bus_bus",
+      "label": {
+        "en_US": "Communication Bus"
+      },
+      "original_model": "bus.bus"
+    },
+    {
+      "name": "web_tour_tour",
+      "label": {
+        "en_US": "Tours"
+      },
+      "original_model": "web_tour.tour"
+    },
+    {
+      "name": "web_tour_tour_step",
+      "label": {
+        "en_US": "Tour's step"
+      },
+      "original_model": "web_tour.tour.step"
+    },
+    {
+      "name": "iap_enrich_api",
+      "label": {
+        "en_US": "IAP Lead Enrichment API"
+      },
+      "original_model": "iap.enrich.api"
+    },
+    {
+      "name": "html_field_history_mixin",
+      "label": {
+        "en_US": "Field html History"
+      },
+      "original_model": "html.field.history.mixin"
+    },
+    {
+      "name": "web_editor_converter_test",
+      "label": {
+        "en_US": "Web Editor Converter Test"
+      },
+      "original_model": "web_editor.converter.test"
+    },
+    {
+      "name": "web_editor_converter_test_sub",
+      "label": {
+        "en_US": "Web Editor Converter Subtest"
+      },
+      "original_model": "web_editor.converter.test.sub"
+    },
+    {
+      "name": "uom_category",
+      "label": {
+        "en_US": "Product UoM Categories"
+      },
+      "original_model": "uom.category"
+    },
+    {
+      "name": "uom_uom",
+      "label": {
+        "en_US": "Product Unit of Measure"
+      },
+      "original_model": "uom.uom"
+    },
+    {
+      "name": "onboarding_progress",
+      "label": {
+        "en_US": "Onboarding Progress Tracker"
+      },
+      "original_model": "onboarding.progress"
+    },
+    {
+      "name": "onboarding_onboarding",
+      "label": {
+        "en_US": "Onboarding"
+      },
+      "original_model": "onboarding.onboarding"
+    },
+    {
+      "name": "onboarding_onboarding_step",
+      "label": {
+        "en_US": "Onboarding Step"
+      },
+      "original_model": "onboarding.onboarding.step"
+    },
+    {
+      "name": "onboarding_progress_step",
+      "label": {
+        "en_US": "Onboarding Progress Step Tracker"
+      },
+      "original_model": "onboarding.progress.step"
+    },
+    {
+      "name": "resource_calendar",
+      "label": {
+        "en_US": "Resource Working Time"
+      },
+      "original_model": "resource.calendar"
+    },
+    {
+      "name": "resource_calendar_attendance",
+      "label": {
+        "en_US": "Work Detail"
+      },
+      "original_model": "resource.calendar.attendance"
+    },
+    {
+      "name": "resource_calendar_leaves",
+      "label": {
+        "en_US": "Resource Time Off Detail"
+      },
+      "original_model": "resource.calendar.leaves"
+    },
+    {
+      "name": "resource_mixin",
+      "label": {
+        "en_US": "Resource Mixin"
+      },
+      "original_model": "resource.mixin"
+    },
+    {
+      "name": "resource_resource",
+      "label": {
+        "en_US": "Resources"
+      },
+      "original_model": "resource.resource"
+    },
+    {
+      "name": "utm_campaign",
+      "label": {
+        "en_US": "UTM Campaign"
+      },
+      "original_model": "utm.campaign"
+    },
+    {
+      "name": "utm_medium",
+      "label": {
+        "en_US": "UTM Medium"
+      },
+      "original_model": "utm.medium"
+    },
+    {
+      "name": "utm_mixin",
+      "label": {
+        "en_US": "UTM Mixin"
+      },
+      "original_model": "utm.mixin"
+    },
+    {
+      "name": "utm_source",
+      "label": {
+        "en_US": "UTM Source"
+      },
+      "original_model": "utm.source"
+    },
+    {
+      "name": "utm_source_mixin",
+      "label": {
+        "en_US": "UTM Source Mixin"
+      },
+      "original_model": "utm.source.mixin"
+    },
+    {
+      "name": "utm_stage",
+      "label": {
+        "en_US": "Campaign Stage"
+      },
+      "original_model": "utm.stage"
+    },
+    {
+      "name": "utm_tag",
+      "label": {
+        "en_US": "UTM Tag"
+      },
+      "original_model": "utm.tag"
+    },
+    {
+      "name": "account_analytic_plan",
+      "label": {
+        "en_US": "Analytic Plans"
+      },
+      "original_model": "account.analytic.plan"
+    },
+    {
+      "name": "account_analytic_applicability",
+      "label": {
+        "en_US": "Analytic Plan's Applicabilities"
+      },
+      "original_model": "account.analytic.applicability"
+    },
+    {
+      "name": "account_analytic_account",
+      "label": {
+        "en_US": "Analytic Account"
+      },
+      "original_model": "account.analytic.account"
+    },
+    {
+      "name": "analytic_plan_fields_mixin",
+      "label": {
+        "en_US": "Analytic Plan Fields"
+      },
+      "original_model": "analytic.plan.fields.mixin"
+    },
+    {
+      "name": "account_analytic_line",
+      "label": {
+        "en_US": "Analytic Line"
+      },
+      "original_model": "account.analytic.line"
+    },
+    {
+      "name": "analytic_mixin",
+      "label": {
+        "en_US": "Analytic Mixin"
+      },
+      "original_model": "analytic.mixin"
+    },
+    {
+      "name": "account_analytic_distribution_model",
+      "label": {
+        "en_US": "Analytic Distribution Model"
+      },
+      "original_model": "account.analytic.distribution.model"
+    },
+    {
+      "name": "google_gmail_mixin",
+      "label": {
+        "en_US": "Google Gmail Mixin"
+      },
+      "original_model": "google.gmail.mixin"
+    },
+    {
+      "name": "iap_account",
+      "label": {
+        "en_US": "IAP Account"
+      },
+      "original_model": "iap.account"
+    },
+    {
+      "name": "mail_bot",
+      "label": {
+        "en_US": "Mail Bot"
+      },
+      "original_model": "mail.bot"
+    },
+    {
+      "name": "phone_blacklist",
+      "label": {
+        "en_US": "Phone Blacklist"
+      },
+      "original_model": "phone.blacklist"
+    },
+    {
+      "name": "mail_thread_phone",
+      "label": {
+        "en_US": "Phone Blacklist Mixin"
+      },
+      "original_model": "mail.thread.phone"
+    },
+    {
+      "name": "privacy_log",
+      "label": {
+        "en_US": "Privacy Log"
+      },
+      "original_model": "privacy.log"
+    },
+    {
+      "name": "product_template",
+      "label": {
+        "en_US": "Product"
+      },
+      "original_model": "product.template"
+    },
+    {
+      "name": "product_product",
+      "label": {
+        "en_US": "Product Variant"
+      },
+      "original_model": "product.product"
+    },
+    {
+      "name": "product_attribute",
+      "label": {
+        "en_US": "Product Attribute"
+      },
+      "original_model": "product.attribute"
+    },
+    {
+      "name": "product_attribute_custom_value",
+      "label": {
+        "en_US": "Product Attribute Custom Value"
+      },
+      "original_model": "product.attribute.custom.value"
+    },
+    {
+      "name": "product_attribute_value",
+      "label": {
+        "en_US": "Attribute Value"
+      },
+      "original_model": "product.attribute.value"
+    },
+    {
+      "name": "product_catalog_mixin",
+      "label": {
+        "en_US": "Product Catalog Mixin"
+      },
+      "original_model": "product.catalog.mixin"
+    },
+    {
+      "name": "product_category",
+      "label": {
+        "en_US": "Product Category"
+      },
+      "original_model": "product.category"
+    },
+    {
+      "name": "product_combo",
+      "label": {
+        "en_US": "Product Combo"
+      },
+      "original_model": "product.combo"
+    },
+    {
+      "name": "product_combo_item",
+      "label": {
+        "en_US": "Product Combo Item"
+      },
+      "original_model": "product.combo.item"
+    },
+    {
+      "name": "product_document",
+      "label": {
+        "en_US": "Product Document"
+      },
+      "original_model": "product.document"
+    },
+    {
+      "name": "product_packaging",
+      "label": {
+        "en_US": "Product Packaging"
+      },
+      "original_model": "product.packaging"
+    },
+    {
+      "name": "product_pricelist",
+      "label": {
+        "en_US": "Pricelist"
+      },
+      "original_model": "product.pricelist"
+    },
+    {
+      "name": "product_pricelist_item",
+      "label": {
+        "en_US": "Pricelist Rule"
+      },
+      "original_model": "product.pricelist.item"
+    },
+    {
+      "name": "product_supplierinfo",
+      "label": {
+        "en_US": "Supplier Pricelist"
+      },
+      "original_model": "product.supplierinfo"
+    },
+    {
+      "name": "product_tag",
+      "label": {
+        "en_US": "Product Tag"
+      },
+      "original_model": "product.tag"
+    },
+    {
+      "name": "product_template_attribute_line",
+      "label": {
+        "en_US": "Product Template Attribute Line"
+      },
+      "original_model": "product.template.attribute.line"
+    },
+    {
+      "name": "product_template_attribute_exclusion",
+      "label": {
+        "en_US": "Product Template Attribute Exclusion"
+      },
+      "original_model": "product.template.attribute.exclusion"
+    },
+    {
+      "name": "product_template_attribute_value",
+      "label": {
+        "en_US": "Product Template Attribute Value"
+      },
+      "original_model": "product.template.attribute.value"
+    },
+    {
+      "name": "report_product_report_producttemplatelabel2x7",
+      "label": {
+        "en_US": "Product Label Report 2x7"
+      },
+      "original_model": "report.product.report_producttemplatelabel2x7"
+    },
+    {
+      "name": "report_product_report_producttemplatelabel4x7",
+      "label": {
+        "en_US": "Product Label Report 4x7"
+      },
+      "original_model": "report.product.report_producttemplatelabel4x7"
+    },
+    {
+      "name": "report_product_report_producttemplatelabel4x12",
+      "label": {
+        "en_US": "Product Label Report 4x12"
+      },
+      "original_model": "report.product.report_producttemplatelabel4x12"
+    },
+    {
+      "name": "report_product_report_producttemplatelabel4x12noprice",
+      "label": {
+        "en_US": "Product Label Report 4x12 No Price"
+      },
+      "original_model": "report.product.report_producttemplatelabel4x12noprice"
+    },
+    {
+      "name": "report_product_report_producttemplatelabel_dymo",
+      "label": {
+        "en_US": "Product Label Report"
+      },
+      "original_model": "report.product.report_producttemplatelabel_dymo"
+    },
+    {
+      "name": "report_product_report_pricelist",
+      "label": {
+        "en_US": "Pricelist Report"
+      },
+      "original_model": "report.product.report_pricelist"
+    },
+    {
+      "name": "hr_manager_department_report",
+      "label": {
+        "en_US": "Hr Manager Department Report"
+      },
+      "original_model": "hr.manager.department.report"
+    },
+    {
+      "name": "mailing_subscription",
+      "label": {
+        "en_US": "Mailing List Subscription"
+      },
+      "original_model": "mailing.subscription"
+    },
+    {
+      "name": "mailing_contact",
+      "label": {
+        "en_US": "Mailing Contact"
+      },
+      "original_model": "mailing.contact"
+    },
+    {
+      "name": "mailing_list",
+      "label": {
+        "en_US": "Mailing List"
+      },
+      "original_model": "mailing.list"
+    },
+    {
+      "name": "mailing_subscription_optout",
+      "label": {
+        "en_US": "Mailing Subscription Reason"
+      },
+      "original_model": "mailing.subscription.optout"
+    },
+    {
+      "name": "mailing_trace",
+      "label": {
+        "en_US": "Mailing Statistics"
+      },
+      "original_model": "mailing.trace"
+    },
+    {
+      "name": "mailing_mailing",
+      "label": {
+        "en_US": "Mass Mailing"
+      },
+      "original_model": "mailing.mailing"
+    },
+    {
+      "name": "mailing_filter",
+      "label": {
+        "en_US": "Mailing Favorite Filters"
+      },
+      "original_model": "mailing.filter"
+    },
+    {
+      "name": "mail_thread",
+      "label": {
+        "en_US": "Email Thread"
+      },
+      "original_model": "mail.thread"
+    },
+    {
+      "name": "mailing_trace_report",
+      "label": {
+        "en_US": "Mass Mailing Statistics"
+      },
+      "original_model": "mailing.trace.report"
+    },
+    {
+      "name": "mail_thread_cc",
+      "label": {
+        "en_US": "Email CC management"
+      },
+      "original_model": "mail.thread.cc"
+    },
+    {
+      "name": "sale_order_option",
+      "label": {
+        "en_US": "Sale Options"
+      },
+      "original_model": "sale.order.option"
+    },
+    {
+      "name": "sale_order_template",
+      "label": {
+        "en_US": "Quotation Template"
+      },
+      "original_model": "sale.order.template"
+    },
+    {
+      "name": "sale_order_template_line",
+      "label": {
+        "en_US": "Quotation Template Line"
+      },
+      "original_model": "sale.order.template.line"
+    },
+    {
+      "name": "sale_order_template_option",
+      "label": {
+        "en_US": "Quotation Template Option"
+      },
+      "original_model": "sale.order.template.option"
+    },
+    {
+      "name": "quotation_document",
+      "label": {
+        "en_US": "Quotation's Headers & Footers"
+      },
+      "original_model": "quotation.document"
+    },
+    {
+      "name": "sale_pdf_form_field",
+      "label": {
+        "en_US": "Form fields of inside quotation documents."
+      },
+      "original_model": "sale.pdf.form.field"
+    },
+    {
+      "name": "barcodes_barcode_events_mixin",
+      "label": {
+        "en_US": "Barcode Event Mixin"
+      },
+      "original_model": "barcodes.barcode_events_mixin"
+    },
+    {
+      "name": "barcode_nomenclature",
+      "label": {
+        "en_US": "Barcode Nomenclature"
+      },
+      "original_model": "barcode.nomenclature"
+    },
+    {
+      "name": "barcode_rule",
+      "label": {
+        "en_US": "Barcode Rule"
+      },
+      "original_model": "barcode.rule"
+    },
+    {
+      "name": "product_removal",
+      "label": {
+        "en_US": "Removal Strategy"
+      },
+      "original_model": "product.removal"
+    },
+    {
+      "name": "stock_putaway_rule",
+      "label": {
+        "en_US": "Putaway Rule"
+      },
+      "original_model": "stock.putaway.rule"
+    },
+    {
+      "name": "stock_location",
+      "label": {
+        "en_US": "Inventory Locations"
+      },
+      "original_model": "stock.location"
+    },
+    {
+      "name": "stock_route",
+      "label": {
+        "en_US": "Inventory Routes"
+      },
+      "original_model": "stock.route"
+    },
+    {
+      "name": "stock_move",
+      "label": {
+        "en_US": "Stock Move"
+      },
+      "original_model": "stock.move"
+    },
+    {
+      "name": "stock_move_line",
+      "label": {
+        "en_US": "Product Moves (Stock Move Line)"
+      },
+      "original_model": "stock.move.line"
+    },
+    {
+      "name": "stock_rule",
+      "label": {
+        "en_US": "Stock Rule"
+      },
+      "original_model": "stock.rule"
+    },
+    {
+      "name": "procurement_group",
+      "label": {
+        "en_US": "Procurement Group"
+      },
+      "original_model": "procurement.group"
+    },
+    {
+      "name": "stock_warehouse_orderpoint",
+      "label": {
+        "en_US": "Minimum Inventory Rule"
+      },
+      "original_model": "stock.warehouse.orderpoint"
+    },
+    {
+      "name": "stock_lot",
+      "label": {
+        "en_US": "Lot/Serial"
+      },
+      "original_model": "stock.lot"
+    },
+    {
+      "name": "stock_picking_type",
+      "label": {
+        "en_US": "Picking Type"
+      },
+      "original_model": "stock.picking.type"
+    },
+    {
+      "name": "stock_picking",
+      "label": {
+        "en_US": "Transfer"
+      },
+      "original_model": "stock.picking"
+    },
+    {
+      "name": "stock_quant",
+      "label": {
+        "en_US": "Quants"
+      },
+      "original_model": "stock.quant"
+    },
+    {
+      "name": "stock_quant_package",
+      "label": {
+        "en_US": "Packages"
+      },
+      "original_model": "stock.quant.package"
+    },
+    {
+      "name": "stock_replenish_mixin",
+      "label": {
+        "en_US": "Product Replenish Mixin"
+      },
+      "original_model": "stock.replenish.mixin"
+    },
+    {
+      "name": "stock_warehouse",
+      "label": {
+        "en_US": "Warehouse"
+      },
+      "original_model": "stock.warehouse"
+    },
+    {
+      "name": "stock_scrap",
+      "label": {
+        "en_US": "Scrap"
+      },
+      "original_model": "stock.scrap"
+    },
+    {
+      "name": "stock_scrap_reason_tag",
+      "label": {
+        "en_US": "Scrap Reason Tag"
+      },
+      "original_model": "stock.scrap.reason.tag"
+    },
+    {
+      "name": "stock_package_level",
+      "label": {
+        "en_US": "Stock Package Level"
+      },
+      "original_model": "stock.package_level"
+    },
+    {
+      "name": "stock_package_type",
+      "label": {
+        "en_US": "Stock package type"
+      },
+      "original_model": "stock.package.type"
+    },
+    {
+      "name": "stock_storage_category",
+      "label": {
+        "en_US": "Storage Category"
+      },
+      "original_model": "stock.storage.category"
+    },
+    {
+      "name": "stock_storage_category_capacity",
+      "label": {
+        "en_US": "Storage Category Capacity"
+      },
+      "original_model": "stock.storage.category.capacity"
+    },
+    {
+      "name": "stock_forecasted_product_product",
+      "label": {
+        "en_US": "Stock Replenishment Report"
+      },
+      "original_model": "stock.forecasted_product_product"
+    },
+    {
+      "name": "stock_forecasted_product_template",
+      "label": {
+        "en_US": "Stock Replenishment Report"
+      },
+      "original_model": "stock.forecasted_product_template"
+    },
+    {
+      "name": "report_stock_quantity",
+      "label": {
+        "en_US": "Stock Quantity Report"
+      },
+      "original_model": "report.stock.quantity"
+    },
+    {
+      "name": "report_stock_report_reception",
+      "label": {
+        "en_US": "Stock Reception Report"
+      },
+      "original_model": "report.stock.report_reception"
+    },
+    {
+      "name": "report_stock_report_stock_rule",
+      "label": {
+        "en_US": "Stock rule report"
+      },
+      "original_model": "report.stock.report_stock_rule"
+    },
+    {
+      "name": "report_stock_label_product_product_view",
+      "label": {
+        "en_US": "Product Label Report"
+      },
+      "original_model": "report.stock.label_product_product_view"
+    },
+    {
+      "name": "report_stock_label_lot_template_view",
+      "label": {
+        "en_US": "Lot Label Report"
+      },
+      "original_model": "report.stock.label_lot_template_view"
+    },
+    {
+      "name": "stock_lot_report",
+      "label": {
+        "en_US": "Customer Lot Report"
+      },
+      "original_model": "stock.lot.report"
+    },
+    {
+      "name": "stock_warn_insufficient_qty",
+      "label": {
+        "en_US": "Warn Insufficient Quantity"
+      },
+      "original_model": "stock.warn.insufficient.qty"
+    }
+  ],
+  "custom_doctypes": [],
+  "custom_fields": [],
+  "doctype_details": {}
+}

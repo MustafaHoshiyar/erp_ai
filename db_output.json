@@ -1,0 +1,78 @@
+{
+    "client_system_prompts": [
+        {
+            "id": 7,
+            "client_id": "eagle_group",
+            "app_name": null,
+            "segment_key": "kuwait_fiscal_rules",
+            "prompt_text": "Kuwait Dinar (KWD) transactions use 3 decimal places. The fiscal year in Kuwait follows the standard Gregorian calendar unless specified.",
+            "is_active": true,
+            "created_at": "2026-04-01T09:52:37.327933+02:00"
+        },
+        {
+            "id": 8,
+            "client_id": "supernatural",
+            "app_name": null,
+            "segment_key": "maintenance_rules",
+            "prompt_text": "For maintenance prompts about records that are \"scheduled\", \"upcoming\", \"next week\", or \"this week\", prioritize querying the \"tabMaintenance\" doctype over \"tabMaintenance Visit\".",
+            "is_active": true,
+            "created_at": "2026-04-01T09:52:37.327933+02:00"
+        },
+        {
+            "id": 6,
+            "client_id": "GLOBAL",
+            "app_name": null,
+            "segment_key": "sales_invoice_rules",
+            "prompt_text": "When fetching sales or revenue aggregates from \"tabSales Invoice\", always filter by is_return = 0 unless the user specifically asks for return invoices.",
+            "is_active": true,
+            "created_at": "2026-04-01T09:52:37.327933+02:00"
+        },
+        {
+            "id": 9,
+            "client_id": "supernatural",
+            "app_name": "Supernatural",
+            "segment_key": "sales_invoice_custom_fields",
+            "prompt_text": "IMPORTANT: In the 'tabSales Invoice' table, use the field 'custom_sales_person' (Link) when the user asks for a 'salesperson' or 'sales person'. Do NOT use 'sales_partner' and do NOT join 'tabSales Team' unless explicitly asked.",
+            "is_active": true,
+            "created_at": "2026-04-02T13:49:04.550871+02:00"
+        }
+    ],
+    "client_context_overrides": [
+        {
+            "id": 3,
+            "client_id": "GLOBAL",
+            "term": "Net Revenue",
+            "sql_logic": "SUM(grand_total) - SUM(discount_amount)",
+            "description": "Standard business definition for net revenue across all modules.",
+            "created_at": "2026-03-31T13:57:34.388892+02:00",
+            "app_name": null
+        },
+        {
+            "id": 1,
+            "client_id": "supernatural",
+            "term": "Maintenance schedule",
+            "sql_logic": "SELECT `tabMaintenance`",
+            "description": "use maintenance table instead of maintenance schedule",
+            "created_at": "2026-03-13T11:19:13+01:00",
+            "app_name": null
+        },
+        {
+            "id": 4,
+            "client_id": "superUser",
+            "term": "sales person",
+            "sql_logic": "tabSales Invoice.custom_sales_person",
+            "description": "For Supernatural client, sales person is stored in the custom_sales_person field of the Sales Invoice table. Use this instead of joining with Sales Team.",
+            "created_at": "2026-04-02T13:53:45.301987+02:00",
+            "app_name": "Supernatural"
+        }
+    ],
+    "client_feature_flags": [
+        {
+            "id": 4,
+            "client_id": "eagle_group",
+            "feature_key": "sales_invoice_followup_guardrail",
+            "is_enabled": true,
+            "created_at": "2026-04-01T09:34:03.393371+02:00"
+        }
+    ]
+}
