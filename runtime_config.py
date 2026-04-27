@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 
 from database import ClientConfig, SessionLocal
 
-load_dotenv()
+load_dotenv(override=True)
 
 DEFAULT_ERP_URL = os.getenv("ERP_URL", "").rstrip("/")
 DEFAULT_ERP_API_KEY = os.getenv("ERP_API_KEY", "")

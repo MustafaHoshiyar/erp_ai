@@ -1,8 +1,2369 @@
 {
-  "fetched_at": 1774340143.6951632,
-  "fetched_at_readable": "2026-03-24 13:45:43",
+  "fetched_at": 1776336423.3478174,
+  "fetched_at_readable": "2026-04-16 16:17:03",
   "available_doctypes": [],
   "custom_doctypes": [],
-  "custom_fields": [],
+  "custom_fields": [
+    {
+      "name": "Address-custom_apartment",
+      "dt": "Address",
+      "fieldname": "custom_apartment",
+      "fieldtype": "Data",
+      "label": "Apartment",
+      "options": null
+    },
+    {
+      "name": "Address-custom_area_n",
+      "dt": "Address",
+      "fieldname": "custom_area_n",
+      "fieldtype": "Link",
+      "label": "Area",
+      "options": "Area"
+    },
+    {
+      "name": "Address-custom_block",
+      "dt": "Address",
+      "fieldname": "custom_block",
+      "fieldtype": "Data",
+      "label": "Block",
+      "options": null
+    },
+    {
+      "name": "Address-custom_building",
+      "dt": "Address",
+      "fieldname": "custom_building",
+      "fieldtype": "Data",
+      "label": "Building",
+      "options": null
+    },
+    {
+      "name": "Address-custom_floor",
+      "dt": "Address",
+      "fieldname": "custom_floor",
+      "fieldtype": "Data",
+      "label": "Floor",
+      "options": null
+    },
+    {
+      "name": "Address-custom_street",
+      "dt": "Address",
+      "fieldname": "custom_street",
+      "fieldtype": "Data",
+      "label": "Street",
+      "options": ""
+    },
+    {
+      "name": "Address-is_your_company_address",
+      "dt": "Address",
+      "fieldname": "is_your_company_address",
+      "fieldtype": "Check",
+      "label": "Is Your Company Address",
+      "options": null
+    },
+    {
+      "name": "Address-posa_delivery_charges",
+      "dt": "Address",
+      "fieldname": "posa_delivery_charges",
+      "fieldtype": "Link",
+      "label": "Delivery Charges",
+      "options": "Delivery Charges"
+    },
+    {
+      "name": "Address-tax_category",
+      "dt": "Address",
+      "fieldname": "tax_category",
+      "fieldtype": "Link",
+      "label": "Tax Category",
+      "options": "Tax Category"
+    },
+    {
+      "name": "Advance Payment-custom_sales_invoice_status",
+      "dt": "Advance Payment",
+      "fieldname": "custom_sales_invoice_status",
+      "fieldtype": "Data",
+      "label": "Sales Invoice Status",
+      "options": null
+    },
+    {
+      "name": "Batch-posa_batch_price",
+      "dt": "Batch",
+      "fieldname": "posa_batch_price",
+      "fieldtype": "Float",
+      "label": "Price",
+      "options": null
+    },
+    {
+      "name": "Communication-company",
+      "dt": "Communication",
+      "fieldname": "company",
+      "fieldtype": "Link",
+      "label": "Company",
+      "options": "Company"
+    },
+    {
+      "name": "Company-posa_auto_referral",
+      "dt": "Company",
+      "fieldname": "posa_auto_referral",
+      "fieldtype": "Check",
+      "label": "Auto Create Referral For New Customers",
+      "options": null
+    },
+    {
+      "name": "Company-posa_column_break_22",
+      "dt": "Company",
+      "fieldname": "posa_column_break_22",
+      "fieldtype": "Column Break",
+      "label": "",
+      "options": null
+    },
+    {
+      "name": "Company-posa_customer_offer",
+      "dt": "Company",
+      "fieldname": "posa_customer_offer",
+      "fieldtype": "Link",
+      "label": "Final Customer Offer",
+      "options": "POS Offer"
+    },
+    {
+      "name": "Company-posa_primary_offer",
+      "dt": "Company",
+      "fieldname": "posa_primary_offer",
+      "fieldtype": "Link",
+      "label": "Primary Customer Offer",
+      "options": "POS Offer"
+    },
+    {
+      "name": "Company-posa_referral_campaign",
+      "dt": "Company",
+      "fieldname": "posa_referral_campaign",
+      "fieldtype": "Link",
+      "label": "Referral Campaign",
+      "options": "Campaign"
+    },
+    {
+      "name": "Company-posa_referral_section",
+      "dt": "Company",
+      "fieldname": "posa_referral_section",
+      "fieldtype": "Section Break",
+      "label": "Referral Code",
+      "options": null
+    },
+    {
+      "name": "Contact-is_billing_contact",
+      "dt": "Contact",
+      "fieldname": "is_billing_contact",
+      "fieldtype": "Check",
+      "label": "Is Billing Contact",
+      "options": null
+    },
+    {
+      "name": "Customer-custom_civil_id_number",
+      "dt": "Customer",
+      "fieldname": "custom_civil_id_number",
+      "fieldtype": "Data",
+      "label": "Civil Id Number",
+      "options": null
+    },
+    {
+      "name": "Customer-custom_date_of_birth",
+      "dt": "Customer",
+      "fieldname": "custom_date_of_birth",
+      "fieldtype": "Date",
+      "label": "Date of Birth",
+      "options": null
+    },
+    {
+      "name": "Customer-custom_file_number",
+      "dt": "Customer",
+      "fieldname": "custom_file_number",
+      "fieldtype": "Data",
+      "label": "File Number",
+      "options": null
+    },
+    {
+      "name": "Customer-custom_nationality",
+      "dt": "Customer",
+      "fieldname": "custom_nationality",
+      "fieldtype": "Link",
+      "label": "Nationality",
+      "options": "Nationality"
+    },
+    {
+      "name": "Customer-custom_status",
+      "dt": "Customer",
+      "fieldname": "custom_status",
+      "fieldtype": "Select",
+      "label": "Status",
+      "options": "M.I.A\nACTIVE\nLAW SUIT\nCANCELLED\nSETTLED\nNOT INSTALLED"
+    },
+    {
+      "name": "Customer-posa_birthday",
+      "dt": "Customer",
+      "fieldname": "posa_birthday",
+      "fieldtype": "Data",
+      "label": "Birthday",
+      "options": null
+    },
+    {
+      "name": "Customer-posa_discount",
+      "dt": "Customer",
+      "fieldname": "posa_discount",
+      "fieldtype": "Float",
+      "label": "Discount %",
+      "options": null
+    },
+    {
+      "name": "Customer-posa_referral_code",
+      "dt": "Customer",
+      "fieldname": "posa_referral_code",
+      "fieldtype": "Data",
+      "label": "Referral Code",
+      "options": null
+    },
+    {
+      "name": "Customer-posa_referral_company",
+      "dt": "Customer",
+      "fieldname": "posa_referral_company",
+      "fieldtype": "Link",
+      "label": "Referral Company",
+      "options": "Company"
+    },
+    {
+      "name": "Customer-posa_referral_section",
+      "dt": "Customer",
+      "fieldname": "posa_referral_section",
+      "fieldtype": "Section Break",
+      "label": "Referral Code",
+      "options": null
+    },
+    {
+      "name": "Email Account-company",
+      "dt": "Email Account",
+      "fieldname": "company",
+      "fieldtype": "Link",
+      "label": "Company",
+      "options": "Company"
+    },
+    {
+      "name": "Installment-custom_sales_invoice_status",
+      "dt": "Installment",
+      "fieldname": "custom_sales_invoice_status",
+      "fieldtype": "Data",
+      "label": "Sales Invoice Status",
+      "options": null
+    },
+    {
+      "name": "Item Barcode-posa_uom",
+      "dt": "Item Barcode",
+      "fieldname": "posa_uom",
+      "fieldtype": "Link",
+      "label": "UOM",
+      "options": "UOM"
+    },
+    {
+      "name": "Item-custom_is_maintenance_item",
+      "dt": "Item",
+      "fieldname": "custom_is_maintenance_item",
+      "fieldtype": "Check",
+      "label": "Is Maintenance Item",
+      "options": null
+    },
+    {
+      "name": "Journal Entry-custom_is_commission_entry",
+      "dt": "Journal Entry",
+      "fieldname": "custom_is_commission_entry",
+      "fieldtype": "Check",
+      "label": "Is_Commission_Entry",
+      "options": null
+    },
+    {
+      "name": "Lead Pending Calls-custom_history",
+      "dt": "Lead Pending Calls",
+      "fieldname": "custom_history",
+      "fieldtype": "Table",
+      "label": "History",
+      "options": "Lead Results"
+    },
+    {
+      "name": "Lead Pending Calls-custom_history_table",
+      "dt": "Lead Pending Calls",
+      "fieldname": "custom_history_table",
+      "fieldtype": "Section Break",
+      "label": "History Table",
+      "options": null
+    },
+    {
+      "name": "Lead-custom_area",
+      "dt": "Lead",
+      "fieldname": "custom_area",
+      "fieldtype": "Link",
+      "label": "Area",
+      "options": "Area"
+    },
+    {
+      "name": "Lead-custom_column_break_gszax",
+      "dt": "Lead",
+      "fieldname": "custom_column_break_gszax",
+      "fieldtype": "Column Break",
+      "label": "",
+      "options": null
+    },
+    {
+      "name": "Lead-custom_final_lead_result",
+      "dt": "Lead",
+      "fieldname": "custom_final_lead_result",
+      "fieldtype": "Data",
+      "label": "Final Lead Result",
+      "options": null
+    },
+    {
+      "name": "Lead-custom_from_referral_form",
+      "dt": "Lead",
+      "fieldname": "custom_from_referral_form",
+      "fieldtype": "Link",
+      "label": "From Referral Form",
+      "options": "Referral Form"
+    },
+    {
+      "name": "Lead-custom_lead_date",
+      "dt": "Lead",
+      "fieldname": "custom_lead_date",
+      "fieldtype": "Date",
+      "label": "Lead Date",
+      "options": null
+    },
+    {
+      "name": "Lead-custom_lead_report",
+      "dt": "Lead",
+      "fieldname": "custom_lead_report",
+      "fieldtype": "Table",
+      "label": "Lead Report",
+      "options": "Lead Report"
+    },
+    {
+      "name": "Lead-custom_lead_result",
+      "dt": "Lead",
+      "fieldname": "custom_lead_result",
+      "fieldtype": "Table",
+      "label": "Lead Result",
+      "options": "Lead Results"
+    },
+    {
+      "name": "Lead-custom_lead_type",
+      "dt": "Lead",
+      "fieldname": "custom_lead_type",
+      "fieldtype": "Select",
+      "label": "Lead Type",
+      "options": "\nFOP\nOffice\nOwn\nPersonal"
+    },
+    {
+      "name": "Lead-custom_manual_customer_name",
+      "dt": "Lead",
+      "fieldname": "custom_manual_customer_name",
+      "fieldtype": "Data",
+      "label": "Manual Customer Name",
+      "options": null
+    },
+    {
+      "name": "Lead-custom_mobileno",
+      "dt": "Lead",
+      "fieldname": "custom_mobileno",
+      "fieldtype": "Data",
+      "label": "Mobile No",
+      "options": null
+    },
+    {
+      "name": "Lead-custom_name",
+      "dt": "Lead",
+      "fieldname": "custom_name",
+      "fieldtype": "Data",
+      "label": "Name",
+      "options": null
+    },
+    {
+      "name": "Lead-custom_nationality",
+      "dt": "Lead",
+      "fieldname": "custom_nationality",
+      "fieldtype": "Link",
+      "label": "Nationality",
+      "options": "Nationality"
+    },
+    {
+      "name": "Lead-custom_note",
+      "dt": "Lead",
+      "fieldname": "custom_note",
+      "fieldtype": "Small Text",
+      "label": "Note",
+      "options": null
+    },
+    {
+      "name": "Lead-custom_referral_",
+      "dt": "Lead",
+      "fieldname": "custom_referral_",
+      "fieldtype": "Data",
+      "label": "Referral Number",
+      "options": null
+    },
+    {
+      "name": "Lead-custom_referral_number",
+      "dt": "Lead",
+      "fieldname": "custom_referral_number",
+      "fieldtype": "Data",
+      "label": "Referral Number",
+      "options": null
+    },
+    {
+      "name": "Lead-custom_referred_by_customer",
+      "dt": "Lead",
+      "fieldname": "custom_referred_by_customer",
+      "fieldtype": "Link",
+      "label": "Referred By Customer",
+      "options": "Customer"
+    },
+    {
+      "name": "Lead-custom_referred_by_customer_name",
+      "dt": "Lead",
+      "fieldname": "custom_referred_by_customer_name",
+      "fieldtype": "Data",
+      "label": "Referred By Customer Name",
+      "options": null
+    },
+    {
+      "name": "Lead-custom_referred_customer",
+      "dt": "Lead",
+      "fieldname": "custom_referred_customer",
+      "fieldtype": "Data",
+      "label": "Referred by Customer",
+      "options": null
+    },
+    {
+      "name": "Lead-custom_report",
+      "dt": "Lead",
+      "fieldname": "custom_report",
+      "fieldtype": "Tab Break",
+      "label": "Report",
+      "options": null
+    },
+    {
+      "name": "Lead-custom_sales_person",
+      "dt": "Lead",
+      "fieldname": "custom_sales_person",
+      "fieldtype": "Link",
+      "label": "Sales Person",
+      "options": "Sales Person"
+    },
+    {
+      "name": "Lead-custom_section_break_dzip5",
+      "dt": "Lead",
+      "fieldname": "custom_section_break_dzip5",
+      "fieldtype": "Section Break",
+      "label": "",
+      "options": null
+    },
+    {
+      "name": "Lead-custom_section_break_qm8gj",
+      "dt": "Lead",
+      "fieldname": "custom_section_break_qm8gj",
+      "fieldtype": "Section Break",
+      "label": "",
+      "options": null
+    },
+    {
+      "name": "Lead-custom_telemarketer_id",
+      "dt": "Lead",
+      "fieldname": "custom_telemarketer_id",
+      "fieldtype": "Link",
+      "label": "Telemarketer Id",
+      "options": "Sales Person"
+    },
+    {
+      "name": "Maintenance Schedule Item-custom_perriodicity",
+      "dt": "Maintenance Schedule Item",
+      "fieldname": "custom_perriodicity",
+      "fieldtype": "Select",
+      "label": "Periodicity",
+      "options": "1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12"
+    },
+    {
+      "name": "Maintenance Schedule-custom_history",
+      "dt": "Maintenance Schedule",
+      "fieldname": "custom_history",
+      "fieldtype": "Table",
+      "label": "History",
+      "options": "Schedule History"
+    },
+    {
+      "name": "Maintenance Schedule-custom_installation_date",
+      "dt": "Maintenance Schedule",
+      "fieldname": "custom_installation_date",
+      "fieldtype": "Data",
+      "label": "Installation Date",
+      "options": null
+    },
+    {
+      "name": "Maintenance Schedule-custom_maintenance_type",
+      "dt": "Maintenance Schedule",
+      "fieldname": "custom_maintenance_type",
+      "fieldtype": "Select",
+      "label": "Maintenance Type",
+      "options": "\nPlanned Maintenance\nMaintenance Call"
+    },
+    {
+      "name": "Maintenance Schedule-custom_mobile_no",
+      "dt": "Maintenance Schedule",
+      "fieldname": "custom_mobile_no",
+      "fieldtype": "Link",
+      "label": "Mobile No",
+      "options": "Customer"
+    },
+    {
+      "name": "Maintenance Schedule-custom_schedule_history",
+      "dt": "Maintenance Schedule",
+      "fieldname": "custom_schedule_history",
+      "fieldtype": "Section Break",
+      "label": "Schedule History",
+      "options": null
+    },
+    {
+      "name": "Maintenance Visit-custom_replace_item",
+      "dt": "Maintenance Visit",
+      "fieldname": "custom_replace_item",
+      "fieldtype": "Table",
+      "label": "Replace Item",
+      "options": "Maintenance Visit Table"
+    },
+    {
+      "name": "Maintenance Visit-custom_sales_invoice_ref",
+      "dt": "Maintenance Visit",
+      "fieldname": "custom_sales_invoice_ref",
+      "fieldtype": "Data",
+      "label": "Sales Invoice Ref",
+      "options": null
+    },
+    {
+      "name": "Maintenance Visit-custom_section_break_yoc18",
+      "dt": "Maintenance Visit",
+      "fieldname": "custom_section_break_yoc18",
+      "fieldtype": "Section Break",
+      "label": "",
+      "options": null
+    },
+    {
+      "name": "Maintenance Visit-custom_total_",
+      "dt": "Maintenance Visit",
+      "fieldname": "custom_total_",
+      "fieldtype": "Currency",
+      "label": "Total ",
+      "options": null
+    },
+    {
+      "name": "Maintenance Visit-custom_warehouse",
+      "dt": "Maintenance Visit",
+      "fieldname": "custom_warehouse",
+      "fieldtype": "Link",
+      "label": "Warehouse",
+      "options": "Warehouse"
+    },
+    {
+      "name": "Maintenance-custom_address_dropdown",
+      "dt": "Maintenance",
+      "fieldname": "custom_address_dropdown",
+      "fieldtype": "Link",
+      "label": "Select Address",
+      "options": "Address"
+    },
+    {
+      "name": "Maintenance-custom_column_break_eeogj",
+      "dt": "Maintenance",
+      "fieldname": "custom_column_break_eeogj",
+      "fieldtype": "Column Break",
+      "label": "",
+      "options": null
+    },
+    {
+      "name": "Maintenance-custom_new_maintenance_id",
+      "dt": "Maintenance",
+      "fieldname": "custom_new_maintenance_id",
+      "fieldtype": "Link",
+      "label": "New Maintenance ID",
+      "options": "Maintenance"
+    },
+    {
+      "name": "Payment Entry-custom_is_partial",
+      "dt": "Payment Entry",
+      "fieldname": "custom_is_partial",
+      "fieldtype": "Check",
+      "label": "Is Partial?",
+      "options": null
+    },
+    {
+      "name": "Payment Entry-custom_linked_payment_entry",
+      "dt": "Payment Entry",
+      "fieldname": "custom_linked_payment_entry",
+      "fieldtype": "Link",
+      "label": "Linked Payment Entry",
+      "options": "Payment Entry"
+    },
+    {
+      "name": "Payment Entry-custom_manual_voucher_number",
+      "dt": "Payment Entry",
+      "fieldname": "custom_manual_voucher_number",
+      "fieldtype": "Data",
+      "label": "Manual Voucher Number",
+      "options": null
+    },
+    {
+      "name": "Payment Entry-custom_party_status",
+      "dt": "Payment Entry",
+      "fieldname": "custom_party_status",
+      "fieldtype": "Data",
+      "label": "Party Status",
+      "options": null
+    },
+    {
+      "name": "Payment Entry-custom_payment_purpose",
+      "dt": "Payment Entry",
+      "fieldname": "custom_payment_purpose",
+      "fieldtype": "Select",
+      "label": "Payment Purpose",
+      "options": "\nDown Payment\nInstallment\nMaintenance"
+    },
+    {
+      "name": "Payment Entry-custom_sales_order_id",
+      "dt": "Payment Entry",
+      "fieldname": "custom_sales_order_id",
+      "fieldtype": "Link",
+      "label": "Sales Order Id",
+      "options": "Sales Order"
+    },
+    {
+      "name": "POS Invoice Item-posa_delivery_date",
+      "dt": "POS Invoice Item",
+      "fieldname": "posa_delivery_date",
+      "fieldtype": "Date",
+      "label": "Delivery Date",
+      "options": null
+    },
+    {
+      "name": "POS Invoice Item-posa_is_offer",
+      "dt": "POS Invoice Item",
+      "fieldname": "posa_is_offer",
+      "fieldtype": "Check",
+      "label": "Is Offer",
+      "options": null
+    },
+    {
+      "name": "POS Invoice Item-posa_is_replace",
+      "dt": "POS Invoice Item",
+      "fieldname": "posa_is_replace",
+      "fieldtype": "Data",
+      "label": "Is Offer Replace For item Row ID",
+      "options": null
+    },
+    {
+      "name": "POS Invoice Item-posa_notes",
+      "dt": "POS Invoice Item",
+      "fieldname": "posa_notes",
+      "fieldtype": "Small Text",
+      "label": "Additional Notes",
+      "options": null
+    },
+    {
+      "name": "POS Invoice Item-posa_offer_applied",
+      "dt": "POS Invoice Item",
+      "fieldname": "posa_offer_applied",
+      "fieldtype": "Check",
+      "label": "Offer Applied",
+      "options": null
+    },
+    {
+      "name": "POS Invoice Item-posa_offers",
+      "dt": "POS Invoice Item",
+      "fieldname": "posa_offers",
+      "fieldtype": "Small Text",
+      "label": "POS Offers",
+      "options": null
+    },
+    {
+      "name": "POS Invoice Item-posa_row_id",
+      "dt": "POS Invoice Item",
+      "fieldname": "posa_row_id",
+      "fieldtype": "Data",
+      "label": "Row ID",
+      "options": null
+    },
+    {
+      "name": "POS Invoice-posa_additional_notes_section",
+      "dt": "POS Invoice",
+      "fieldname": "posa_additional_notes_section",
+      "fieldtype": "Section Break",
+      "label": "Additional Notes",
+      "options": null
+    },
+    {
+      "name": "POS Invoice-posa_authorization_code",
+      "dt": "POS Invoice",
+      "fieldname": "posa_authorization_code",
+      "fieldtype": "Data",
+      "label": "Authorization Code",
+      "options": null
+    },
+    {
+      "name": "POS Invoice-posa_column_break_111",
+      "dt": "POS Invoice",
+      "fieldname": "posa_column_break_111",
+      "fieldtype": "Column Break",
+      "label": "",
+      "options": null
+    },
+    {
+      "name": "POS Invoice-posa_coupons",
+      "dt": "POS Invoice",
+      "fieldname": "posa_coupons",
+      "fieldtype": "Table",
+      "label": "POS Coupons Detail",
+      "options": "POS Coupon Detail"
+    },
+    {
+      "name": "POS Invoice-posa_delivery_charges",
+      "dt": "POS Invoice",
+      "fieldname": "posa_delivery_charges",
+      "fieldtype": "Link",
+      "label": "Delivery Charges",
+      "options": "Delivery Charges"
+    },
+    {
+      "name": "POS Invoice-posa_delivery_charges_rate",
+      "dt": "POS Invoice",
+      "fieldname": "posa_delivery_charges_rate",
+      "fieldtype": "Currency",
+      "label": "Delivery Charges Rate",
+      "options": "currency"
+    },
+    {
+      "name": "POS Invoice-posa_delivery_date",
+      "dt": "POS Invoice",
+      "fieldname": "posa_delivery_date",
+      "fieldtype": "Date",
+      "label": "Delivery Date",
+      "options": null
+    },
+    {
+      "name": "POS Invoice-posa_is_printed",
+      "dt": "POS Invoice",
+      "fieldname": "posa_is_printed",
+      "fieldtype": "Check",
+      "label": "Printed",
+      "options": null
+    },
+    {
+      "name": "POS Invoice-posa_notes",
+      "dt": "POS Invoice",
+      "fieldname": "posa_notes",
+      "fieldtype": "Small Text",
+      "label": "Additional Notes",
+      "options": null
+    },
+    {
+      "name": "POS Invoice-posa_offers",
+      "dt": "POS Invoice",
+      "fieldname": "posa_offers",
+      "fieldtype": "Table",
+      "label": "POS Offers Detail",
+      "options": "POS Offer Detail"
+    },
+    {
+      "name": "POS Invoice-posa_pos_opening_shift",
+      "dt": "POS Invoice",
+      "fieldname": "posa_pos_opening_shift",
+      "fieldtype": "Data",
+      "label": "POS Shift",
+      "options": null
+    },
+    {
+      "name": "POS Invoice-posa_return_valid_upto",
+      "dt": "POS Invoice",
+      "fieldname": "posa_return_valid_upto",
+      "fieldtype": "Date",
+      "label": "Return Valid Upto",
+      "options": null
+    },
+    {
+      "name": "POS Profile-column_break_anyol",
+      "dt": "POS Profile",
+      "fieldname": "column_break_anyol",
+      "fieldtype": "Column Break",
+      "label": null,
+      "options": null
+    },
+    {
+      "name": "POS Profile-column_break_dqsba",
+      "dt": "POS Profile",
+      "fieldname": "column_break_dqsba",
+      "fieldtype": "Column Break",
+      "label": null,
+      "options": null
+    },
+    {
+      "name": "POS Profile-column_break_uolvm",
+      "dt": "POS Profile",
+      "fieldname": "column_break_uolvm",
+      "fieldtype": "Column Break",
+      "label": null,
+      "options": null
+    },
+    {
+      "name": "POS Profile-create_pos_invoice_instead_of_sales_invoice",
+      "dt": "POS Profile",
+      "fieldname": "create_pos_invoice_instead_of_sales_invoice",
+      "fieldtype": "Check",
+      "label": "Create POS Invoice instead of Sales Invoice",
+      "options": null
+    },
+    {
+      "name": "POS Profile-custom_allow_select_sales_order",
+      "dt": "POS Profile",
+      "fieldname": "custom_allow_select_sales_order",
+      "fieldtype": "Check",
+      "label": "Allow Select Sales Order",
+      "options": null
+    },
+    {
+      "name": "POS Profile-hide_expected_amount",
+      "dt": "POS Profile",
+      "fieldname": "hide_expected_amount",
+      "fieldtype": "Check",
+      "label": "Hide Expected Amount",
+      "options": null
+    },
+    {
+      "name": "POS Profile-pos_awesome_payments",
+      "dt": "POS Profile",
+      "fieldname": "pos_awesome_payments",
+      "fieldtype": "Section Break",
+      "label": "POS Awesome Payments",
+      "options": null
+    },
+    {
+      "name": "POS Profile-posa_allow_cancel_submitted_cash_movement",
+      "dt": "POS Profile",
+      "fieldname": "posa_allow_cancel_submitted_cash_movement",
+      "fieldtype": "Check",
+      "label": "Allow Cancel Submitted Cash Movement",
+      "options": null
+    },
+    {
+      "name": "POS Profile-posa_allow_cash_deposit",
+      "dt": "POS Profile",
+      "fieldname": "posa_allow_cash_deposit",
+      "fieldtype": "Check",
+      "label": "Allow Cash Deposit",
+      "options": null
+    },
+    {
+      "name": "POS Profile-posa_allow_change_posting_date",
+      "dt": "POS Profile",
+      "fieldname": "posa_allow_change_posting_date",
+      "fieldtype": "Check",
+      "label": "Allow Change Posting Date",
+      "options": null
+    },
+    {
+      "name": "POS Profile-posa_allow_company_dashboard_scope",
+      "dt": "POS Profile",
+      "fieldname": "posa_allow_company_dashboard_scope",
+      "fieldtype": "Check",
+      "label": "Enable Company-Wide Dashboard Scope",
+      "options": null
+    },
+    {
+      "name": "POS Profile-posa_allow_create_purchase_items",
+      "dt": "POS Profile",
+      "fieldname": "posa_allow_create_purchase_items",
+      "fieldtype": "Check",
+      "label": "Allow Create Items from POS",
+      "options": null
+    },
+    {
+      "name": "POS Profile-posa_allow_create_purchase_suppliers",
+      "dt": "POS Profile",
+      "fieldname": "posa_allow_create_purchase_suppliers",
+      "fieldtype": "Check",
+      "label": "Allow Create Suppliers from POS",
+      "options": null
+    },
+    {
+      "name": "POS Profile-posa_allow_credit_sale",
+      "dt": "POS Profile",
+      "fieldname": "posa_allow_credit_sale",
+      "fieldtype": "Check",
+      "label": "Allow Credit Sale",
+      "options": null
+    },
+    {
+      "name": "POS Profile-posa_allow_customer_purchase_order",
+      "dt": "POS Profile",
+      "fieldname": "posa_allow_customer_purchase_order",
+      "fieldtype": "Check",
+      "label": "Allow Customer Purchase Order",
+      "options": null
+    },
+    {
+      "name": "POS Profile-posa_allow_delete",
+      "dt": "POS Profile",
+      "fieldname": "posa_allow_delete",
+      "fieldtype": "Check",
+      "label": "Auto Delete Draft Invoice",
+      "options": null
+    },
+    {
+      "name": "POS Profile-posa_allow_delete_cancelled_cash_movement",
+      "dt": "POS Profile",
+      "fieldname": "posa_allow_delete_cancelled_cash_movement",
+      "fieldtype": "Check",
+      "label": "Allow Delete Cancelled Cash Movement",
+      "options": null
+    },
+    {
+      "name": "POS Profile-posa_allow_delete_offline_invoice",
+      "dt": "POS Profile",
+      "fieldname": "posa_allow_delete_offline_invoice",
+      "fieldtype": "Check",
+      "label": "Allow Delete Offline Invoice",
+      "options": null
+    },
+    {
+      "name": "POS Profile-posa_allow_duplicate_customer_names",
+      "dt": "POS Profile",
+      "fieldname": "posa_allow_duplicate_customer_names",
+      "fieldtype": "Check",
+      "label": "Allow Duplicate Customer Names",
+      "options": null
+    },
+    {
+      "name": "POS Profile-posa_allow_free_batch_return",
+      "dt": "POS Profile",
+      "fieldname": "posa_allow_free_batch_return",
+      "fieldtype": "Check",
+      "label": "Allow Free Batch Return",
+      "options": null
+    },
+    {
+      "name": "POS Profile-posa_allow_line_item_name_override",
+      "dt": "POS Profile",
+      "fieldname": "posa_allow_line_item_name_override",
+      "fieldtype": "Check",
+      "label": "Allow Line Item Name Override",
+      "options": null
+    },
+    {
+      "name": "POS Profile-posa_allow_make_new_payments",
+      "dt": "POS Profile",
+      "fieldname": "posa_allow_make_new_payments",
+      "fieldtype": "Check",
+      "label": "Allow Make New Payments",
+      "options": null
+    },
+    {
+      "name": "POS Profile-posa_allow_mpesa_reconcile_payments",
+      "dt": "POS Profile",
+      "fieldname": "posa_allow_mpesa_reconcile_payments",
+      "fieldtype": "Check",
+      "label": "Allow Mpesa Reconcile Payments",
+      "options": null
+    },
+    {
+      "name": "POS Profile-posa_allow_multi_currency",
+      "dt": "POS Profile",
+      "fieldname": "posa_allow_multi_currency",
+      "fieldtype": "Check",
+      "label": "Allow Multi Currency in POS",
+      "options": null
+    },
+    {
+      "name": "POS Profile-posa_allow_partial_payment",
+      "dt": "POS Profile",
+      "fieldname": "posa_allow_partial_payment",
+      "fieldtype": "Check",
+      "label": "Allow Partial Payment",
+      "options": null
+    },
+    {
+      "name": "POS Profile-posa_allow_pos_expense",
+      "dt": "POS Profile",
+      "fieldname": "posa_allow_pos_expense",
+      "fieldtype": "Check",
+      "label": "Allow POS Expense",
+      "options": null
+    },
+    {
+      "name": "POS Profile-posa_allow_price_list_rate_change",
+      "dt": "POS Profile",
+      "fieldname": "posa_allow_price_list_rate_change",
+      "fieldtype": "Check",
+      "label": "Allow Price List Rate Change",
+      "options": null
+    },
+    {
+      "name": "POS Profile-posa_allow_print_draft_invoices",
+      "dt": "POS Profile",
+      "fieldname": "posa_allow_print_draft_invoices",
+      "fieldtype": "Check",
+      "label": "Allow Print Draft Invoices",
+      "options": null
+    },
+    {
+      "name": "POS Profile-posa_allow_print_last_invoice",
+      "dt": "POS Profile",
+      "fieldname": "posa_allow_print_last_invoice",
+      "fieldtype": "Check",
+      "label": "Allow Print Last Invoice",
+      "options": null
+    },
+    {
+      "name": "POS Profile-posa_allow_purchase_order",
+      "dt": "POS Profile",
+      "fieldname": "posa_allow_purchase_order",
+      "fieldtype": "Check",
+      "label": "Allow Purchase Order",
+      "options": null
+    },
+    {
+      "name": "POS Profile-posa_allow_purchase_receipt",
+      "dt": "POS Profile",
+      "fieldname": "posa_allow_purchase_receipt",
+      "fieldtype": "Check",
+      "label": "Allow Receive Stock from POS",
+      "options": null
+    },
+    {
+      "name": "POS Profile-posa_allow_reconcile_payments",
+      "dt": "POS Profile",
+      "fieldname": "posa_allow_reconcile_payments",
+      "fieldtype": "Check",
+      "label": "Allow Reconcile Payments",
+      "options": null
+    },
+    {
+      "name": "POS Profile-posa_allow_return",
+      "dt": "POS Profile",
+      "fieldname": "posa_allow_return",
+      "fieldtype": "Check",
+      "label": "Allow Return",
+      "options": null
+    },
+    {
+      "name": "POS Profile-posa_allow_return_without_invoice",
+      "dt": "POS Profile",
+      "fieldname": "posa_allow_return_without_invoice",
+      "fieldtype": "Check",
+      "label": "Allow Return Without Invoice",
+      "options": null
+    },
+    {
+      "name": "POS Profile-posa_allow_sales_order",
+      "dt": "POS Profile",
+      "fieldname": "posa_allow_sales_order",
+      "fieldtype": "Check",
+      "label": "Allow Create Sales Order",
+      "options": null
+    },
+    {
+      "name": "POS Profile-posa_allow_source_account_override",
+      "dt": "POS Profile",
+      "fieldname": "posa_allow_source_account_override",
+      "fieldtype": "Check",
+      "label": "Allow Source Account Selection",
+      "options": null
+    },
+    {
+      "name": "POS Profile-posa_allow_submissions_in_background_job",
+      "dt": "POS Profile",
+      "fieldname": "posa_allow_submissions_in_background_job",
+      "fieldtype": "Check",
+      "label": "Allow Submissions in background job",
+      "options": null
+    },
+    {
+      "name": "POS Profile-posa_allow_user_to_edit_additional_discount",
+      "dt": "POS Profile",
+      "fieldname": "posa_allow_user_to_edit_additional_discount",
+      "fieldtype": "Check",
+      "label": "Allow user to edit Additional Discount",
+      "options": null
+    },
+    {
+      "name": "POS Profile-posa_allow_user_to_edit_item_discount",
+      "dt": "POS Profile",
+      "fieldname": "posa_allow_user_to_edit_item_discount",
+      "fieldtype": "Check",
+      "label": "Allow User to Edit Item Discount",
+      "options": null
+    },
+    {
+      "name": "POS Profile-posa_allow_user_to_edit_rate",
+      "dt": "POS Profile",
+      "fieldname": "posa_allow_user_to_edit_rate",
+      "fieldtype": "Check",
+      "label": "Allow user to edit Rate",
+      "options": null
+    },
+    {
+      "name": "POS Profile-posa_allow_write_off_change",
+      "dt": "POS Profile",
+      "fieldname": "posa_allow_write_off_change",
+      "fieldtype": "Check",
+      "label": "Allow Write Off Change",
+      "options": null
+    },
+    {
+      "name": "POS Profile-posa_allow_zero_rated_items",
+      "dt": "POS Profile",
+      "fieldname": "posa_allow_zero_rated_items",
+      "fieldtype": "Check",
+      "label": "Allow Zero Rated Items",
+      "options": null
+    },
+    {
+      "name": "POS Profile-posa_allowed_expense_accounts",
+      "dt": "POS Profile",
+      "fieldname": "posa_allowed_expense_accounts",
+      "fieldtype": "Table",
+      "label": "Allowed POS Expense Accounts",
+      "options": "POS Allowed Expense Account"
+    },
+    {
+      "name": "POS Profile-posa_allowed_source_accounts",
+      "dt": "POS Profile",
+      "fieldname": "posa_allowed_source_accounts",
+      "fieldtype": "Table",
+      "label": "Allowed POS Source Accounts",
+      "options": "POS Allowed Source Account"
+    },
+    {
+      "name": "POS Profile-posa_apply_customer_discount",
+      "dt": "POS Profile",
+      "fieldname": "posa_apply_customer_discount",
+      "fieldtype": "Check",
+      "label": "Apply Customer Discount",
+      "options": null
+    },
+    {
+      "name": "POS Profile-posa_auto_open_customer_display",
+      "dt": "POS Profile",
+      "fieldname": "posa_auto_open_customer_display",
+      "fieldtype": "Check",
+      "label": "Auto Open Customer Display",
+      "options": null
+    },
+    {
+      "name": "POS Profile-posa_auto_set_batch",
+      "dt": "POS Profile",
+      "fieldname": "posa_auto_set_batch",
+      "fieldtype": "Check",
+      "label": "Auto Set Batch",
+      "options": null
+    },
+    {
+      "name": "POS Profile-posa_auto_set_delivery_charges",
+      "dt": "POS Profile",
+      "fieldname": "posa_auto_set_delivery_charges",
+      "fieldtype": "Check",
+      "label": "Auto Set Delivery Charges",
+      "options": null
+    },
+    {
+      "name": "POS Profile-posa_back_office_cash_account",
+      "dt": "POS Profile",
+      "fieldname": "posa_back_office_cash_account",
+      "fieldtype": "Link",
+      "label": "Back Office Cash Account",
+      "options": "Account"
+    },
+    {
+      "name": "POS Profile-posa_block_sale_beyond_available_qty",
+      "dt": "POS Profile",
+      "fieldname": "posa_block_sale_beyond_available_qty",
+      "fieldtype": "Check",
+      "label": "Block Sale Beyond Available Qty",
+      "options": null
+    },
+    {
+      "name": "POS Profile-posa_camera_scan_type",
+      "dt": "POS Profile",
+      "fieldname": "posa_camera_scan_type",
+      "fieldtype": "Select",
+      "label": "Camera Scan Type",
+      "options": "QR Code\nBarcode\nBoth"
+    },
+    {
+      "name": "POS Profile-posa_cash_mode_of_payment",
+      "dt": "POS Profile",
+      "fieldname": "posa_cash_mode_of_payment",
+      "fieldtype": "Link",
+      "label": "Cash Mode of Payment",
+      "options": "Mode of Payment"
+    },
+    {
+      "name": "POS Profile-posa_cash_movement_max_amount",
+      "dt": "POS Profile",
+      "fieldname": "posa_cash_movement_max_amount",
+      "fieldtype": "Currency",
+      "label": "Cash Movement Max Amount",
+      "options": "Company:company:default_currency"
+    },
+    {
+      "name": "POS Profile-posa_col_1",
+      "dt": "POS Profile",
+      "fieldname": "posa_col_1",
+      "fieldtype": "Column Break",
+      "label": "",
+      "options": null
+    },
+    {
+      "name": "POS Profile-posa_column_break_112",
+      "dt": "POS Profile",
+      "fieldname": "posa_column_break_112",
+      "fieldtype": "Column Break",
+      "label": "",
+      "options": null
+    },
+    {
+      "name": "POS Profile-posa_create_only_sales_order",
+      "dt": "POS Profile",
+      "fieldname": "posa_create_only_sales_order",
+      "fieldtype": "Check",
+      "label": "Create Only Sales Order",
+      "options": null
+    },
+    {
+      "name": "POS Profile-posa_decimal_precision",
+      "dt": "POS Profile",
+      "fieldname": "posa_decimal_precision",
+      "fieldtype": "Select",
+      "label": "Decimal Precision",
+      "options": "0\n1\n2\n3\n4\n5"
+    },
+    {
+      "name": "POS Profile-posa_default_card_view",
+      "dt": "POS Profile",
+      "fieldname": "posa_default_card_view",
+      "fieldtype": "Check",
+      "label": "Default Card View",
+      "options": null
+    },
+    {
+      "name": "POS Profile-posa_default_country",
+      "dt": "POS Profile",
+      "fieldname": "posa_default_country",
+      "fieldtype": "Link",
+      "label": "Default Country",
+      "options": "Country"
+    },
+    {
+      "name": "POS Profile-posa_default_expense_account",
+      "dt": "POS Profile",
+      "fieldname": "posa_default_expense_account",
+      "fieldtype": "Link",
+      "label": "Default POS Expense Account",
+      "options": "Account"
+    },
+    {
+      "name": "POS Profile-posa_default_sales_order",
+      "dt": "POS Profile",
+      "fieldname": "posa_default_sales_order",
+      "fieldtype": "Check",
+      "label": "Default Sales Order",
+      "options": null
+    },
+    {
+      "name": "POS Profile-posa_default_source_account",
+      "dt": "POS Profile",
+      "fieldname": "posa_default_source_account",
+      "fieldtype": "Link",
+      "label": "Default POS Source Account",
+      "options": "Account"
+    },
+    {
+      "name": "POS Profile-posa_display_additional_notes",
+      "dt": "POS Profile",
+      "fieldname": "posa_display_additional_notes",
+      "fieldtype": "Check",
+      "label": "Display Additional Notes",
+      "options": null
+    },
+    {
+      "name": "POS Profile-posa_display_authorization_code",
+      "dt": "POS Profile",
+      "fieldname": "posa_display_authorization_code",
+      "fieldtype": "Check",
+      "label": "Display Authorization Code",
+      "options": null
+    },
+    {
+      "name": "POS Profile-posa_display_discount_amount",
+      "dt": "POS Profile",
+      "fieldname": "posa_display_discount_amount",
+      "fieldtype": "Check",
+      "label": "Display Discount Amount",
+      "options": null
+    },
+    {
+      "name": "POS Profile-posa_display_discount_percentage",
+      "dt": "POS Profile",
+      "fieldname": "posa_display_discount_percentage",
+      "fieldtype": "Check",
+      "label": "Display Discount %",
+      "options": null
+    },
+    {
+      "name": "POS Profile-posa_display_item_code",
+      "dt": "POS Profile",
+      "fieldname": "posa_display_item_code",
+      "fieldtype": "Check",
+      "label": "Display Item Code",
+      "options": null
+    },
+    {
+      "name": "POS Profile-posa_display_items_in_stock",
+      "dt": "POS Profile",
+      "fieldname": "posa_display_items_in_stock",
+      "fieldtype": "Check",
+      "label": "Hide Unavailable Items",
+      "options": null
+    },
+    {
+      "name": "POS Profile-posa_enable_awesome_dashboard",
+      "dt": "POS Profile",
+      "fieldname": "posa_enable_awesome_dashboard",
+      "fieldtype": "Check",
+      "label": "Enable Awesome Dashboard",
+      "options": null
+    },
+    {
+      "name": "POS Profile-posa_enable_camera_scanning",
+      "dt": "POS Profile",
+      "fieldname": "posa_enable_camera_scanning",
+      "fieldtype": "Check",
+      "label": "Enable Camera Scanning",
+      "options": null
+    },
+    {
+      "name": "POS Profile-posa_enable_cash_movement",
+      "dt": "POS Profile",
+      "fieldname": "posa_enable_cash_movement",
+      "fieldtype": "Check",
+      "label": "Enable Cash Movement",
+      "options": null
+    },
+    {
+      "name": "POS Profile-posa_enable_customer_display",
+      "dt": "POS Profile",
+      "fieldname": "posa_enable_customer_display",
+      "fieldtype": "Check",
+      "label": "Enable Customer Display",
+      "options": null
+    },
+    {
+      "name": "POS Profile-posa_enable_return_validity",
+      "dt": "POS Profile",
+      "fieldname": "posa_enable_return_validity",
+      "fieldtype": "Check",
+      "label": "Enable Return Validity",
+      "options": null
+    },
+    {
+      "name": "POS Profile-posa_fetch_coupon",
+      "dt": "POS Profile",
+      "fieldname": "posa_fetch_coupon",
+      "fieldtype": "Check",
+      "label": "Auto Fetch Coupon Gifts",
+      "options": null
+    },
+    {
+      "name": "POS Profile-posa_force_price_from_customer_price_list",
+      "dt": "POS Profile",
+      "fieldname": "posa_force_price_from_customer_price_list",
+      "fieldtype": "Check",
+      "label": "Force Price from Customer Price List",
+      "options": null
+    },
+    {
+      "name": "POS Profile-posa_force_reload_items",
+      "dt": "POS Profile",
+      "fieldname": "posa_force_reload_items",
+      "fieldtype": "Check",
+      "label": "Force Reload Items",
+      "options": null
+    },
+    {
+      "name": "POS Profile-posa_force_server_items",
+      "dt": "POS Profile",
+      "fieldname": "posa_force_server_items",
+      "fieldtype": "Check",
+      "label": "Fetch Items Directly from Server",
+      "options": null
+    },
+    {
+      "name": "POS Profile-posa_hide_closing_shift",
+      "dt": "POS Profile",
+      "fieldname": "posa_hide_closing_shift",
+      "fieldtype": "Check",
+      "label": "Hide Close Shift",
+      "options": null
+    },
+    {
+      "name": "POS Profile-posa_hide_variants_items",
+      "dt": "POS Profile",
+      "fieldname": "posa_hide_variants_items",
+      "fieldtype": "Check",
+      "label": "Hide Variants Items",
+      "options": null
+    },
+    {
+      "name": "POS Profile-posa_input_qty",
+      "dt": "POS Profile",
+      "fieldname": "posa_input_qty",
+      "fieldtype": "Check",
+      "label": "Use QTY Input",
+      "options": null
+    },
+    {
+      "name": "POS Profile-posa_language",
+      "dt": "POS Profile",
+      "fieldname": "posa_language",
+      "fieldtype": "Select",
+      "label": "POS Language",
+      "options": null
+    },
+    {
+      "name": "POS Profile-posa_local_storage",
+      "dt": "POS Profile",
+      "fieldname": "posa_local_storage",
+      "fieldtype": "Check",
+      "label": "Use Browser Local Storage",
+      "options": null
+    },
+    {
+      "name": "POS Profile-posa_low_stock_alert_threshold",
+      "dt": "POS Profile",
+      "fieldname": "posa_low_stock_alert_threshold",
+      "fieldtype": "Int",
+      "label": "Low Stock Alert Threshold",
+      "options": null
+    },
+    {
+      "name": "POS Profile-posa_max_discount_allowed",
+      "dt": "POS Profile",
+      "fieldname": "posa_max_discount_allowed",
+      "fieldtype": "Float",
+      "label": "Max Discount Percentage Allowed ",
+      "options": null
+    },
+    {
+      "name": "POS Profile-posa_new_line",
+      "dt": "POS Profile",
+      "fieldname": "posa_new_line",
+      "fieldtype": "Check",
+      "label": "Allow add New Items on New Line",
+      "options": null
+    },
+    {
+      "name": "POS Profile-posa_open_print_in_new_tab",
+      "dt": "POS Profile",
+      "fieldname": "posa_open_print_in_new_tab",
+      "fieldtype": "Check",
+      "label": "Open Print in New Tab",
+      "options": null
+    },
+    {
+      "name": "POS Profile-posa_pos_awesome_advance_settings",
+      "dt": "POS Profile",
+      "fieldname": "posa_pos_awesome_advance_settings",
+      "fieldtype": "Section Break",
+      "label": "POS Awesome Advance Settings",
+      "options": null
+    },
+    {
+      "name": "POS Profile-posa_pos_awesome_settings",
+      "dt": "POS Profile",
+      "fieldname": "posa_pos_awesome_settings",
+      "fieldtype": "Section Break",
+      "label": "POS Awesome Settings",
+      "options": null
+    },
+    {
+      "name": "POS Profile-posa_print_format_rules",
+      "dt": "POS Profile",
+      "fieldname": "posa_print_format_rules",
+      "fieldtype": "Table",
+      "label": "Print Format Rules",
+      "options": "POS Awesome Print Format Rule"
+    },
+    {
+      "name": "POS Profile-posa_require_cash_movement_remarks",
+      "dt": "POS Profile",
+      "fieldname": "posa_require_cash_movement_remarks",
+      "fieldtype": "Check",
+      "label": "Require Cash Movement Remarks",
+      "options": null
+    },
+    {
+      "name": "POS Profile-posa_return_validity_days",
+      "dt": "POS Profile",
+      "fieldname": "posa_return_validity_days",
+      "fieldtype": "Int",
+      "label": "Return Validity Days",
+      "options": null
+    },
+    {
+      "name": "POS Profile-posa_sales_persons",
+      "dt": "POS Profile",
+      "fieldname": "posa_sales_persons",
+      "fieldtype": "Table",
+      "label": "Allowed Sales Persons",
+      "options": "POSA Sales Person Filter"
+    },
+    {
+      "name": "POS Profile-posa_search_batch_no",
+      "dt": "POS Profile",
+      "fieldname": "posa_search_batch_no",
+      "fieldtype": "Check",
+      "label": "Search by Batch Number",
+      "options": null
+    },
+    {
+      "name": "POS Profile-posa_search_limit",
+      "dt": "POS Profile",
+      "fieldname": "posa_search_limit",
+      "fieldtype": "Int",
+      "label": "Search Limit Number",
+      "options": null
+    },
+    {
+      "name": "POS Profile-posa_search_serial_no",
+      "dt": "POS Profile",
+      "fieldname": "posa_search_serial_no",
+      "fieldtype": "Check",
+      "label": "Search by Serial Number",
+      "options": null
+    },
+    {
+      "name": "POS Profile-posa_section_awesome_dashboard",
+      "dt": "POS Profile",
+      "fieldname": "posa_section_awesome_dashboard",
+      "fieldtype": "Section Break",
+      "label": "Awesome Dashboard",
+      "options": null
+    },
+    {
+      "name": "POS Profile-posa_section_cash_movement",
+      "dt": "POS Profile",
+      "fieldname": "posa_section_cash_movement",
+      "fieldtype": "Section Break",
+      "label": "Cash Movement",
+      "options": null
+    },
+    {
+      "name": "POS Profile-posa_section_customer_display",
+      "dt": "POS Profile",
+      "fieldname": "posa_section_customer_display",
+      "fieldtype": "Section Break",
+      "label": "Customer Display",
+      "options": null
+    },
+    {
+      "name": "POS Profile-posa_section_inventory_controls",
+      "dt": "POS Profile",
+      "fieldname": "posa_section_inventory_controls",
+      "fieldtype": "Section Break",
+      "label": "Inventory and Item Controls",
+      "options": null
+    },
+    {
+      "name": "POS Profile-posa_section_pricing_controls",
+      "dt": "POS Profile",
+      "fieldname": "posa_section_pricing_controls",
+      "fieldtype": "Section Break",
+      "label": "Pricing and Discount Controls",
+      "options": null
+    },
+    {
+      "name": "POS Profile-posa_section_print_delivery",
+      "dt": "POS Profile",
+      "fieldname": "posa_section_print_delivery",
+      "fieldtype": "Section Break",
+      "label": "Printing and Delivery",
+      "options": null
+    },
+    {
+      "name": "POS Profile-posa_section_sales_purchase",
+      "dt": "POS Profile",
+      "fieldname": "posa_section_sales_purchase",
+      "fieldtype": "Section Break",
+      "label": "Sales and Purchase Flows",
+      "options": null
+    },
+    {
+      "name": "POS Profile-posa_section_sales_returns",
+      "dt": "POS Profile",
+      "fieldname": "posa_section_sales_returns",
+      "fieldtype": "Section Break",
+      "label": "Sales and Return Controls",
+      "options": null
+    },
+    {
+      "name": "POS Profile-posa_server_cache_duration",
+      "dt": "POS Profile",
+      "fieldname": "posa_server_cache_duration",
+      "fieldtype": "Int",
+      "label": "Server Cache Duration",
+      "options": null
+    },
+    {
+      "name": "POS Profile-posa_show_custom_name_marker_on_print",
+      "dt": "POS Profile",
+      "fieldname": "posa_show_custom_name_marker_on_print",
+      "fieldtype": "Check",
+      "label": "Show Custom Name Marker On Print",
+      "options": null
+    },
+    {
+      "name": "POS Profile-posa_show_customer_balance",
+      "dt": "POS Profile",
+      "fieldname": "posa_show_customer_balance",
+      "fieldtype": "Check",
+      "label": "Show Customer Balance",
+      "options": null
+    },
+    {
+      "name": "POS Profile-posa_show_template_items",
+      "dt": "POS Profile",
+      "fieldname": "posa_show_template_items",
+      "fieldtype": "Check",
+      "label": "Show Template Items",
+      "options": null
+    },
+    {
+      "name": "POS Profile-posa_silent_print",
+      "dt": "POS Profile",
+      "fieldname": "posa_silent_print",
+      "fieldtype": "Check",
+      "label": "Enable Silent Print",
+      "options": null
+    },
+    {
+      "name": "POS Profile-posa_smart_reload_mode",
+      "dt": "POS Profile",
+      "fieldname": "posa_smart_reload_mode",
+      "fieldtype": "Check",
+      "label": "Smart Reload Mode",
+      "options": null
+    },
+    {
+      "name": "POS Profile-posa_tax_inclusive",
+      "dt": "POS Profile",
+      "fieldname": "posa_tax_inclusive",
+      "fieldtype": "Check",
+      "label": "Tax Inclusive",
+      "options": null
+    },
+    {
+      "name": "POS Profile-posa_use_delivery_charges",
+      "dt": "POS Profile",
+      "fieldname": "posa_use_delivery_charges",
+      "fieldtype": "Check",
+      "label": "Use Delivery Charges",
+      "options": null
+    },
+    {
+      "name": "POS Profile-posa_use_percentage_discount",
+      "dt": "POS Profile",
+      "fieldname": "posa_use_percentage_discount",
+      "fieldtype": "Check",
+      "label": "Use Percentage Discount",
+      "options": null
+    },
+    {
+      "name": "POS Profile-posa_use_pos_awesome_payments",
+      "dt": "POS Profile",
+      "fieldname": "posa_use_pos_awesome_payments",
+      "fieldtype": "Check",
+      "label": "Use POS Awesome Payments",
+      "options": null
+    },
+    {
+      "name": "POS Profile-posa_use_server_cache",
+      "dt": "POS Profile",
+      "fieldname": "posa_use_server_cache",
+      "fieldtype": "Check",
+      "label": "Use Server Cache",
+      "options": null
+    },
+    {
+      "name": "POS Profile-pose_use_limit_search",
+      "dt": "POS Profile",
+      "fieldname": "pose_use_limit_search",
+      "fieldtype": "Check",
+      "label": "Use Limit Search",
+      "options": null
+    },
+    {
+      "name": "POS Profile-use_cashback",
+      "dt": "POS Profile",
+      "fieldname": "use_cashback",
+      "fieldtype": "Check",
+      "label": "Use Cashback",
+      "options": null
+    },
+    {
+      "name": "POS Profile-use_customer_credit",
+      "dt": "POS Profile",
+      "fieldname": "use_customer_credit",
+      "fieldtype": "Check",
+      "label": "Use Customer Credit",
+      "options": null
+    },
+    {
+      "name": "POS Settings-posa_dashboard_default_scope",
+      "dt": "POS Settings",
+      "fieldname": "posa_dashboard_default_scope",
+      "fieldtype": "Select",
+      "label": "Dashboard Default Scope",
+      "options": "All Profiles\nCurrent Profile"
+    },
+    {
+      "name": "POS Settings-posa_dashboard_low_stock_alert_threshold",
+      "dt": "POS Settings",
+      "fieldname": "posa_dashboard_low_stock_alert_threshold",
+      "fieldtype": "Int",
+      "label": "Dashboard Low Stock Alert Threshold",
+      "options": null
+    },
+    {
+      "name": "POS Settings-posa_enable_awesome_dashboard_global",
+      "dt": "POS Settings",
+      "fieldname": "posa_enable_awesome_dashboard_global",
+      "fieldtype": "Check",
+      "label": "Enable Awesome Dashboard",
+      "options": null
+    },
+    {
+      "name": "POS Settings-posa_enable_return_validity",
+      "dt": "POS Settings",
+      "fieldname": "posa_enable_return_validity",
+      "fieldtype": "Check",
+      "label": "Enable Return Validity",
+      "options": null
+    },
+    {
+      "name": "POS Settings-posa_return_validity_days",
+      "dt": "POS Settings",
+      "fieldname": "posa_return_validity_days",
+      "fieldtype": "Int",
+      "label": "Return Validity Days",
+      "options": null
+    },
+    {
+      "name": "POS Settings-posa_section_dashboard",
+      "dt": "POS Settings",
+      "fieldname": "posa_section_dashboard",
+      "fieldtype": "Section Break",
+      "label": "Awesome Dashboard",
+      "options": null
+    },
+    {
+      "name": "Print Settings-compact_item_print",
+      "dt": "Print Settings",
+      "fieldname": "compact_item_print",
+      "fieldtype": "Check",
+      "label": "Compact Item Print",
+      "options": null
+    },
+    {
+      "name": "Print Settings-print_taxes_with_zero_amount",
+      "dt": "Print Settings",
+      "fieldname": "print_taxes_with_zero_amount",
+      "fieldtype": "Check",
+      "label": "Print taxes with zero amount",
+      "options": null
+    },
+    {
+      "name": "Print Settings-print_uom_after_quantity",
+      "dt": "Print Settings",
+      "fieldname": "print_uom_after_quantity",
+      "fieldtype": "Check",
+      "label": "Print UOM after Quantity",
+      "options": null
+    },
+    {
+      "name": "Referral Form-custom_customer_name",
+      "dt": "Referral Form",
+      "fieldname": "custom_customer_name",
+      "fieldtype": "Data",
+      "label": "Referred Customer Name",
+      "options": null
+    },
+    {
+      "name": "Sales Invoice Item-name_overridden",
+      "dt": "Sales Invoice Item",
+      "fieldname": "name_overridden",
+      "fieldtype": "Check",
+      "label": "Name Overridden",
+      "options": null
+    },
+    {
+      "name": "Sales Invoice Item-posa_delivery_date",
+      "dt": "Sales Invoice Item",
+      "fieldname": "posa_delivery_date",
+      "fieldtype": "Date",
+      "label": "Delivery Date",
+      "options": null
+    },
+    {
+      "name": "Sales Invoice Item-posa_is_offer",
+      "dt": "Sales Invoice Item",
+      "fieldname": "posa_is_offer",
+      "fieldtype": "Check",
+      "label": "Is Offer",
+      "options": null
+    },
+    {
+      "name": "Sales Invoice Item-posa_is_replace",
+      "dt": "Sales Invoice Item",
+      "fieldname": "posa_is_replace",
+      "fieldtype": "Data",
+      "label": "Is Offer Replace For item Row ID",
+      "options": null
+    },
+    {
+      "name": "Sales Invoice Item-posa_notes",
+      "dt": "Sales Invoice Item",
+      "fieldname": "posa_notes",
+      "fieldtype": "Small Text",
+      "label": "Additional Notes",
+      "options": null
+    },
+    {
+      "name": "Sales Invoice Item-posa_offer_applied",
+      "dt": "Sales Invoice Item",
+      "fieldname": "posa_offer_applied",
+      "fieldtype": "Check",
+      "label": "Offer Applied",
+      "options": null
+    },
+    {
+      "name": "Sales Invoice Item-posa_offers",
+      "dt": "Sales Invoice Item",
+      "fieldname": "posa_offers",
+      "fieldtype": "Small Text",
+      "label": "POS Offers",
+      "options": null
+    },
+    {
+      "name": "Sales Invoice Item-posa_row_id",
+      "dt": "Sales Invoice Item",
+      "fieldname": "posa_row_id",
+      "fieldtype": "Data",
+      "label": "Row ID",
+      "options": null
+    },
+    {
+      "name": "Sales Invoice Reference-pos_invoice",
+      "dt": "Sales Invoice Reference",
+      "fieldname": "pos_invoice",
+      "fieldtype": "Link",
+      "label": "POS Invoice",
+      "options": "POS Invoice"
+    },
+    {
+      "name": "Sales Invoice-custom_column_break_5fsfa",
+      "dt": "Sales Invoice",
+      "fieldname": "custom_column_break_5fsfa",
+      "fieldtype": "Column Break",
+      "label": "",
+      "options": null
+    },
+    {
+      "name": "Sales Invoice-custom_column_break_subfx",
+      "dt": "Sales Invoice",
+      "fieldname": "custom_column_break_subfx",
+      "fieldtype": "Column Break",
+      "label": "",
+      "options": null
+    },
+    {
+      "name": "Sales Invoice-custom_commission_details",
+      "dt": "Sales Invoice",
+      "fieldname": "custom_commission_details",
+      "fieldtype": "Section Break",
+      "label": "Commission Details",
+      "options": null
+    },
+    {
+      "name": "Sales Invoice-custom_invoice_type",
+      "dt": "Sales Invoice",
+      "fieldname": "custom_invoice_type",
+      "fieldtype": "Select",
+      "label": "Invoice Type",
+      "options": "\nSales\nMaintenance"
+    },
+    {
+      "name": "Sales Invoice-custom_jv_entry",
+      "dt": "Sales Invoice",
+      "fieldname": "custom_jv_entry",
+      "fieldtype": "Link",
+      "label": "Jv Entry",
+      "options": "Journal Entry"
+    },
+    {
+      "name": "Sales Invoice-custom_maintenance_id",
+      "dt": "Sales Invoice",
+      "fieldname": "custom_maintenance_id",
+      "fieldtype": "Link",
+      "label": "Maintenance ID",
+      "options": "Maintenance"
+    },
+    {
+      "name": "Sales Invoice-custom_maintenance_visit_ref",
+      "dt": "Sales Invoice",
+      "fieldname": "custom_maintenance_visit_ref",
+      "fieldtype": "Data",
+      "label": "Maintenance Visit Ref",
+      "options": null
+    },
+    {
+      "name": "Sales Invoice-custom_maintenance_voucher_details",
+      "dt": "Sales Invoice",
+      "fieldname": "custom_maintenance_voucher_details",
+      "fieldtype": "Section Break",
+      "label": "Maintenance Voucher Details",
+      "options": null
+    },
+    {
+      "name": "Sales Invoice-custom_make_commission",
+      "dt": "Sales Invoice",
+      "fieldname": "custom_make_commission",
+      "fieldtype": "Button",
+      "label": "Make Commission",
+      "options": null
+    },
+    {
+      "name": "Sales Invoice-custom_manual_contract_no",
+      "dt": "Sales Invoice",
+      "fieldname": "custom_manual_contract_no",
+      "fieldtype": "Data",
+      "label": "Manual Contract No",
+      "options": null
+    },
+    {
+      "name": "Sales Invoice-custom_manual_voucher_number",
+      "dt": "Sales Invoice",
+      "fieldname": "custom_manual_voucher_number",
+      "fieldtype": "Data",
+      "label": "Manual Voucher Number",
+      "options": null
+    },
+    {
+      "name": "Sales Invoice-custom_sales_commission",
+      "dt": "Sales Invoice",
+      "fieldname": "custom_sales_commission",
+      "fieldtype": "Float",
+      "label": "Sales Commission",
+      "options": null
+    },
+    {
+      "name": "Sales Invoice-custom_sales_order_id",
+      "dt": "Sales Invoice",
+      "fieldname": "custom_sales_order_id",
+      "fieldtype": "Data",
+      "label": "Sales Order ID",
+      "options": null
+    },
+    {
+      "name": "Sales Invoice-custom_sales_person",
+      "dt": "Sales Invoice",
+      "fieldname": "custom_sales_person",
+      "fieldtype": "Link",
+      "label": "Sales Person",
+      "options": "Sales Person"
+    },
+    {
+      "name": "Sales Invoice-custom_section_break_cbrsu",
+      "dt": "Sales Invoice",
+      "fieldname": "custom_section_break_cbrsu",
+      "fieldtype": "Section Break",
+      "label": "",
+      "options": null
+    },
+    {
+      "name": "Sales Invoice-custom_sold_item_details",
+      "dt": "Sales Invoice",
+      "fieldname": "custom_sold_item_details",
+      "fieldtype": "Table",
+      "label": "Sold item Details",
+      "options": "Item Detail"
+    },
+    {
+      "name": "Sales Invoice-custom_supervisior",
+      "dt": "Sales Invoice",
+      "fieldname": "custom_supervisior",
+      "fieldtype": "Link",
+      "label": "Supervisior",
+      "options": "Sales Person"
+    },
+    {
+      "name": "Sales Invoice-custom_supervisior_commission",
+      "dt": "Sales Invoice",
+      "fieldname": "custom_supervisior_commission",
+      "fieldtype": "Float",
+      "label": "Supervisior Commission",
+      "options": null
+    },
+    {
+      "name": "Sales Invoice-custom_telemarketer",
+      "dt": "Sales Invoice",
+      "fieldname": "custom_telemarketer",
+      "fieldtype": "Link",
+      "label": "Telemarketer",
+      "options": "Sales Person"
+    },
+    {
+      "name": "Sales Invoice-custom_telemarketer_commission",
+      "dt": "Sales Invoice",
+      "fieldname": "custom_telemarketer_commission",
+      "fieldtype": "Float",
+      "label": "Telemarketer Commission",
+      "options": null
+    },
+    {
+      "name": "Sales Invoice-posa_additional_notes_section",
+      "dt": "Sales Invoice",
+      "fieldname": "posa_additional_notes_section",
+      "fieldtype": "Section Break",
+      "label": "Additional Notes",
+      "options": null
+    },
+    {
+      "name": "Sales Invoice-posa_authorization_code",
+      "dt": "Sales Invoice",
+      "fieldname": "posa_authorization_code",
+      "fieldtype": "Data",
+      "label": "Authorization Code",
+      "options": null
+    },
+    {
+      "name": "Sales Invoice-posa_column_break_111",
+      "dt": "Sales Invoice",
+      "fieldname": "posa_column_break_111",
+      "fieldtype": "Column Break",
+      "label": "",
+      "options": null
+    },
+    {
+      "name": "Sales Invoice-posa_coupons",
+      "dt": "Sales Invoice",
+      "fieldname": "posa_coupons",
+      "fieldtype": "Table",
+      "label": "POS Coupons Detail",
+      "options": "POS Coupon Detail"
+    },
+    {
+      "name": "Sales Invoice-posa_delivery_charges",
+      "dt": "Sales Invoice",
+      "fieldname": "posa_delivery_charges",
+      "fieldtype": "Link",
+      "label": "Delivery Charges",
+      "options": "Delivery Charges"
+    },
+    {
+      "name": "Sales Invoice-posa_delivery_charges_rate",
+      "dt": "Sales Invoice",
+      "fieldname": "posa_delivery_charges_rate",
+      "fieldtype": "Currency",
+      "label": "Delivery Charges Rate",
+      "options": "currency"
+    },
+    {
+      "name": "Sales Invoice-posa_delivery_date",
+      "dt": "Sales Invoice",
+      "fieldname": "posa_delivery_date",
+      "fieldtype": "Date",
+      "label": "Delivery Date",
+      "options": null
+    },
+    {
+      "name": "Sales Invoice-posa_is_printed",
+      "dt": "Sales Invoice",
+      "fieldname": "posa_is_printed",
+      "fieldtype": "Check",
+      "label": "Printed",
+      "options": null
+    },
+    {
+      "name": "Sales Invoice-posa_notes",
+      "dt": "Sales Invoice",
+      "fieldname": "posa_notes",
+      "fieldtype": "Small Text",
+      "label": "Additional Notes",
+      "options": null
+    },
+    {
+      "name": "Sales Invoice-posa_offers",
+      "dt": "Sales Invoice",
+      "fieldname": "posa_offers",
+      "fieldtype": "Table",
+      "label": "POS Offers Detail",
+      "options": "POS Offer Detail"
+    },
+    {
+      "name": "Sales Invoice-posa_pos_opening_shift",
+      "dt": "Sales Invoice",
+      "fieldname": "posa_pos_opening_shift",
+      "fieldtype": "Data",
+      "label": "POS Shift",
+      "options": null
+    },
+    {
+      "name": "Sales Invoice-posa_return_valid_upto",
+      "dt": "Sales Invoice",
+      "fieldname": "posa_return_valid_upto",
+      "fieldtype": "Date",
+      "label": "Return Valid Upto",
+      "options": null
+    },
+    {
+      "name": "Sales Order Item-custom_is_maintenance_item",
+      "dt": "Sales Order Item",
+      "fieldname": "custom_is_maintenance_item",
+      "fieldtype": "Check",
+      "label": "Is Maintenance Item",
+      "options": null
+    },
+    {
+      "name": "Sales Order Item-posa_notes",
+      "dt": "Sales Order Item",
+      "fieldname": "posa_notes",
+      "fieldtype": "Small Text",
+      "label": "Additional Notes",
+      "options": null
+    },
+    {
+      "name": "Sales Order Item-posa_row_id",
+      "dt": "Sales Order Item",
+      "fieldname": "posa_row_id",
+      "fieldtype": "Data",
+      "label": "Row ID",
+      "options": null
+    },
+    {
+      "name": "Sales Order-custom_column_break_aspdc",
+      "dt": "Sales Order",
+      "fieldname": "custom_column_break_aspdc",
+      "fieldtype": "Column Break",
+      "label": "",
+      "options": null
+    },
+    {
+      "name": "Sales Order-custom_column_break_zzfyc",
+      "dt": "Sales Order",
+      "fieldname": "custom_column_break_zzfyc",
+      "fieldtype": "Column Break",
+      "label": "",
+      "options": null
+    },
+    {
+      "name": "Sales Order-custom_commission_details",
+      "dt": "Sales Order",
+      "fieldname": "custom_commission_details",
+      "fieldtype": "Section Break",
+      "label": "Commission Details",
+      "options": null
+    },
+    {
+      "name": "Sales Order-custom_contract_type",
+      "dt": "Sales Order",
+      "fieldname": "custom_contract_type",
+      "fieldtype": "Select",
+      "label": "Contract Type",
+      "options": "\nSigned\nUnsigned"
+    },
+    {
+      "name": "Sales Order-custom_discount_account",
+      "dt": "Sales Order",
+      "fieldname": "custom_discount_account",
+      "fieldtype": "Link",
+      "label": "Discount Account",
+      "options": "Account"
+    },
+    {
+      "name": "Sales Order-custom_down_payment_amount",
+      "dt": "Sales Order",
+      "fieldname": "custom_down_payment_amount",
+      "fieldtype": "Data",
+      "label": "Down Payment Amount",
+      "options": null
+    },
+    {
+      "name": "Sales Order-custom_from_lead",
+      "dt": "Sales Order",
+      "fieldname": "custom_from_lead",
+      "fieldtype": "Data",
+      "label": "From Lead",
+      "options": null
+    },
+    {
+      "name": "Sales Order-custom_jv_entry",
+      "dt": "Sales Order",
+      "fieldname": "custom_jv_entry",
+      "fieldtype": "Link",
+      "label": "Jv Entry",
+      "options": "Journal Entry"
+    },
+    {
+      "name": "Sales Order-custom_make_commission",
+      "dt": "Sales Order",
+      "fieldname": "custom_make_commission",
+      "fieldtype": "Button",
+      "label": "Make Commission",
+      "options": null
+    },
+    {
+      "name": "Sales Order-custom_make_payment_entry",
+      "dt": "Sales Order",
+      "fieldname": "custom_make_payment_entry",
+      "fieldtype": "Button",
+      "label": "Make Payment Entry",
+      "options": null
+    },
+    {
+      "name": "Sales Order-custom_make_sales_invoice",
+      "dt": "Sales Order",
+      "fieldname": "custom_make_sales_invoice",
+      "fieldtype": "Button",
+      "label": "Make Sales Invoice",
+      "options": null
+    },
+    {
+      "name": "Sales Order-custom_sales_commission",
+      "dt": "Sales Order",
+      "fieldname": "custom_sales_commission",
+      "fieldtype": "Float",
+      "label": "Sales Commission",
+      "options": null
+    },
+    {
+      "name": "Sales Order-custom_sales_invoice_id",
+      "dt": "Sales Order",
+      "fieldname": "custom_sales_invoice_id",
+      "fieldtype": "Link",
+      "label": "Sales Invoice ID",
+      "options": "Sales Invoice"
+    },
+    {
+      "name": "Sales Order-custom_sales_person",
+      "dt": "Sales Order",
+      "fieldname": "custom_sales_person",
+      "fieldtype": "Link",
+      "label": "Sales Person",
+      "options": "Sales Person"
+    },
+    {
+      "name": "Sales Order-custom_serial_no",
+      "dt": "Sales Order",
+      "fieldname": "custom_serial_no",
+      "fieldtype": "Data",
+      "label": "Serial No",
+      "options": null
+    },
+    {
+      "name": "Sales Order-custom_supervisior",
+      "dt": "Sales Order",
+      "fieldname": "custom_supervisior",
+      "fieldtype": "Link",
+      "label": "Supervisior",
+      "options": "Sales Person"
+    },
+    {
+      "name": "Sales Order-custom_supervisior_commission",
+      "dt": "Sales Order",
+      "fieldname": "custom_supervisior_commission",
+      "fieldtype": "Float",
+      "label": "Supervisior Commission",
+      "options": null
+    },
+    {
+      "name": "Sales Order-custom_telemarketer",
+      "dt": "Sales Order",
+      "fieldname": "custom_telemarketer",
+      "fieldtype": "Link",
+      "label": "Telemarketer",
+      "options": "Sales Person"
+    },
+    {
+      "name": "Sales Order-custom_telemarketer_commission",
+      "dt": "Sales Order",
+      "fieldname": "custom_telemarketer_commission",
+      "fieldtype": "Float",
+      "label": "Telemarketer Commission",
+      "options": null
+    },
+    {
+      "name": "Sales Order-posa_additional_notes_section",
+      "dt": "Sales Order",
+      "fieldname": "posa_additional_notes_section",
+      "fieldtype": "Section Break",
+      "label": "Additional Notes",
+      "options": null
+    },
+    {
+      "name": "Sales Order-posa_coupons",
+      "dt": "Sales Order",
+      "fieldname": "posa_coupons",
+      "fieldtype": "Table",
+      "label": "POS Coupons Detail",
+      "options": "POS Coupon Detail"
+    },
+    {
+      "name": "Sales Order-posa_notes",
+      "dt": "Sales Order",
+      "fieldname": "posa_notes",
+      "fieldtype": "Small Text",
+      "label": "Additional Notes",
+      "options": null
+    },
+    {
+      "name": "Sales Order-posa_offers",
+      "dt": "Sales Order",
+      "fieldname": "posa_offers",
+      "fieldtype": "Table",
+      "label": "POS Offers Detail",
+      "options": "POS Offer Detail"
+    },
+    {
+      "name": "Sales Person-custom_sales_person_commission_ac",
+      "dt": "Sales Person",
+      "fieldname": "custom_sales_person_commission_ac",
+      "fieldtype": "Link",
+      "label": "Sales Person Commission A/C",
+      "options": "Account"
+    },
+    {
+      "name": "ToDo-custom_result",
+      "dt": "ToDo",
+      "fieldname": "custom_result",
+      "fieldtype": "Link",
+      "label": "Result",
+      "options": "Results"
+    },
+    {
+      "name": "User-assistant_enabled",
+      "dt": "User",
+      "fieldname": "assistant_enabled",
+      "fieldtype": "Check",
+      "label": "Enable Assistant Access",
+      "options": null
+    }
+  ],
   "doctype_details": {}
 }

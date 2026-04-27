@@ -149,19 +149,30 @@ async def generate_report(request: PromptRequest, background_tasks: BackgroundTa
     currency_info = await get_default_currency_info(client_id)
     generation_started_at = time.perf_counter()
 
-    if detected_intent == "chat":
-        from ai_engine import generate_chat_response
-        result = generate_chat_response(request.prompt, request.history)
-        result["sql"] = None
-    else:
-        result = generate_sql(
-            request.prompt, 
-            request.history, 
-            client_id, 
-            app_name=app_name, 
-            currency=currency_info["code"], 
-            currency_symbol=currency_info["symbol"]
-        )
+    try:
+        if detected_intent == "chat":
+            from ai_engine import generate_chat_response
+            result = generate_chat_response(request.prompt, request.history)
+            result["sql"] = None
+        else:
+            result = generate_sql(
+                request.prompt, 
+                request.history, 
+                client_id, 
+                app_name=app_name, 
+                currency=currency_info["code"], 
+                currency_symbol=currency_info["symbol"]
+            )
+    except Exception as ai_err:
+        import traceback
+        print(f"[Main] Critical error during AI generation: {ai_err}")
+        traceback.print_exc()
+        result = {
+            "sql": None,
+            "message": f"I encountered an internal error while processing your request: {str(ai_err)}",
+            "tokens_used": 0,
+            "detected_intent": detected_intent
+        }
 
     generation_ms = round((time.perf_counter() - generation_started_at) * 1000)
     if result.get("sql"):

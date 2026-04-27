@@ -1099,14 +1099,26 @@ def generate_sql(user_prompt, history=None, client_id="DEMO_CLIENT_123", app_nam
         repair_messages.append({"role": "assistant", "content": raw_output})
         repair_messages.append({"role": "user", "content": repair_instruction})
 
-        repair_response = client.chat.completions.create(
-            model=AI_MODEL,
-            messages=repair_messages,
-            temperature=0
-        )
-        repair_output = repair_response.choices[0].message.content.strip()
-        repair_tokens = repair_response.usage.total_tokens if hasattr(repair_response, "usage") and repair_response.usage else 0
-        tokens_used += repair_tokens
+        try:
+            repair_response = client.chat.completions.create(
+                model=AI_MODEL,
+                messages=repair_messages,
+                temperature=0
+            )
+            repair_output = repair_response.choices[0].message.content.strip()
+            usage = repair_response.usage if hasattr(repair_response, "usage") and repair_response.usage else None
+            repair_total = usage.total_tokens if usage else 0
+            
+            # Correctly update the tokens_used dictionary
+            tokens_used["total"] += repair_total
+            if usage:
+                tokens_used["prompt"] += usage.prompt_tokens
+                tokens_used["completion"] += usage.completion_tokens
+        except Exception as e:
+            print(f"[AI Engine] Error during SQL repair attempt: {e}")
+            # If repair fails, fall back to the original raw_output
+            repair_output = raw_output
+            
         repair_needs_forecast = "FORECAST:" in repair_output
         repaired_result = _parse_sql_response(repair_output, tokens_used, repair_needs_forecast)
 
