@@ -5,16 +5,41 @@ from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Integer, JSON, Str
 from sqlalchemy.orm import declarative_base, relationship, sessionmaker
 from sqlalchemy.sql import func
 
-load_dotenv()
+load_dotenv(override=True)
 
 DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./erp_ai_memory.db")
 IS_SQLITE = DATABASE_URL.startswith("sqlite")
 
-engine = create_engine(
-    DATABASE_URL,
-    connect_args={"check_same_thread": False} if IS_SQLITE else {},
-    pool_pre_ping=not IS_SQLITE,
-)
+def get_connection():
+    if IS_SQLITE:
+        # SQLite doesn't need a custom creator for simple use cases
+        return None
+    
+    # Import psycopg here to avoid dependency issues if not installed
+    import psycopg
+    from urllib.parse import urlparse, unquote
+    
+    url = urlparse(DATABASE_URL)
+    print(f"[Database] Connection creator called for {DATABASE_URL.replace(unquote(url.password or ''), '********')}")
+    return psycopg.connect(
+        host=url.hostname or "127.0.0.1",
+        port=url.port or 5432,
+        user=unquote(url.username or ""),
+        password=unquote(url.password or ""),
+        dbname=url.path.lstrip("/"),
+        sslmode="disable" # Vital for tunnel stability
+    )
+
+engine_kwargs = {
+    "pool_pre_ping": not IS_SQLITE,
+}
+
+if IS_SQLITE:
+    engine_kwargs["connect_args"] = {"check_same_thread": False}
+else:
+    engine_kwargs["creator"] = get_connection
+
+engine = create_engine(DATABASE_URL if IS_SQLITE else "postgresql+psycopg://", **engine_kwargs)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
@@ -191,7 +216,11 @@ def init_db(bind_engine=None):
     except Exception as outer_e:
         print(f"Database auto-migration safety check failed: {outer_e}")
 
-init_db()
+try:
+    init_db()
+except Exception as e:
+    print(f"WARNING: Database initialization failed. The server will start but database features may be unavailable. Error: {e}")
+
 
 def get_db():
     db = SessionLocal()
