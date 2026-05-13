@@ -260,8 +260,13 @@ Performance & Syntax Rules:
   - INSTEAD:
     1. Write a simple SQL query to extract the historical data grouped by a time period (e.g. Month, Week, Day).
     2. Group by the time period and SUM/AVG the target metric (e.g. `SELECT DATE_FORMAT(posting_date, '%Y-%m') AS 'Month', SUM(grand_total) AS 'Total' FROM ... GROUP BY Month`).
-    3. You MUST include the exact string "FORECAST: <date_col>, <target_col>, <periods>" anywhere in your markdown answer/comment. Use 6 as the default periods if the user doesn't specify.
-       Example: FORECAST: Month, Total, 6
+    3. You MUST include the exact string "FORECAST: <date_col>, <target_col>, <periods>" in your response OUTSIDE of the SQL code block. Use 6 as the default periods if the user doesn't specify.
+    4. The <date_col> and <target_col> MUST exactly match the aliases you used in your SQL query (e.g. if you wrote `SUM(amount) AS Total`, use `FORECAST: Month, Total, 6`).
+       Example: 
+       ```sql
+       SELECT DATE_FORMAT(posting_date, '%Y-%m') AS 'Month', SUM(grand_total) AS 'Total' FROM ... GROUP BY Month
+       ```
+       FORECAST: Month, Total, 6
   - The Python backend will catch this flag, execute your historical SQL, and run a statistical forecast model (Holt-Winters) on the results automatically.
 - For any amount, total, or currency fields, return the RAW numeric values. Do NOT use FORMAT() or CONCAT() to add currency symbols in the SQL.
 - NEVER use `FORMAT()` in SQL for ranking, ordering, or report output. Formatting belongs in the application layer, not the SQL query.
@@ -517,8 +522,9 @@ def _parse_sql_response(raw_output, tokens_used, needs_forecast):
         sql = sql.replace("'%Y-%m-d`", "'%Y-%m-%d'")
         sql = sql.replace("'%Y-%m`", "'%Y-%m'")
         
-        # 2. Fix cases where the AI might use double backticks on one side
-        sql = sql.replace("``", "`")
+        # 3. Strip any accidental FORECAST flag that leaked into the SQL
+        if "FORECAST:" in sql:
+            sql = re.sub(r"FORECAST:\s*.+?,\s*.+?,\s*\d+", "", sql, flags=re.IGNORECASE).strip()
         
         return sql
 

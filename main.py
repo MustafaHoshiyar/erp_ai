@@ -239,11 +239,30 @@ async def generate_report(request: PromptRequest, background_tasks: BackgroundTa
             import re
             from forecaster import generate_forecast
             match = re.search(r"FORECAST:\s*(.+?),\s*(.+?),\s*(\d+)", result.get("message", ""))
-            if match:
-                date_col = match.group(1).strip()
-                target_col = match.group(2).strip()
+            if match and data:
+                date_col_req = match.group(1).strip()
+                target_col_req = match.group(2).strip()
                 periods = int(match.group(3).strip())
-                print(f"[Main] Running Python forecast: {date_col}, {target_col}, for {periods} periods.")
+                
+                # Robust column matching
+                available_cols = list(data[0].keys()) if data else []
+                
+                def find_best_col(req, available):
+                    # 1. Exact match
+                    if req in available: return req
+                    # 2. Case-insensitive match
+                    for c in available:
+                        if c.lower() == req.lower(): return c
+                    # 3. Stripped match (no spaces)
+                    req_stripped = req.replace(" ", "").lower()
+                    for c in available:
+                        if c.replace(" ", "").lower() == req_stripped: return c
+                    return req # Fallback
+
+                date_col = find_best_col(date_col_req, available_cols)
+                target_col = find_best_col(target_col_req, available_cols)
+                
+                print(f"[Main] Running Python forecast: {date_col} (req: {date_col_req}), {target_col} (req: {target_col_req}), for {periods} periods.")
                 data = generate_forecast(data, date_col, target_col, periods)
 
         msg.execution_status = "success"
