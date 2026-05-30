@@ -557,13 +557,13 @@ code {
     letter-spacing: 0.5px;
 }
 
-/* Error Toast */
+/* Error Toast — neutral info style, never shows tracebacks */
 .error-toast {
     margin-top: 1rem;
     padding: 0.75rem;
-    background: rgba(239, 68, 68, 0.1);
-    border: 1px solid rgba(239, 68, 68, 0.2);
-    color: #fca5a5;
+    background: rgba(255, 183, 77, 0.1);
+    border: 1px solid rgba(255, 183, 77, 0.2);
+    color: #ffcc80;
     border-radius: 6px;
     font-size: 0.85rem;
 }

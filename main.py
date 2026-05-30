@@ -36,8 +36,44 @@ def _simplify_error_message(error_str: str) -> str:
         return "Database access denied. Please check your ERPNext credentials."
     if "connection" in err or "refused" in err:
         return "Could not connect to the ERPNext server. Please check the ERP URL."
-        
-    return "An error occurred while processing the report. The details have been logged for the developer."
+    if "timeout" in err:
+        return "The database request timed out. Please try again."
+    if "ssl" in err:
+        return "A secure connection error occurred. Please check your SSL configuration."
+    if "permission" in err or "not authorized" in err:
+        return "You don't have permission to perform this operation."
+    if "not found" in err or "404" in err:
+        return "The requested resource was not found."
+    if "duplicate" in err or "unique constraint" in err:
+        return "A record with the same key already exists. Please use a unique value."
+
+    return "An unexpected error occurred. Our team has been notified."
+
+
+def _clarification_from_error(error_str: str, original_prompt: str) -> str:
+    """Generates a clarifying question based on the error type instead of showing raw errors."""
+    err = str(error_str).lower()
+    if "unknown column" in err or "1054" in err:
+        return "I found the right table but one of the columns doesn't seem to exist. Could you specify which fields you're looking for in more detail?"
+    if "table" in err and "doesn't exist" in err or "1146" in err:
+        return "I couldn't find the table I was looking for. Could you tell me which module or document type you're referring to (e.g., Sales Invoice, Purchase Order, Items, etc.)?"
+    if "syntax" in err or "1064" in err:
+        return "I had trouble understanding the request. Could you rephrase it with more specific details about what you need?"
+    if "connection" in err or "refused" in err:
+        return "I'm having trouble connecting to the database. Please try again in a moment."
+    if "timeout" in err:
+        return "The query took too long to run. Could you try a more specific question, maybe narrowing the date range or filters?"
+    if "access denied" in err or "1045" in err or "unauthorized" in err:
+        return "I don't have access to the required data. Please check your permissions and try again."
+    return "I wasn't able to process that request. Could you rephrase your question with more detail about what you're looking for?"
+
+
+def _safe_http_error(status_code: int, error: Exception, prefix: str = ""):
+    """Raises HTTPException with user-safe message instead of raw error text."""
+    msg = _simplify_error_message(str(error))
+    if prefix:
+        msg = f"{prefix}: {msg}"
+    raise HTTPException(status_code=status_code, detail=msg)
 
 
 def _normalize_erp_base_url(url: str) -> str:
@@ -52,7 +88,7 @@ def home():
 
 @app.get("/health")
 def health():
-    return {"status": "ok", "service": "erp_ai"}
+    return {"status": "ok", "service": "erp_ai", "version": "debug_v1"}
     
 @app.get("/api/config")
 def get_config(client_id: str = "DEMO_CLIENT_123"):
@@ -169,7 +205,7 @@ async def generate_report(request: PromptRequest, background_tasks: BackgroundTa
         traceback.print_exc()
         result = {
             "sql": None,
-            "message": f"I encountered an internal error while processing your request: {str(ai_err)}",
+            "message": "I encountered an internal error while processing your request. Our team has been notified.",
             "tokens_used": 0,
             "detected_intent": detected_intent
         }
@@ -270,22 +306,25 @@ async def generate_report(request: PromptRequest, background_tasks: BackgroundTa
         db.commit()
         background_tasks.add_task(backfill_embeddings_in_background, client_id)
     except Exception as e:
-        msg.execution_status = "error"
+        import traceback
+        traceback.print_exc()
+        clarification = _clarification_from_error(str(e), request.prompt)
+        msg.execution_status = "clarification_needed"
+        msg.assistant_response = clarification
         msg.error_message = str(e)
         msg.execution_ms = round((time.perf_counter() - execution_started_at) * 1000) if 'execution_started_at' in locals() else None
         msg.total_duration_ms = round((time.perf_counter() - request_started_at) * 1000)
+        msg.detected_intent = "clarification_needed"
         db.commit()
         # Auto-push failures to Motherbrain immediately
         background_tasks.add_task(_push_telemetry_to_motherbrain, msg.id)
-        failed_sql = locals().get("validated_sql") or result.get("sql")
         return {
             "conversation_id": conversation_id,
             "message_id": msg.id,
-            "intent": msg.detected_intent,
-            "sql": failed_sql,
+            "intent": "clarification_needed",
+            "sql": None,
             "data": None,
-            "message": result.get("message"),
-            "error": _simplify_error_message(str(e)),
+            "message": clarification,
             "tokens_used": tokens_used
         }
 
@@ -315,7 +354,7 @@ async def api_generate_chart_config(request: ChartConfigRequest):
         config_json = json.loads(config_str)
         return config_json
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        _safe_http_error(500, e)
 
 class SaveReportRequest(BaseModel):
     client_id: str
@@ -343,7 +382,7 @@ def save_report(request: SaveReportRequest, background_tasks: BackgroundTasks, d
         return {"status": "success", "id": new_report.id}
     except Exception as e:
         db.rollback()
-        raise HTTPException(status_code=500, detail=str(e))
+        _safe_http_error(500, e)
 
 @app.get("/api/reports/insights-dashboards")
 async def get_insights_dashboards(client_id: str = "DEMO_CLIENT_123"):
@@ -352,7 +391,7 @@ async def get_insights_dashboards(client_id: str = "DEMO_CLIENT_123"):
         dashboards = await get_all_dashboards(client_id=_normalize_client_id(client_id))
         return {"status": "success", "dashboards": dashboards}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        _safe_http_error(500, e)
 
 @app.get("/api/reports/{client_id}")
 def get_saved_reports(client_id: str, user_id: Optional[str] = None, db: Session = Depends(get_db)):
@@ -385,7 +424,7 @@ def delete_saved_report(report_id: int, db: Session = Depends(get_db)):
         return {"status": "success"}
     except Exception as e:
         db.rollback()
-        raise HTTPException(status_code=500, detail=str(e))
+        _safe_http_error(500, e)
 
 @app.post("/api/schema/refresh")
 @app.get("/api/schema/refresh")
@@ -403,7 +442,7 @@ def refresh_schema(client_id: str = "DEMO_CLIENT_123"):
             "doctype_details": len(schema.get("doctype_details", {})),
         }
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Schema refresh failed: {str(e)}")
+        _safe_http_error(500, e, "Schema refresh failed")
 
 @app.post("/api/reports/execute/{report_id}")
 async def execute_saved_report(report_id: int, db: Session = Depends(get_db)):
@@ -571,7 +610,7 @@ async def export_to_insights(request: ExportInsightsRequest):
         )
         return result
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        _safe_http_error(500, e)
 
 class LoginRequest(BaseModel):
     username: str
@@ -613,13 +652,13 @@ async def login(req: LoginRequest):
         import traceback
         print(f"FAILED TO CONNECT TO ERPNext for client_id={client_id} at {config['erp_url']}")
         traceback.print_exc()
-        raise HTTPException(status_code=502, detail=f"Failed to connect to ERPNext: {str(exc)}")
+        _safe_http_error(502, exc, "Failed to connect to ERPNext")
     except HTTPException:
         raise
     except Exception as e:
         import traceback
         traceback.print_exc()
-        raise HTTPException(status_code=500, detail=str(e))
+        _safe_http_error(500, e)
 
 class ClientConfigRequest(BaseModel):
     client_id: str
@@ -661,9 +700,10 @@ def get_client_config(client_id: str, db: Session = Depends(get_db)):
             "is_active": config.is_active,
         }
     except Exception as e:
+        print(f"[Main] Client config lookup failed: {e}")
         return {
             "status": "node_internal_error",
-            "error": str(e),
+            "error": "An internal error occurred while fetching client configuration. Check server logs.",
             "internal_details": "Check edge node database connection or schema."
         }
 
@@ -924,7 +964,7 @@ def create_context_override(request: ContextOverrideRequest, db: Session = Depen
         return {"status": "success", "id": new_override.id}
     except Exception as e:
         db.rollback()
-        raise HTTPException(status_code=500, detail=str(e))
+        _safe_http_error(500, e)
 
 @app.get("/api/context-overrides/{client_id}")
 def get_context_overrides(client_id: str, app_name: Optional[str] = None, db: Session = Depends(get_db)):
@@ -972,7 +1012,7 @@ def create_system_prompt(request: SystemPromptRequest, db: Session = Depends(get
         return {"status": "success", "id": new_prompt.id}
     except Exception as e:
         db.rollback()
-        raise HTTPException(status_code=500, detail=str(e))
+        _safe_http_error(500, e)
 
 @app.get("/api/system-prompts/{client_id}")
 def get_system_prompts(client_id: str, app_name: Optional[str] = None, db: Session = Depends(get_db)):
@@ -1007,7 +1047,7 @@ def delete_system_prompt(prompt_id: int, db: Session = Depends(get_db)):
         return {"status": "success"}
     except Exception as e:
         db.rollback()
-        raise HTTPException(status_code=500, detail=str(e))
+        _safe_http_error(500, e)
 
 class FeatureFlagToggleRequest(BaseModel):
     client_id: str
@@ -1123,7 +1163,7 @@ def delete_conversation(conversation_id: int, db: Session = Depends(get_db)):
         return {"status": "success"}
     except Exception as e:
         db.rollback()
-        raise HTTPException(status_code=500, detail=str(e))
+        _safe_http_error(500, e)
 
 class ExecuteSqlRequest(BaseModel):
     sql: str
@@ -1137,7 +1177,7 @@ async def api_execute_sql(request: ExecuteSqlRequest):
         data = await run_query(validated_sql, client_id=request.client_id)
         return {"status": "success", "data": data}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        _safe_http_error(500, e)
 
 @app.delete("/api/context-overrides/{override_id}")
 def delete_context_override(override_id: int, db: Session = Depends(get_db)):
@@ -1152,7 +1192,7 @@ def delete_context_override(override_id: int, db: Session = Depends(get_db)):
         return {"status": "success"}
     except Exception as e:
         db.rollback()
-        raise HTTPException(status_code=500, detail=str(e))
+        _safe_http_error(500, e)
 
 
 # ---------------------------------------------------------------------------
@@ -1210,7 +1250,7 @@ def approve_pending_override(pending_id: int, db: Session = Depends(get_db)):
         return {"status": "approved", "override_id": new_override.id}
     except Exception as e:
         db.rollback()
-        raise HTTPException(status_code=500, detail=str(e))
+        _safe_http_error(500, e)
 
 
 @app.post("/api/pending-overrides/{pending_id}/reject")
@@ -1226,7 +1266,7 @@ def reject_pending_override(pending_id: int, db: Session = Depends(get_db)):
         return {"status": "rejected"}
     except Exception as e:
         db.rollback()
-        raise HTTPException(status_code=500, detail=str(e))
+        _safe_http_error(500, e)
 
 
 # ---------------------------------------------------------------------------

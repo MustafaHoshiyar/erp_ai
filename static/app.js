@@ -545,7 +545,8 @@ document.addEventListener('DOMContentLoaded', () => {
                                 alert("Failed to delete.");
                             }
                         } catch (err) {
-                            alert("Error: " + err.message);
+                            console.error(err);
+                            alert("Something went wrong. Please try again.");
                         }
                     }
                 });
@@ -598,17 +599,18 @@ document.addEventListener('DOMContentLoaded', () => {
                             message: msg.assistant_response || "Restored from history"
                         });
                     } catch (e) {
-                        showAiError(aiNode, "Failed to restore data: " + e.message);
+                        populateAiMessage(aiNode, {
+                            message_id: msg.id,
+                            sql: msg.generated_sql,
+                            message: "I couldn't restore this historical report. Please try running it again."
+                        });
                     }
                 } else {
                     populateAiMessage(aiNode, {
                         message_id: msg.id,
                         sql: msg.generated_sql,
-                        message: msg.assistant_response || msg.error_message || "No data available."
+                        message: msg.assistant_response || "I couldn't process this request at that time."
                     });
-                    if (msg.execution_status === 'error') {
-                        showAiError(aiNode, msg.error_message);
-                    }
                 }
 
                 // Update internal chat history for LLM context
@@ -622,7 +624,7 @@ document.addEventListener('DOMContentLoaded', () => {
             scrollToBottom();
         } catch (err) {
             console.error(err);
-            alert("Failed to load conversation messages.");
+            console.error("Failed to load conversation messages.", err);
         }
     }
 
@@ -715,9 +717,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // 4. Fill AI Response Block with Data
             populateAiMessage(aiMessageNode, result);
-            if (result.error) {
-                showAiError(aiMessageNode, result.error);
-            }
 
             // Update conversation ID if this was a new chat
             if (!currentConversationId && result.conversation_id) {
@@ -732,7 +731,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         } catch (err) {
             console.error(err);
-            showAiError(aiMessageNode, err.message || 'An unexpected error occurred.');
+            const msg = "I encountered a network issue. Please try again in a moment.";
+            populateAiMessage(aiMessageNode, { message: msg });
+            chatHistory.push({ role: 'assistant', content: msg });
         } finally {
             setLoadingState(false);
             scrollToBottom();
@@ -1065,7 +1066,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 } catch (e) {
                     console.error("Dashboard error:", e);
-                    alert("Could not generate dashboard: " + e.message);
+                    showToast("Could not generate the dashboard. Please try again.", "info");
                 } finally {
                     dashboardBtn.innerHTML = originalBtnContent;
                     dashboardBtn.disabled = false;
@@ -1114,7 +1115,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     loadSavedReports();
                 } catch (err) {
-                    alert("Error: " + err.message);
+                    console.error(err);
+                    alert("Something went wrong. Please try again.");
                     saveReportBtn.innerHTML = originalBtnContent;
                 } finally {
                     saveReportBtn.disabled = false;
@@ -1559,9 +1561,12 @@ document.addEventListener('DOMContentLoaded', () => {
     function showAiError(messageNode, errorMessage) {
         cleanupPlaceholderState(messageNode);
 
+        const contentDiv = messageNode.querySelector('.message-content');
         const toast = messageNode.querySelector('.error-toast');
-        toast.textContent = errorMessage;
-        toast.classList.remove('hidden');
+        if (toast) {
+            toast.textContent = errorMessage;
+            toast.classList.remove('hidden');
+        }
     }
 
     function setLoadingState(isLoading) {
