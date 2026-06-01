@@ -7,3 +7,5 @@ __pycache__/
 .pytest_cache/
 erp_ai_memory.db
 .docx
+opencode.json
+.playwright-mcp

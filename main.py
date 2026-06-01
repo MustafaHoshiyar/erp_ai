@@ -309,19 +309,18 @@ async def generate_report(request: PromptRequest, background_tasks: BackgroundTa
         import traceback
         traceback.print_exc()
         clarification = _clarification_from_error(str(e), request.prompt)
-        msg.execution_status = "clarification_needed"
-        msg.assistant_response = clarification
+        msg.execution_status = "error"
         msg.error_message = str(e)
+        msg.assistant_response = clarification
         msg.execution_ms = round((time.perf_counter() - execution_started_at) * 1000) if 'execution_started_at' in locals() else None
         msg.total_duration_ms = round((time.perf_counter() - request_started_at) * 1000)
-        msg.detected_intent = "clarification_needed"
         db.commit()
-        # Auto-push failures to Motherbrain immediately
+        # Auto-push failures to Motherbrain immediately with execution_status="error"
         background_tasks.add_task(_push_telemetry_to_motherbrain, msg.id)
         return {
             "conversation_id": conversation_id,
             "message_id": msg.id,
-            "intent": "clarification_needed",
+            "intent": msg.detected_intent,
             "sql": None,
             "data": None,
             "message": clarification,
