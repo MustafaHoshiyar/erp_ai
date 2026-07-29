@@ -489,6 +489,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initial load for desktop where sidebar is visible
     loadConversationHistory();
     fetchTokenStats();  // Load token stats on startup
+    fetchErpVersion();  // Load ERP version on startup
 
     async function loadConversationHistory() {
         sidebarV2Container.innerHTML = '<div class="text-muted" style="padding: 1rem;">Loading...</div>';
@@ -1588,6 +1589,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Initialize button state
     generateBtn.disabled = true;
+
+    // --- ERP Version ---
+    const erpVersionEl = document.getElementById('erp-version-value');
+
+    async function fetchErpVersion() {
+        try {
+            const res = await fetch(`/api/erp-version?client_id=${encodeURIComponent(CLIENT_ID)}`);
+            const data = await res.json();
+            if (data.erp_version) {
+                erpVersionEl.textContent = `v${data.erp_version}`;
+            } else {
+                erpVersionEl.textContent = 'unknown';
+            }
+        } catch (err) {
+            console.error('Failed to fetch ERP version:', err);
+            erpVersionEl.textContent = 'unknown';
+        }
+    }
 
     // --- Token Usage Stats ---
     async function fetchTokenStats() {

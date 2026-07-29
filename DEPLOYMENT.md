@@ -1,3 +1,9 @@
+password for 
+
+i what was
+
+or the erp_ai_user for postgresql d f
+
 # ERP AI Deployment Guide
 
 This project is a FastAPI app that serves:

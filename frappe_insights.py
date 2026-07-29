@@ -12,6 +12,43 @@ ERP_API_SECRET = os.getenv("ERP_API_SECRET")
 
 WORKBOOK_TITLE = "ERP AI Reports"
 
+_INSIGHTS_VERSION_CACHE = {}
+
+
+async def _get_insights_version(client_id: str) -> str | None:
+    if client_id in _INSIGHTS_VERSION_CACHE:
+        return _INSIGHTS_VERSION_CACHE[client_id]
+
+    config = _get_insights_runtime_config(client_id)
+    headers = {
+        "Authorization": f"token {config['api_key']}:{config['api_secret']}",
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+    }
+
+    async with httpx.AsyncClient() as client:
+        res = await client.get(
+            f"{config['site_url']}/api/resource/Insights Query v3",
+            headers=headers,
+            params={"limit_page_length": 1},
+            timeout=10.0
+        )
+        if res.status_code == 200:
+            _INSIGHTS_VERSION_CACHE[client_id] = "v3"
+            return "v3"
+
+        res = await client.get(
+            f"{config['site_url']}/api/method/insights.api.get_queries",
+            headers=headers,
+            timeout=10.0
+        )
+        if res.status_code == 200:
+            _INSIGHTS_VERSION_CACHE[client_id] = "v2"
+            return "v2"
+
+    _INSIGHTS_VERSION_CACHE[client_id] = None
+    return None
+
 
 def _normalize_site_base_url(url: str) -> str:
     normalized = (url or "").strip().rstrip("/")
@@ -74,6 +111,12 @@ async def get_or_create_workbook(client_id: str = "DEMO_CLIENT_123"):
 
 async def export_query_to_insights(title: str, sql: str, client_id: str = "DEMO_CLIENT_123"):
     """Creates a new Insights Query v3 record with the provided SQL."""
+    insights_version = await _get_insights_version(client_id)
+    if insights_version != "v3":
+        raise Exception(
+            "Frappe Insights v3 is required for dashboard export. "
+            "Please install or upgrade the Insights app to version 3 on your ERPNext instance."
+        )
     config = _get_insights_runtime_config(client_id)
     workbook_name = await get_or_create_workbook(client_id=client_id)
     
@@ -147,6 +190,12 @@ async def export_chart_and_dashboard_to_insights(title: str, sql: str, chart_typ
     2. Creates a Chart v3 linked to the query (query only, NO data_query)
     3. Appends to or creates Dashboard v3
     """
+    insights_version = await _get_insights_version(client_id)
+    if insights_version != "v3":
+        raise Exception(
+            "Frappe Insights v3 is required for dashboard export. "
+            "Please install or upgrade the Insights app to version 3 on your ERPNext instance."
+        )
     config = _get_insights_runtime_config(client_id)
     headers = {
         "Authorization": f"token {config['api_key']}:{config['api_secret']}",

@@ -181,8 +181,9 @@ async def generate_report(request: PromptRequest, background_tasks: BackgroundTa
             "tokens_used": 0
         }
 
-    from erp_client import get_default_currency_info
+    from erp_client import get_default_currency_info, get_frappe_version
     currency_info = await get_default_currency_info(client_id)
+    erp_version = await get_frappe_version(client_id)
     generation_started_at = time.perf_counter()
 
     try:
@@ -197,7 +198,8 @@ async def generate_report(request: PromptRequest, background_tasks: BackgroundTa
                 client_id, 
                 app_name=app_name, 
                 currency=currency_info["code"], 
-                currency_symbol=currency_info["symbol"]
+                currency_symbol=currency_info["symbol"],
+                erp_version=erp_version
             )
     except Exception as ai_err:
         import traceback
@@ -309,19 +311,18 @@ async def generate_report(request: PromptRequest, background_tasks: BackgroundTa
         import traceback
         traceback.print_exc()
         clarification = _clarification_from_error(str(e), request.prompt)
-        msg.execution_status = "clarification_needed"
-        msg.assistant_response = clarification
+        msg.execution_status = "error"
         msg.error_message = str(e)
+        msg.assistant_response = clarification
         msg.execution_ms = round((time.perf_counter() - execution_started_at) * 1000) if 'execution_started_at' in locals() else None
         msg.total_duration_ms = round((time.perf_counter() - request_started_at) * 1000)
-        msg.detected_intent = "clarification_needed"
         db.commit()
-        # Auto-push failures to Motherbrain immediately
+        # Auto-push failures to Motherbrain immediately with execution_status="error"
         background_tasks.add_task(_push_telemetry_to_motherbrain, msg.id)
         return {
             "conversation_id": conversation_id,
             "message_id": msg.id,
-            "intent": "clarification_needed",
+            "intent": msg.detected_intent,
             "sql": None,
             "data": None,
             "message": clarification,
@@ -477,6 +478,13 @@ async def get_currency_info(client_id: Optional[str] = None, db: Session = Depen
 
 def _token_reset_allowed() -> bool:
     return os.getenv("ENVIRONMENT", "development").lower() != "production"
+
+
+@app.get("/api/erp-version")
+async def get_erp_version_endpoint(client_id: str = "DEMO_CLIENT_123"):
+    from erp_version import get_erp_version
+    version = await get_erp_version(client_id)
+    return {"erp_version": version, "client_id": client_id}
 
 
 @app.get("/api/token-stats")

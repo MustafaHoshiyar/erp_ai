@@ -1,6 +1,6 @@
 {
-  "fetched_at": 1775134700.5947077,
-  "fetched_at_readable": "2026-04-02 18:28:20",
+  "fetched_at": 1785245283.5541816,
+  "fetched_at_readable": "2026-07-28 18:58:03",
   "available_doctypes": [
     {
       "name": "About Us Settings",
@@ -5479,6 +5479,14 @@
       "options": null
     },
     {
+      "name": "Lead Follow Up-custom_lead_name",
+      "dt": "Lead Follow Up",
+      "fieldname": "custom_lead_name",
+      "fieldtype": "Data",
+      "label": "Lead Name",
+      "options": null
+    },
+    {
       "name": "Lead Pending Calls-custom_history",
       "dt": "Lead Pending Calls",
       "fieldname": "custom_history",
@@ -5791,6 +5799,22 @@
       "options": "Maintenance"
     },
     {
+      "name": "Maintenance-custom_state",
+      "dt": "Maintenance",
+      "fieldname": "custom_state",
+      "fieldtype": "Select",
+      "label": "State",
+      "options": "\nActive\nInactive"
+    },
+    {
+      "name": "Payment Entry-custom_comments",
+      "dt": "Payment Entry",
+      "fieldname": "custom_comments",
+      "fieldtype": "Small Text",
+      "label": "Comments",
+      "options": null
+    },
+    {
       "name": "Payment Entry-custom_is_partial",
       "dt": "Payment Entry",
       "fieldname": "custom_is_partial",
@@ -5828,7 +5852,7 @@
       "fieldname": "custom_payment_purpose",
       "fieldtype": "Select",
       "label": "Payment Purpose",
-      "options": "\nDown Payment\nInstallment\nMaintenance"
+      "options": "\nDown Payment\nInstallment\nMaintenance\nSettle"
     },
     {
       "name": "Payment Entry-custom_sales_order_id",
@@ -5837,6 +5861,14 @@
       "fieldtype": "Link",
       "label": "Sales Order Id",
       "options": "Sales Order"
+    },
+    {
+      "name": "Payment Entry-workflow_state",
+      "dt": "Payment Entry",
+      "fieldname": "workflow_state",
+      "fieldtype": "Link",
+      "label": "Workflow State",
+      "options": "Workflow State"
     },
     {
       "name": "Print Settings-compact_item_print",
@@ -7486,85 +7518,464 @@
         }
       ]
     },
-    "Sales Person": {
-      "name": "Sales Person",
-      "module": "Setup",
+    "Sales Invoice Item": {
+      "name": "Sales Invoice Item",
+      "module": "Accounts",
       "custom": 0,
-      "istable": 0,
+      "istable": 1,
       "fields": [
         {
-          "fieldname": "sales_person_name",
+          "fieldname": "barcode",
           "fieldtype": "Data",
-          "label": "Sales Person Name",
+          "label": "Barcode",
           "options": null
         },
         {
-          "fieldname": "parent_sales_person",
-          "fieldtype": "Link",
-          "label": "Parent Sales Person",
-          "options": "Sales Person"
-        },
-        {
-          "fieldname": "commission_rate",
-          "fieldtype": "Data",
-          "label": "Commission Rate",
-          "options": null
-        },
-        {
-          "fieldname": "is_group",
+          "fieldname": "has_item_scanned",
           "fieldtype": "Check",
-          "label": "Is Group",
+          "label": "Has Item Scanned",
           "options": null
         },
         {
-          "fieldname": "enabled",
-          "fieldtype": "Check",
-          "label": "Enabled",
-          "options": null
-        },
-        {
-          "fieldname": "employee",
+          "fieldname": "item_code",
           "fieldtype": "Link",
-          "label": "Employee",
-          "options": "Employee"
+          "label": "Item",
+          "options": "Item"
         },
         {
-          "fieldname": "department",
-          "fieldtype": "Link",
-          "label": "Department",
-          "options": "Department"
-        },
-        {
-          "fieldname": "lft",
-          "fieldtype": "Int",
-          "label": "lft",
-          "options": null
-        },
-        {
-          "fieldname": "rgt",
-          "fieldtype": "Int",
-          "label": "rgt",
-          "options": null
-        },
-        {
-          "fieldname": "old_parent",
+          "fieldname": "item_name",
           "fieldtype": "Data",
-          "label": "old_parent",
+          "label": "Item Name",
           "options": null
         },
         {
-          "fieldname": "targets",
-          "fieldtype": "Table",
-          "label": "Targets",
-          "options": "Target Detail"
+          "fieldname": "customer_item_code",
+          "fieldtype": "Data",
+          "label": "Customer's Item Code",
+          "options": null
+        },
+        {
+          "fieldname": "description",
+          "fieldtype": "Text Editor",
+          "label": "Description",
+          "options": null
+        },
+        {
+          "fieldname": "item_group",
+          "fieldtype": "Link",
+          "label": "Item Group",
+          "options": "Item Group"
+        },
+        {
+          "fieldname": "brand",
+          "fieldtype": "Data",
+          "label": "Brand Name",
+          "options": null
+        },
+        {
+          "fieldname": "image",
+          "fieldtype": "Attach",
+          "label": "Image",
+          "options": null
+        },
+        {
+          "fieldname": "image_view",
+          "fieldtype": "Image",
+          "label": "Image View",
+          "options": "image"
+        },
+        {
+          "fieldname": "qty",
+          "fieldtype": "Float",
+          "label": "Quantity",
+          "options": null
+        },
+        {
+          "fieldname": "stock_uom",
+          "fieldtype": "Link",
+          "label": "Stock UOM",
+          "options": "UOM"
+        },
+        {
+          "fieldname": "uom",
+          "fieldtype": "Link",
+          "label": "UOM",
+          "options": "UOM"
+        },
+        {
+          "fieldname": "conversion_factor",
+          "fieldtype": "Float",
+          "label": "UOM Conversion Factor",
+          "options": null
+        },
+        {
+          "fieldname": "stock_qty",
+          "fieldtype": "Float",
+          "label": "Qty as per Stock UOM",
+          "options": null
+        },
+        {
+          "fieldname": "price_list_rate",
+          "fieldtype": "Currency",
+          "label": "Price List Rate",
+          "options": "currency"
+        },
+        {
+          "fieldname": "base_price_list_rate",
+          "fieldtype": "Currency",
+          "label": "Price List Rate (Company Currency)",
+          "options": "Company:company:default_currency"
+        },
+        {
+          "fieldname": "margin_type",
+          "fieldtype": "Select",
+          "label": "Margin Type",
+          "options": "\nPercentage\nAmount"
+        },
+        {
+          "fieldname": "margin_rate_or_amount",
+          "fieldtype": "Float",
+          "label": "Margin Rate or Amount",
+          "options": null
+        },
+        {
+          "fieldname": "rate_with_margin",
+          "fieldtype": "Currency",
+          "label": "Rate With Margin",
+          "options": "currency"
+        },
+        {
+          "fieldname": "discount_percentage",
+          "fieldtype": "Percent",
+          "label": "Discount (%) on Price List Rate with Margin",
+          "options": null
+        },
+        {
+          "fieldname": "discount_amount",
+          "fieldtype": "Currency",
+          "label": "Discount Amount",
+          "options": "currency"
+        },
+        {
+          "fieldname": "base_rate_with_margin",
+          "fieldtype": "Currency",
+          "label": "Rate With Margin (Company Currency)",
+          "options": "Company:company:default_currency"
+        },
+        {
+          "fieldname": "rate",
+          "fieldtype": "Currency",
+          "label": "Rate",
+          "options": "currency"
+        },
+        {
+          "fieldname": "amount",
+          "fieldtype": "Currency",
+          "label": "Amount",
+          "options": "currency"
+        },
+        {
+          "fieldname": "item_tax_template",
+          "fieldtype": "Link",
+          "label": "Item Tax Template",
+          "options": "Item Tax Template"
+        },
+        {
+          "fieldname": "base_rate",
+          "fieldtype": "Currency",
+          "label": "Rate (Company Currency)",
+          "options": "Company:company:default_currency"
+        },
+        {
+          "fieldname": "base_amount",
+          "fieldtype": "Currency",
+          "label": "Amount (Company Currency)",
+          "options": "Company:company:default_currency"
+        },
+        {
+          "fieldname": "pricing_rules",
+          "fieldtype": "Small Text",
+          "label": "Pricing Rules",
+          "options": null
+        },
+        {
+          "fieldname": "stock_uom_rate",
+          "fieldtype": "Currency",
+          "label": "Rate of Stock UOM",
+          "options": "currency"
+        },
+        {
+          "fieldname": "is_free_item",
+          "fieldtype": "Check",
+          "label": "Is Free Item",
+          "options": null
+        },
+        {
+          "fieldname": "grant_commission",
+          "fieldtype": "Check",
+          "label": "Grant Commission",
+          "options": null
+        },
+        {
+          "fieldname": "net_rate",
+          "fieldtype": "Currency",
+          "label": "Net Rate",
+          "options": "currency"
+        },
+        {
+          "fieldname": "net_amount",
+          "fieldtype": "Currency",
+          "label": "Net Amount",
+          "options": "currency"
+        },
+        {
+          "fieldname": "base_net_rate",
+          "fieldtype": "Currency",
+          "label": "Net Rate (Company Currency)",
+          "options": "Company:company:default_currency"
+        },
+        {
+          "fieldname": "base_net_amount",
+          "fieldtype": "Currency",
+          "label": "Net Amount (Company Currency)",
+          "options": "Company:company:default_currency"
+        },
+        {
+          "fieldname": "delivered_by_supplier",
+          "fieldtype": "Check",
+          "label": "Delivered By Supplier",
+          "options": null
+        },
+        {
+          "fieldname": "income_account",
+          "fieldtype": "Link",
+          "label": "Income Account",
+          "options": "Account"
+        },
+        {
+          "fieldname": "is_fixed_asset",
+          "fieldtype": "Check",
+          "label": "Is Fixed Asset",
+          "options": null
+        },
+        {
+          "fieldname": "asset",
+          "fieldtype": "Link",
+          "label": "Asset",
+          "options": "Asset"
+        },
+        {
+          "fieldname": "finance_book",
+          "fieldtype": "Link",
+          "label": "Finance Book",
+          "options": "Finance Book"
+        },
+        {
+          "fieldname": "expense_account",
+          "fieldtype": "Link",
+          "label": "Expense Account",
+          "options": "Account"
+        },
+        {
+          "fieldname": "discount_account",
+          "fieldtype": "Link",
+          "label": "Discount Account",
+          "options": "Account"
+        },
+        {
+          "fieldname": "deferred_revenue_account",
+          "fieldtype": "Link",
+          "label": "Deferred Revenue Account",
+          "options": "Account"
+        },
+        {
+          "fieldname": "service_stop_date",
+          "fieldtype": "Date",
+          "label": "Service Stop Date",
+          "options": null
+        },
+        {
+          "fieldname": "enable_deferred_revenue",
+          "fieldtype": "Check",
+          "label": "Enable Deferred Revenue",
+          "options": null
+        },
+        {
+          "fieldname": "service_start_date",
+          "fieldtype": "Date",
+          "label": "Service Start Date",
+          "options": null
+        },
+        {
+          "fieldname": "service_end_date",
+          "fieldtype": "Date",
+          "label": "Service End Date",
+          "options": null
+        },
+        {
+          "fieldname": "weight_per_unit",
+          "fieldtype": "Float",
+          "label": "Weight Per Unit",
+          "options": null
+        },
+        {
+          "fieldname": "total_weight",
+          "fieldtype": "Float",
+          "label": "Total Weight",
+          "options": null
+        },
+        {
+          "fieldname": "weight_uom",
+          "fieldtype": "Link",
+          "label": "Weight UOM",
+          "options": "UOM"
+        },
+        {
+          "fieldname": "warehouse",
+          "fieldtype": "Link",
+          "label": "Warehouse",
+          "options": "Warehouse"
+        },
+        {
+          "fieldname": "target_warehouse",
+          "fieldtype": "Link",
+          "label": "Target Warehouse",
+          "options": "Warehouse"
+        },
+        {
+          "fieldname": "quality_inspection",
+          "fieldtype": "Link",
+          "label": "Quality Inspection",
+          "options": "Quality Inspection"
+        },
+        {
+          "fieldname": "serial_and_batch_bundle",
+          "fieldtype": "Link",
+          "label": "Serial and Batch Bundle",
+          "options": "Serial and Batch Bundle"
+        },
+        {
+          "fieldname": "use_serial_batch_fields",
+          "fieldtype": "Check",
+          "label": "Use Serial No / Batch Fields",
+          "options": null
+        },
+        {
+          "fieldname": "allow_zero_valuation_rate",
+          "fieldtype": "Check",
+          "label": "Allow Zero Valuation Rate",
+          "options": null
+        },
+        {
+          "fieldname": "incoming_rate",
+          "fieldtype": "Currency",
+          "label": "Incoming Rate (Costing)",
+          "options": "Company:company:default_currency"
+        },
+        {
+          "fieldname": "item_tax_rate",
+          "fieldtype": "Small Text",
+          "label": "Item Tax Rate",
+          "options": null
+        },
+        {
+          "fieldname": "actual_batch_qty",
+          "fieldtype": "Float",
+          "label": "Available Batch Qty at Warehouse",
+          "options": null
+        },
+        {
+          "fieldname": "serial_no",
+          "fieldtype": "Text",
+          "label": "Serial No",
+          "options": null
+        },
+        {
+          "fieldname": "batch_no",
+          "fieldtype": "Link",
+          "label": "Batch No",
+          "options": "Batch"
+        },
+        {
+          "fieldname": "actual_qty",
+          "fieldtype": "Float",
+          "label": "Qty (Warehouse)",
+          "options": null
+        },
+        {
+          "fieldname": "company_total_stock",
+          "fieldtype": "Float",
+          "label": "Qty (Company)",
+          "options": null
+        },
+        {
+          "fieldname": "sales_order",
+          "fieldtype": "Link",
+          "label": "Sales Order",
+          "options": "Sales Order"
+        },
+        {
+          "fieldname": "so_detail",
+          "fieldtype": "Data",
+          "label": "Sales Order Item",
+          "options": null
+        },
+        {
+          "fieldname": "sales_invoice_item",
+          "fieldtype": "Data",
+          "label": "Sales Invoice Item",
+          "options": null
+        },
+        {
+          "fieldname": "delivery_note",
+          "fieldtype": "Link",
+          "label": "Delivery Note",
+          "options": "Delivery Note"
+        },
+        {
+          "fieldname": "dn_detail",
+          "fieldtype": "Data",
+          "label": "Delivery Note Item",
+          "options": null
+        },
+        {
+          "fieldname": "delivered_qty",
+          "fieldtype": "Float",
+          "label": "Delivered Qty",
+          "options": null
+        },
+        {
+          "fieldname": "purchase_order",
+          "fieldtype": "Link",
+          "label": "Purchase Order",
+          "options": "Purchase Order"
+        },
+        {
+          "fieldname": "purchase_order_item",
+          "fieldtype": "Data",
+          "label": "Purchase Order Item",
+          "options": null
+        },
+        {
+          "fieldname": "cost_center",
+          "fieldtype": "Link",
+          "label": "Cost Center",
+          "options": "Cost Center"
+        },
+        {
+          "fieldname": "project",
+          "fieldtype": "Link",
+          "label": "Project",
+          "options": "Project"
+        },
+        {
+          "fieldname": "page_break",
+          "fieldtype": "Check",
+          "label": "Page Break",
+          "options": null
         }
       ],
-      "child_tables": [
-        {
-          "child_doctype": "Target Detail",
-          "fieldname": "targets"
-        }
-      ]
+      "child_tables": []
     }
   }
 }
