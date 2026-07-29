@@ -59,6 +59,11 @@ async def run_query(sql, client_id="DEMO_CLIENT_123"):
         return data
 
 
+async def get_frappe_version(client_id="DEMO_CLIENT_123"):
+    from erp_version import get_erp_version
+    return await get_erp_version(client_id)
+
+
 async def get_app_name(client_id="DEMO_CLIENT_123"):
     """Fetches the App Name from ERPNext System Settings."""
     config = get_client_runtime_config(client_id)

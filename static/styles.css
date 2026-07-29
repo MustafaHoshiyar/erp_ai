@@ -1114,6 +1114,18 @@ body:has(.sidebar.collapsed) .open-sidebar-btn {
     color: var(--primary-color);
 }
 
+.erp-version-display {
+    margin: 0.75rem 0;
+    padding: 0.5rem 0.75rem;
+    background: rgba(99, 102, 241, 0.05);
+    border-radius: 6px;
+    font-size: 0.8rem;
+}
+
+.erp-version-display strong {
+    color: var(--primary-color);
+}
+
 /* Profile Actions Dashboard Style */
 .profile-actions {
     display: flex;

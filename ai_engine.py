@@ -309,6 +309,36 @@ ERPNext Semantics To Respect:
 """
 
 
+_V14_SCHEMA_NOTES = """
+[ERPNext v14 Schema Notes]
+- Stock batches are tracked via `batch_no` column directly on `tabStock Ledger Entry`.
+- Serial numbers are stored in the `serial_no` column directly on `tabStock Ledger Entry`.
+- Dunning documents link to a single Sales Invoice via a direct link field.
+- Event cancellation is tracked in the `event_type` field (value: 'Cancelled').
+- Cashflow Mapper doctype is available for cashflow-related queries.
+"""
+
+_V15_SCHEMA_NOTES = """
+[ERPNext v15 Schema Notes]
+- Stock batches for NEW transactions are stored in `tabSerial and Batch Entry`
+  (child of `tabSerial and Batch Bundle`). Legacy entries still have `batch_no`
+  directly on `tabStock Ledger Entry`. For safest results, check `tabSerial and Batch Bundle` first.
+- Serial numbers for new transactions follow the same `tabSerial and Batch Bundle` pattern.
+- Dunning contains a child table of overdue payments, each linking to a separate Sales Invoice.
+- Event cancellation is tracked in the `status` field (value: 'Cancelled').
+- Cashflow Mapper has been deprecated and removed.
+- Account types include: Current Asset, Current Liability, Direct Income, Indirect Income.
+"""
+
+
+def _get_version_schema_notes(erp_version: str) -> str:
+    if erp_version == "15":
+        return _V15_SCHEMA_NOTES
+    elif erp_version == "14":
+        return _V14_SCHEMA_NOTES
+    return ""
+
+
 def _contains_any(prompt_lower, terms) -> bool:
     return any(term in prompt_lower for term in terms)
 
@@ -957,11 +987,17 @@ def build_non_report_response(user_prompt, intent):
 
     return "I am focused on ERPNext reporting and analytics. Ask me for a report, KPI, dashboard, trend, comparison, or forecast from your ERP data."
 
-def generate_sql(user_prompt, history=None, client_id="DEMO_CLIENT_123", app_name=None, currency="USD", currency_symbol="$"):
+def generate_sql(user_prompt, history=None, client_id="DEMO_CLIENT_123", app_name=None, currency="USD", currency_symbol="$", erp_version=None):
     effective_user_prompt = _build_effective_user_prompt(user_prompt, history)
     memory_context = get_relevant_schema_context(client_id, effective_user_prompt, app_name=app_name)
     
     dynamic_system_prompt = SYSTEM_PROMPT.format(currency=currency)
+    
+    # Inject ERPNext version-specific schema notes
+    if erp_version:
+        version_notes = _get_version_schema_notes(erp_version)
+        if version_notes:
+            dynamic_system_prompt += f"\n\n{version_notes}"
     
     # Inject Dynamic Database-stored Prompt Segments
     dynamic_segments = _get_dynamic_system_prompt_segments(client_id, app_name)
