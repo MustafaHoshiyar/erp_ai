@@ -638,7 +638,12 @@ async def login(req: LoginRequest):
             raise HTTPException(status_code=400, detail="Workspace ID is required")
 
         config = get_client_runtime_config(client_id)
-        if not config or not config.get('erp_url'):
+        if not config or config.get("source") == "env_fallback":
+            raise HTTPException(
+                status_code=404,
+                detail="Invalid Workspace ID. Please contact your Service Provider."
+            )
+        if not config.get('erp_url'):
             raise HTTPException(status_code=404, detail=f"No configuration found for Workspace ID: {client_id}")
 
         async with httpx.AsyncClient() as client:
