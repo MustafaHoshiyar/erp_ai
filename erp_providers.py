@@ -100,17 +100,19 @@ class OdooProvider(ERPProvider):
                     timeout=30.0
                 )
                 data = response.json()
-                # Odoo json-rpc wrapper handles 'result' key
-                if "error" in data:
-                    raise Exception(f"Odoo Bridge Error: {data['error'].get('message', 'Unknown Error')}")
-                
-                result = data.get("result", {})
-                if "error" in result:
-                    raise Exception(f"Odoo SQL Error: {result['error']}")
-                
-                return result.get("data", []) # Should return the list of rows
             except Exception as e:
                 raise Exception(f"Failed to reach Odoo bridge: {e}")
+
+            # Odoo json-rpc wrapper handles 'result' key
+            if "error" in data:
+                raise Exception(f"Odoo Bridge Error: {data['error'].get('message', 'Unknown Error')}")
+            
+            result = data.get("result", {})
+            if "error" in result:
+                # This is a specific SQL execution error from Odoo (PostgreSQL)
+                raise Exception(f"Odoo SQL Error: {result['error']}")
+            
+            return result.get("data", []) # Should return the list of rows
 
     async def get_app_name(self) -> str:
         if self.config.get("app_name_override"):

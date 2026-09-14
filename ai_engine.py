@@ -362,7 +362,16 @@ Security & Safety:
 
 Odoo Specific Rules:
 - NEVER use the 'is_return' column; it does not exist in Odoo schema.
+- In `res_partner` (Customers/Suppliers), the column `total_invoiced` does NOT exist in the database (it is a computed field). Do not attempt to use it. If you need total invoiced metrics, you must calculate them by joining with `account_move`.
 - Always use simple table names without 'tab' prefix.
+
+Human-Readable Labels Rule:
+- When the query involves entities like Products, Partners (Customers/Suppliers), or Users, DO NOT just return their internal database IDs (e.g., `product_id`, `partner_id`).
+- ALWAYS perform the necessary join to fetch the human-readable name or label for the user.
+- For Products: Join `product_product` to `product_template` and fetch `product_template.name ->> 'en_US' AS product_name`. 
+- For Partners: Reference `res_partner.name AS partner_name`.
+- For Users: Join `res_users` to `res_partner` to get the name.
+- This ensures results are readable for humans while remaining technically accurate.
 """
 
 
@@ -429,11 +438,18 @@ def _get_dynamic_system_prompt_segments(client_id: str, app_name: str = None, er
         db.close()
 
 
-def build_prompt_specific_guidance(user_prompt, history=None, client_id="DEMO_CLIENT_123", app_name=None):
+def build_prompt_specific_guidance(user_prompt, history=None, client_id="DEMO_CLIENT_123", app_name=None, erp_type="erpnext"):
     prompt_lower = (user_prompt or "").strip().lower()
     guidance_lines = []
     last_sql = _extract_last_sql_from_history(history)
     client_guardrail_enabled = _client_has_feature_flag(client_id, "sales_invoice_followup_guardrail")
+
+    if erp_type == "odoo":
+        # Specific Odoo guidance for common human-readable fields
+        if "product" in prompt_lower or "item" in prompt_lower:
+            guidance_lines.append("- ODOO RULE: When showing products, ALWAYS join `product_product` to `product_template` to fetch the human-readable product name.")
+        if "customer" in prompt_lower or "partner" in prompt_lower or "supplier" in prompt_lower:
+            guidance_lines.append("- ODOO RULE: When showing partners (customers/suppliers), ALWAYS include the human-readable name from `res_partner`.")
 
     if _contains_any(prompt_lower, _REORDER_TERMS):
         guidance_lines.extend(
@@ -1061,7 +1077,7 @@ def generate_sql(user_prompt, history=None, client_id="DEMO_CLIENT_123", app_nam
     if dynamic_segments:
         dynamic_system_prompt += f"\n{dynamic_segments}"
         
-    prompt_specific_guidance = build_prompt_specific_guidance(effective_user_prompt, history, client_id, app_name)
+    prompt_specific_guidance = build_prompt_specific_guidance(effective_user_prompt, history, client_id, app_name, erp_type=erp_type)
     
     from schema_router import get_optimized_schema_context
     from schema_planner import build_relation_constraints
@@ -1099,7 +1115,7 @@ def generate_sql(user_prompt, history=None, client_id="DEMO_CLIENT_123", app_nam
             content = str(item.get("content", "")).strip()
             
             # If the content is an Assistant's Technical Error (Traceback), summarize it
-            if role == "assistant" and ("Traceback (most recent call last)" in content or "ERPNext SQL Error" in content):
+            if role == "assistant" and any(err in content for err in ["Traceback (most recent call last)", "ERPNext SQL Error", "Odoo SQL Error", "Odoo Bridge Error"]):
                 # Extract only the last error line if possible, or just a short summary
                 last_line = content.splitlines()[-1] if content.strip() else "Unknown Database Error"
                 content = f"Error: {last_line}"

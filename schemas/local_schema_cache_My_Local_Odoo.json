@@ -1,6 +1,6 @@
 {
-  "fetched_at": 1776414509.649834,
-  "fetched_at_readable": "2026-04-17 13:58:29",
+  "fetched_at": 1776664470.8235178,
+  "fetched_at_readable": "2026-04-20 11:24:30",
   "erp_type": "odoo",
   "available_doctypes": [
     {
@@ -2585,9 +2585,4831 @@
         "en_US": "Warn Insufficient Quantity"
       },
       "original_model": "stock.warn.insufficient.qty"
+    },
+    {
+      "name": "odashboard_api_key",
+      "label": {
+        "en_US": "O'Dashboard API Key"
+      },
+      "original_model": "odashboard.api.key"
     }
   ],
   "custom_doctypes": [],
   "custom_fields": [],
-  "doctype_details": {}
+  "doctype_details": {
+    "res_partner": {
+      "name": "res_partner",
+      "fields": [
+        {
+          "fieldname": "image_1920",
+          "fieldtype": "binary",
+          "label": {
+            "en_US": "Image"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "image_1024",
+          "fieldtype": "binary",
+          "label": {
+            "en_US": "Image 1024"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "image_512",
+          "fieldtype": "binary",
+          "label": {
+            "en_US": "Image 512"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "image_256",
+          "fieldtype": "binary",
+          "label": {
+            "en_US": "Image 256"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "image_128",
+          "fieldtype": "binary",
+          "label": {
+            "en_US": "Image 128"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "avatar_1920",
+          "fieldtype": "binary",
+          "label": {
+            "en_US": "Avatar"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "avatar_1024",
+          "fieldtype": "binary",
+          "label": {
+            "en_US": "Avatar 1024"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "avatar_512",
+          "fieldtype": "binary",
+          "label": {
+            "en_US": "Avatar 512"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "avatar_256",
+          "fieldtype": "binary",
+          "label": {
+            "en_US": "Avatar 256"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "avatar_128",
+          "fieldtype": "binary",
+          "label": {
+            "en_US": "Avatar 128"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "complete_name",
+          "fieldtype": "char",
+          "label": {
+            "en_US": "Complete Name"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "title",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Title"
+          },
+          "options": "res_partner_title"
+        },
+        {
+          "fieldname": "child_ids",
+          "fieldtype": "one2many",
+          "label": {
+            "en_US": "Contact"
+          },
+          "options": "res_partner"
+        },
+        {
+          "fieldname": "ref",
+          "fieldtype": "char",
+          "label": {
+            "en_US": "Reference"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "lang",
+          "fieldtype": "selection",
+          "label": {
+            "en_US": "Language"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "active_lang_count",
+          "fieldtype": "integer",
+          "label": {
+            "en_US": "Active Lang Count"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "tz",
+          "fieldtype": "selection",
+          "label": {
+            "en_US": "Timezone"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "tz_offset",
+          "fieldtype": "char",
+          "label": {
+            "en_US": "Timezone offset"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "vat_label",
+          "fieldtype": "char",
+          "label": {
+            "en_US": "Tax ID Label"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "same_vat_partner_id",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Partner with same Tax ID"
+          },
+          "options": "res_partner"
+        },
+        {
+          "fieldname": "same_company_registry_partner_id",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Partner with same Company Registry"
+          },
+          "options": "res_partner"
+        },
+        {
+          "fieldname": "company_registry",
+          "fieldtype": "char",
+          "label": {
+            "en_US": "Company ID"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "company_registry_label",
+          "fieldtype": "char",
+          "label": {
+            "en_US": "Company ID Label"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "bank_ids",
+          "fieldtype": "one2many",
+          "label": {
+            "en_US": "Banks"
+          },
+          "options": "res_partner_bank"
+        },
+        {
+          "fieldname": "website",
+          "fieldtype": "char",
+          "label": {
+            "en_US": "Website Link"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "comment",
+          "fieldtype": "html",
+          "label": {
+            "en_US": "Notes"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "category_id",
+          "fieldtype": "many2many",
+          "label": {
+            "en_US": "Tags"
+          },
+          "options": "res_partner_category"
+        },
+        {
+          "fieldname": "active",
+          "fieldtype": "boolean",
+          "label": {
+            "en_US": "Active"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "employee",
+          "fieldtype": "boolean",
+          "label": {
+            "en_US": "Employee"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "function",
+          "fieldtype": "char",
+          "label": {
+            "en_US": "Job Position"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "type",
+          "fieldtype": "selection",
+          "label": {
+            "en_US": "Address Type"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "street",
+          "fieldtype": "char",
+          "label": {
+            "en_US": "Street"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "street2",
+          "fieldtype": "char",
+          "label": {
+            "en_US": "Street2"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "zip",
+          "fieldtype": "char",
+          "label": {
+            "en_US": "Zip"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "city",
+          "fieldtype": "char",
+          "label": {
+            "en_US": "City"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "state_id",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "State"
+          },
+          "options": "res_country_state"
+        },
+        {
+          "fieldname": "country_id",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Country"
+          },
+          "options": "res_country"
+        },
+        {
+          "fieldname": "country_code",
+          "fieldtype": "char",
+          "label": {
+            "en_US": "Country Code"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "partner_latitude",
+          "fieldtype": "float",
+          "label": {
+            "en_US": "Geo Latitude"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "partner_longitude",
+          "fieldtype": "float",
+          "label": {
+            "en_US": "Geo Longitude"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "email_formatted",
+          "fieldtype": "char",
+          "label": {
+            "en_US": "Formatted Email"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "mobile",
+          "fieldtype": "char",
+          "label": {
+            "en_US": "Mobile"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "is_company",
+          "fieldtype": "boolean",
+          "label": {
+            "en_US": "Is a Company"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "is_public",
+          "fieldtype": "boolean",
+          "label": {
+            "en_US": "Is Public"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "industry_id",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Industry"
+          },
+          "options": "res_partner_industry"
+        },
+        {
+          "fieldname": "company_type",
+          "fieldtype": "selection",
+          "label": {
+            "en_US": "Company Type"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "company_id",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Company"
+          },
+          "options": "res_company"
+        },
+        {
+          "fieldname": "color",
+          "fieldtype": "integer",
+          "label": {
+            "en_US": "Color Index"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "user_ids",
+          "fieldtype": "one2many",
+          "label": {
+            "en_US": "Users"
+          },
+          "options": "res_users"
+        },
+        {
+          "fieldname": "partner_share",
+          "fieldtype": "boolean",
+          "label": {
+            "en_US": "Share Partner"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "contact_address",
+          "fieldtype": "char",
+          "label": {
+            "en_US": "Complete Address"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "commercial_partner_id",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Commercial Entity"
+          },
+          "options": "res_partner"
+        },
+        {
+          "fieldname": "commercial_company_name",
+          "fieldtype": "char",
+          "label": {
+            "en_US": "Company Name Entity"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "company_name",
+          "fieldtype": "char",
+          "label": {
+            "en_US": "Company Name"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "barcode",
+          "fieldtype": "char",
+          "label": {
+            "en_US": "Barcode"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "self",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Self"
+          },
+          "options": "res_partner"
+        },
+        {
+          "fieldname": "id",
+          "fieldtype": "integer",
+          "label": {
+            "en_US": "ID"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "display_name",
+          "fieldtype": "char",
+          "label": {
+            "en_US": "Display Name"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "create_uid",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Created by"
+          },
+          "options": "res_users"
+        },
+        {
+          "fieldname": "create_date",
+          "fieldtype": "datetime",
+          "label": {
+            "en_US": "Created on"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "write_uid",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Last Updated by"
+          },
+          "options": "res_users"
+        },
+        {
+          "fieldname": "write_date",
+          "fieldtype": "datetime",
+          "label": {
+            "en_US": "Last Updated on"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "im_status",
+          "fieldtype": "char",
+          "label": {
+            "en_US": "IM Status"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "message_is_follower",
+          "fieldtype": "boolean",
+          "label": {
+            "en_US": "Is Follower"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "message_follower_ids",
+          "fieldtype": "one2many",
+          "label": {
+            "en_US": "Followers"
+          },
+          "options": "mail_followers"
+        },
+        {
+          "fieldname": "message_partner_ids",
+          "fieldtype": "many2many",
+          "label": {
+            "en_US": "Followers (Partners)"
+          },
+          "options": "res_partner"
+        },
+        {
+          "fieldname": "message_ids",
+          "fieldtype": "one2many",
+          "label": {
+            "en_US": "Messages"
+          },
+          "options": "mail_message"
+        },
+        {
+          "fieldname": "has_message",
+          "fieldtype": "boolean",
+          "label": {
+            "en_US": "Has Message"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "message_needaction",
+          "fieldtype": "boolean",
+          "label": {
+            "en_US": "Action Needed"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "message_needaction_counter",
+          "fieldtype": "integer",
+          "label": {
+            "en_US": "Number of Actions"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "message_has_error",
+          "fieldtype": "boolean",
+          "label": {
+            "en_US": "Message Delivery error"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "message_has_error_counter",
+          "fieldtype": "integer",
+          "label": {
+            "en_US": "Number of errors"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "message_attachment_count",
+          "fieldtype": "integer",
+          "label": {
+            "en_US": "Attachment Count"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "email_normalized",
+          "fieldtype": "char",
+          "label": {
+            "en_US": "Normalized Email"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "is_blacklisted",
+          "fieldtype": "boolean",
+          "label": {
+            "en_US": "Blacklist"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "message_bounce",
+          "fieldtype": "integer",
+          "label": {
+            "en_US": "Bounce"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "activity_ids",
+          "fieldtype": "one2many",
+          "label": {
+            "en_US": "Activities"
+          },
+          "options": "mail_activity"
+        },
+        {
+          "fieldname": "activity_state",
+          "fieldtype": "selection",
+          "label": {
+            "en_US": "Activity State"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "activity_user_id",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Responsible User"
+          },
+          "options": "res_users"
+        },
+        {
+          "fieldname": "activity_type_id",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Next Activity Type"
+          },
+          "options": "mail_activity_type"
+        },
+        {
+          "fieldname": "activity_type_icon",
+          "fieldtype": "char",
+          "label": {
+            "en_US": "Activity Type Icon"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "activity_date_deadline",
+          "fieldtype": "date",
+          "label": {
+            "en_US": "Next Activity Deadline"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "my_activity_date_deadline",
+          "fieldtype": "date",
+          "label": {
+            "en_US": "My Activity Deadline"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "activity_summary",
+          "fieldtype": "char",
+          "label": {
+            "en_US": "Next Activity Summary"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "activity_exception_decoration",
+          "fieldtype": "selection",
+          "label": {
+            "en_US": "Activity Exception Decoration"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "activity_exception_icon",
+          "fieldtype": "char",
+          "label": {
+            "en_US": "Icon"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "parent_id",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Related Company"
+          },
+          "options": "res_partner"
+        },
+        {
+          "fieldname": "user_id",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Salesperson"
+          },
+          "options": "res_users"
+        },
+        {
+          "fieldname": "vat",
+          "fieldtype": "char",
+          "label": {
+            "en_US": "Tax ID"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "email",
+          "fieldtype": "char",
+          "label": {
+            "en_US": "Email"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "phone",
+          "fieldtype": "char",
+          "label": {
+            "en_US": "Phone"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "channel_ids",
+          "fieldtype": "many2many",
+          "label": {
+            "en_US": "Channels"
+          },
+          "options": "discuss_channel"
+        },
+        {
+          "fieldname": "contact_address_inline",
+          "fieldtype": "char",
+          "label": {
+            "en_US": "Inlined Complete Address"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "starred_message_ids",
+          "fieldtype": "many2many",
+          "label": {
+            "en_US": "Starred Message"
+          },
+          "options": "mail_message"
+        },
+        {
+          "fieldname": "signup_type",
+          "fieldtype": "char",
+          "label": {
+            "en_US": "Signup Token Type"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "property_product_pricelist",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Pricelist"
+          },
+          "options": "product_pricelist"
+        },
+        {
+          "fieldname": "specific_property_product_pricelist",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Specific Property Product Pricelist"
+          },
+          "options": "product_pricelist"
+        },
+        {
+          "fieldname": "partner_gid",
+          "fieldtype": "integer",
+          "label": {
+            "en_US": "Company database ID"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "additional_info",
+          "fieldtype": "char",
+          "label": {
+            "en_US": "Additional info"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "website_message_ids",
+          "fieldtype": "one2many",
+          "label": {
+            "en_US": "Website Messages"
+          },
+          "options": "mail_message"
+        },
+        {
+          "fieldname": "message_has_sms_error",
+          "fieldtype": "boolean",
+          "label": {
+            "en_US": "SMS Delivery error"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "phone_sanitized",
+          "fieldtype": "char",
+          "label": {
+            "en_US": "Sanitized Number"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "phone_sanitized_blacklisted",
+          "fieldtype": "boolean",
+          "label": {
+            "en_US": "Phone Blacklisted"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "phone_blacklisted",
+          "fieldtype": "boolean",
+          "label": {
+            "en_US": "Blacklisted Phone is Phone"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "mobile_blacklisted",
+          "fieldtype": "boolean",
+          "label": {
+            "en_US": "Blacklisted Phone Is Mobile"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "phone_mobile_search",
+          "fieldtype": "char",
+          "label": {
+            "en_US": "Phone/Mobile"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "payment_token_ids",
+          "fieldtype": "one2many",
+          "label": {
+            "en_US": "Payment Tokens"
+          },
+          "options": "payment_token"
+        },
+        {
+          "fieldname": "payment_token_count",
+          "fieldtype": "integer",
+          "label": {
+            "en_US": "Payment Token Count"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "name",
+          "fieldtype": "char",
+          "label": {
+            "en_US": "Name"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "parent_name",
+          "fieldtype": "char",
+          "label": {
+            "en_US": "Parent name"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "fiscal_country_codes",
+          "fieldtype": "char",
+          "label": {
+            "en_US": "Fiscal Country Codes"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "partner_vat_placeholder",
+          "fieldtype": "char",
+          "label": {
+            "en_US": "Partner Vat Placeholder"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "partner_company_registry_placeholder",
+          "fieldtype": "char",
+          "label": {
+            "en_US": "Partner Company Registry Placeholder"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "duplicate_bank_partner_ids",
+          "fieldtype": "many2many",
+          "label": {
+            "en_US": "Duplicate Bank Partner"
+          },
+          "options": "res_partner"
+        },
+        {
+          "fieldname": "credit",
+          "fieldtype": "monetary",
+          "label": {
+            "en_US": "Total Receivable"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "credit_to_invoice",
+          "fieldtype": "monetary",
+          "label": {
+            "en_US": "Credit To Invoice"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "credit_limit",
+          "fieldtype": "float",
+          "label": {
+            "en_US": "Credit Limit"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "use_partner_credit_limit",
+          "fieldtype": "boolean",
+          "label": {
+            "en_US": "Partner Limit"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "show_credit_limit",
+          "fieldtype": "boolean",
+          "label": {
+            "en_US": "Show Credit Limit"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "days_sales_outstanding",
+          "fieldtype": "float",
+          "label": {
+            "en_US": "Days Sales Outstanding (DSO)"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "debit",
+          "fieldtype": "monetary",
+          "label": {
+            "en_US": "Total Payable"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "debit_limit",
+          "fieldtype": "monetary",
+          "label": {
+            "en_US": "Payable Limit"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "total_invoiced",
+          "fieldtype": "monetary",
+          "label": {
+            "en_US": "Total Invoiced"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "currency_id",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Currency"
+          },
+          "options": "res_currency"
+        },
+        {
+          "fieldname": "journal_item_count",
+          "fieldtype": "integer",
+          "label": {
+            "en_US": "Journal Items"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "property_account_payable_id",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Account Payable"
+          },
+          "options": "account_account"
+        },
+        {
+          "fieldname": "property_account_receivable_id",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Account Receivable"
+          },
+          "options": "account_account"
+        },
+        {
+          "fieldname": "property_account_position_id",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Fiscal Position"
+          },
+          "options": "account_fiscal_position"
+        },
+        {
+          "fieldname": "property_payment_term_id",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Customer Payment Terms"
+          },
+          "options": "account_payment_term"
+        },
+        {
+          "fieldname": "property_supplier_payment_term_id",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Vendor Payment Terms"
+          },
+          "options": "account_payment_term"
+        },
+        {
+          "fieldname": "ref_company_ids",
+          "fieldtype": "one2many",
+          "label": {
+            "en_US": "Companies that refers to partner"
+          },
+          "options": "res_company"
+        },
+        {
+          "fieldname": "supplier_invoice_count",
+          "fieldtype": "integer",
+          "label": {
+            "en_US": "# Vendor Bills"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "invoice_ids",
+          "fieldtype": "one2many",
+          "label": {
+            "en_US": "Invoices"
+          },
+          "options": "account_move"
+        },
+        {
+          "fieldname": "contract_ids",
+          "fieldtype": "one2many",
+          "label": {
+            "en_US": "Partner Contracts"
+          },
+          "options": "account_analytic_account"
+        },
+        {
+          "fieldname": "bank_account_count",
+          "fieldtype": "integer",
+          "label": {
+            "en_US": "Bank"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "trust",
+          "fieldtype": "selection",
+          "label": {
+            "en_US": "Degree of trust you have in this debtor"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "ignore_abnormal_invoice_date",
+          "fieldtype": "boolean",
+          "label": {
+            "en_US": "Ignore Abnormal Invoice Date"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "ignore_abnormal_invoice_amount",
+          "fieldtype": "boolean",
+          "label": {
+            "en_US": "Ignore Abnormal Invoice Amount"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "invoice_warn",
+          "fieldtype": "selection",
+          "label": {
+            "en_US": "Invoice"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "invoice_warn_msg",
+          "fieldtype": "text",
+          "label": {
+            "en_US": "Message for Invoice"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "invoice_sending_method",
+          "fieldtype": "selection",
+          "label": {
+            "en_US": "Invoice sending"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "invoice_edi_format",
+          "fieldtype": "selection",
+          "label": {
+            "en_US": "eInvoice format"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "invoice_edi_format_store",
+          "fieldtype": "char",
+          "label": {
+            "en_US": "Invoice Edi Format Store"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "display_invoice_edi_format",
+          "fieldtype": "boolean",
+          "label": {
+            "en_US": "Display Invoice Edi Format"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "invoice_template_pdf_report_id",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Invoice template"
+          },
+          "options": "ir_actions_report"
+        },
+        {
+          "fieldname": "display_invoice_template_pdf_report_id",
+          "fieldtype": "boolean",
+          "label": {
+            "en_US": "Display Invoice Template Pdf Report"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "supplier_rank",
+          "fieldtype": "integer",
+          "label": {
+            "en_US": "Supplier Rank"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "customer_rank",
+          "fieldtype": "integer",
+          "label": {
+            "en_US": "Customer Rank"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "autopost_bills",
+          "fieldtype": "selection",
+          "label": {
+            "en_US": "Auto-post bills"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "duplicated_bank_account_partners_count",
+          "fieldtype": "integer",
+          "label": {
+            "en_US": "Duplicated Bank Account Partners Count"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "is_coa_installed",
+          "fieldtype": "boolean",
+          "label": {
+            "en_US": "Is Coa Installed"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "property_outbound_payment_method_line_id",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Property Outbound Payment Method Line"
+          },
+          "options": "account_payment_method_line"
+        },
+        {
+          "fieldname": "property_inbound_payment_method_line_id",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Property Inbound Payment Method Line"
+          },
+          "options": "account_payment_method_line"
+        },
+        {
+          "fieldname": "global_location_number",
+          "fieldtype": "char",
+          "label": {
+            "en_US": "GLN"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "is_ubl_format",
+          "fieldtype": "boolean",
+          "label": {
+            "en_US": "Is Ubl Format"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "is_peppol_edi_format",
+          "fieldtype": "boolean",
+          "label": {
+            "en_US": "Is Peppol Edi Format"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "peppol_endpoint",
+          "fieldtype": "char",
+          "label": {
+            "en_US": "Peppol Endpoint"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "peppol_eas",
+          "fieldtype": "selection",
+          "label": {
+            "en_US": "Peppol e-address (EAS)"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "available_peppol_eas",
+          "fieldtype": "json",
+          "label": {
+            "en_US": "Available Peppol Eas"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "sale_order_count",
+          "fieldtype": "integer",
+          "label": {
+            "en_US": "Sale Order Count"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "sale_order_ids",
+          "fieldtype": "one2many",
+          "label": {
+            "en_US": "Sales Order"
+          },
+          "options": "sale_order"
+        },
+        {
+          "fieldname": "sale_warn",
+          "fieldtype": "selection",
+          "label": {
+            "en_US": "Sales Warnings"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "sale_warn_msg",
+          "fieldtype": "text",
+          "label": {
+            "en_US": "Message for Sales Order"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "rating_ids",
+          "fieldtype": "one2many",
+          "label": {
+            "en_US": "Ratings"
+          },
+          "options": "rating_rating"
+        },
+        {
+          "fieldname": "certifications_count",
+          "fieldtype": "integer",
+          "label": {
+            "en_US": "Certifications Count"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "certifications_company_count",
+          "fieldtype": "integer",
+          "label": {
+            "en_US": "Company Certifications Count"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "employee_ids",
+          "fieldtype": "one2many",
+          "label": {
+            "en_US": "Employees"
+          },
+          "options": "hr_employee"
+        },
+        {
+          "fieldname": "employees_count",
+          "fieldtype": "integer",
+          "label": {
+            "en_US": "Employees Count"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "property_stock_customer",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Customer Location"
+          },
+          "options": "stock_location"
+        },
+        {
+          "fieldname": "property_stock_supplier",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Vendor Location"
+          },
+          "options": "stock_location"
+        },
+        {
+          "fieldname": "picking_warn",
+          "fieldtype": "selection",
+          "label": {
+            "en_US": "Stock Picking"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "picking_warn_msg",
+          "fieldtype": "text",
+          "label": {
+            "en_US": "Message for Stock Picking"
+          },
+          "options": null
+        }
+      ],
+      "child_tables": []
+    },
+    "res_partner_bank": {
+      "name": "res_partner_bank",
+      "fields": [
+        {
+          "fieldname": "acc_type",
+          "fieldtype": "selection",
+          "label": {
+            "en_US": "Type"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "sanitized_acc_number",
+          "fieldtype": "char",
+          "label": {
+            "en_US": "Sanitized Account Number"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "bank_name",
+          "fieldtype": "char",
+          "label": {
+            "en_US": "Name"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "bank_bic",
+          "fieldtype": "char",
+          "label": {
+            "en_US": "Bank Identifier Code"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "sequence",
+          "fieldtype": "integer",
+          "label": {
+            "en_US": "Sequence"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "company_id",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Company"
+          },
+          "options": "res_company"
+        },
+        {
+          "fieldname": "country_code",
+          "fieldtype": "char",
+          "label": {
+            "en_US": "Country Code"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "id",
+          "fieldtype": "integer",
+          "label": {
+            "en_US": "ID"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "display_name",
+          "fieldtype": "char",
+          "label": {
+            "en_US": "Display Name"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "create_uid",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Created by"
+          },
+          "options": "res_users"
+        },
+        {
+          "fieldname": "create_date",
+          "fieldtype": "datetime",
+          "label": {
+            "en_US": "Created on"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "write_uid",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Last Updated by"
+          },
+          "options": "res_users"
+        },
+        {
+          "fieldname": "write_date",
+          "fieldtype": "datetime",
+          "label": {
+            "en_US": "Last Updated on"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "aba_routing",
+          "fieldtype": "char",
+          "label": {
+            "en_US": "ABA/Routing"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "activity_ids",
+          "fieldtype": "one2many",
+          "label": {
+            "en_US": "Activities"
+          },
+          "options": "mail_activity"
+        },
+        {
+          "fieldname": "activity_state",
+          "fieldtype": "selection",
+          "label": {
+            "en_US": "Activity State"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "activity_user_id",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Responsible User"
+          },
+          "options": "res_users"
+        },
+        {
+          "fieldname": "activity_type_id",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Next Activity Type"
+          },
+          "options": "mail_activity_type"
+        },
+        {
+          "fieldname": "activity_type_icon",
+          "fieldtype": "char",
+          "label": {
+            "en_US": "Activity Type Icon"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "activity_date_deadline",
+          "fieldtype": "date",
+          "label": {
+            "en_US": "Next Activity Deadline"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "my_activity_date_deadline",
+          "fieldtype": "date",
+          "label": {
+            "en_US": "My Activity Deadline"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "activity_summary",
+          "fieldtype": "char",
+          "label": {
+            "en_US": "Next Activity Summary"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "activity_exception_decoration",
+          "fieldtype": "selection",
+          "label": {
+            "en_US": "Activity Exception Decoration"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "activity_exception_icon",
+          "fieldtype": "char",
+          "label": {
+            "en_US": "Icon"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "message_is_follower",
+          "fieldtype": "boolean",
+          "label": {
+            "en_US": "Is Follower"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "message_follower_ids",
+          "fieldtype": "one2many",
+          "label": {
+            "en_US": "Followers"
+          },
+          "options": "mail_followers"
+        },
+        {
+          "fieldname": "message_partner_ids",
+          "fieldtype": "many2many",
+          "label": {
+            "en_US": "Followers (Partners)"
+          },
+          "options": "res_partner"
+        },
+        {
+          "fieldname": "message_ids",
+          "fieldtype": "one2many",
+          "label": {
+            "en_US": "Messages"
+          },
+          "options": "mail_message"
+        },
+        {
+          "fieldname": "has_message",
+          "fieldtype": "boolean",
+          "label": {
+            "en_US": "Has Message"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "message_needaction",
+          "fieldtype": "boolean",
+          "label": {
+            "en_US": "Action Needed"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "message_needaction_counter",
+          "fieldtype": "integer",
+          "label": {
+            "en_US": "Number of Actions"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "message_has_error",
+          "fieldtype": "boolean",
+          "label": {
+            "en_US": "Message Delivery error"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "message_has_error_counter",
+          "fieldtype": "integer",
+          "label": {
+            "en_US": "Number of errors"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "message_attachment_count",
+          "fieldtype": "integer",
+          "label": {
+            "en_US": "Attachment Count"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "website_message_ids",
+          "fieldtype": "one2many",
+          "label": {
+            "en_US": "Website Messages"
+          },
+          "options": "mail_message"
+        },
+        {
+          "fieldname": "message_has_sms_error",
+          "fieldtype": "boolean",
+          "label": {
+            "en_US": "SMS Delivery error"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "active",
+          "fieldtype": "boolean",
+          "label": {
+            "en_US": "Active"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "acc_number",
+          "fieldtype": "char",
+          "label": {
+            "en_US": "Account Number"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "acc_holder_name",
+          "fieldtype": "char",
+          "label": {
+            "en_US": "Account Holder Name"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "partner_id",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Account Holder"
+          },
+          "options": "res_partner"
+        },
+        {
+          "fieldname": "allow_out_payment",
+          "fieldtype": "boolean",
+          "label": {
+            "en_US": "Send Money"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "bank_id",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Bank"
+          },
+          "options": "res_bank"
+        },
+        {
+          "fieldname": "currency_id",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Currency"
+          },
+          "options": "res_currency"
+        },
+        {
+          "fieldname": "journal_id",
+          "fieldtype": "one2many",
+          "label": {
+            "en_US": "Account Journal"
+          },
+          "options": "account_journal"
+        },
+        {
+          "fieldname": "has_iban_warning",
+          "fieldtype": "boolean",
+          "label": {
+            "en_US": "Has Iban Warning"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "partner_country_name",
+          "fieldtype": "char",
+          "label": {
+            "en_US": "Country Name"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "has_money_transfer_warning",
+          "fieldtype": "boolean",
+          "label": {
+            "en_US": "Has Money Transfer Warning"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "money_transfer_service",
+          "fieldtype": "char",
+          "label": {
+            "en_US": "Money Transfer Service"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "partner_supplier_rank",
+          "fieldtype": "integer",
+          "label": {
+            "en_US": "Supplier Rank"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "partner_customer_rank",
+          "fieldtype": "integer",
+          "label": {
+            "en_US": "Customer Rank"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "related_moves",
+          "fieldtype": "one2many",
+          "label": {
+            "en_US": "Related Moves"
+          },
+          "options": "account_move"
+        },
+        {
+          "fieldname": "user_has_group_validate_bank_account",
+          "fieldtype": "boolean",
+          "label": {
+            "en_US": "User Has Group Validate Bank Account"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "lock_trust_fields",
+          "fieldtype": "boolean",
+          "label": {
+            "en_US": "Lock Trust Fields"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "duplicate_bank_partner_ids",
+          "fieldtype": "many2many",
+          "label": {
+            "en_US": "Duplicate Bank Partner"
+          },
+          "options": "res_partner"
+        },
+        {
+          "fieldname": "rating_ids",
+          "fieldtype": "one2many",
+          "label": {
+            "en_US": "Ratings"
+          },
+          "options": "rating_rating"
+        }
+      ],
+      "child_tables": []
+    },
+    "account_move": {
+      "name": "account_move",
+      "fields": [
+        {
+          "fieldname": "sequence_prefix",
+          "fieldtype": "char",
+          "label": {
+            "en_US": "Sequence Prefix"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "sequence_number",
+          "fieldtype": "integer",
+          "label": {
+            "en_US": "Sequence Number"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "activity_ids",
+          "fieldtype": "one2many",
+          "label": {
+            "en_US": "Activities"
+          },
+          "options": "mail_activity"
+        },
+        {
+          "fieldname": "activity_state",
+          "fieldtype": "selection",
+          "label": {
+            "en_US": "Activity State"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "activity_user_id",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Responsible User"
+          },
+          "options": "res_users"
+        },
+        {
+          "fieldname": "activity_type_id",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Next Activity Type"
+          },
+          "options": "mail_activity_type"
+        },
+        {
+          "fieldname": "activity_type_icon",
+          "fieldtype": "char",
+          "label": {
+            "en_US": "Activity Type Icon"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "activity_date_deadline",
+          "fieldtype": "date",
+          "label": {
+            "en_US": "Next Activity Deadline"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "my_activity_date_deadline",
+          "fieldtype": "date",
+          "label": {
+            "en_US": "My Activity Deadline"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "activity_summary",
+          "fieldtype": "char",
+          "label": {
+            "en_US": "Next Activity Summary"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "activity_exception_decoration",
+          "fieldtype": "selection",
+          "label": {
+            "en_US": "Activity Exception Decoration"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "activity_exception_icon",
+          "fieldtype": "char",
+          "label": {
+            "en_US": "Icon"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "message_is_follower",
+          "fieldtype": "boolean",
+          "label": {
+            "en_US": "Is Follower"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "message_follower_ids",
+          "fieldtype": "one2many",
+          "label": {
+            "en_US": "Followers"
+          },
+          "options": "mail_followers"
+        },
+        {
+          "fieldname": "message_partner_ids",
+          "fieldtype": "many2many",
+          "label": {
+            "en_US": "Followers (Partners)"
+          },
+          "options": "res_partner"
+        },
+        {
+          "fieldname": "message_ids",
+          "fieldtype": "one2many",
+          "label": {
+            "en_US": "Messages"
+          },
+          "options": "mail_message"
+        },
+        {
+          "fieldname": "has_message",
+          "fieldtype": "boolean",
+          "label": {
+            "en_US": "Has Message"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "message_needaction",
+          "fieldtype": "boolean",
+          "label": {
+            "en_US": "Action Needed"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "message_needaction_counter",
+          "fieldtype": "integer",
+          "label": {
+            "en_US": "Number of Actions"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "message_has_error",
+          "fieldtype": "boolean",
+          "label": {
+            "en_US": "Message Delivery error"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "message_has_error_counter",
+          "fieldtype": "integer",
+          "label": {
+            "en_US": "Number of errors"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "message_attachment_count",
+          "fieldtype": "integer",
+          "label": {
+            "en_US": "Attachment Count"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "website_message_ids",
+          "fieldtype": "one2many",
+          "label": {
+            "en_US": "Website Messages"
+          },
+          "options": "mail_message"
+        },
+        {
+          "fieldname": "message_has_sms_error",
+          "fieldtype": "boolean",
+          "label": {
+            "en_US": "SMS Delivery error"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "message_main_attachment_id",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Main Attachment"
+          },
+          "options": "ir_attachment"
+        },
+        {
+          "fieldname": "access_url",
+          "fieldtype": "char",
+          "label": {
+            "en_US": "Portal Access URL"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "access_token",
+          "fieldtype": "char",
+          "label": {
+            "en_US": "Security Token"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "access_warning",
+          "fieldtype": "text",
+          "label": {
+            "en_US": "Access warning"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "name",
+          "fieldtype": "char",
+          "label": {
+            "en_US": "Number"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "name_placeholder",
+          "fieldtype": "char",
+          "label": {
+            "en_US": "Name Placeholder"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "ref",
+          "fieldtype": "char",
+          "label": {
+            "en_US": "Reference"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "date",
+          "fieldtype": "date",
+          "label": {
+            "en_US": "Date"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "state",
+          "fieldtype": "selection",
+          "label": {
+            "en_US": "Status"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "move_type",
+          "fieldtype": "selection",
+          "label": {
+            "en_US": "Type"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "is_storno",
+          "fieldtype": "boolean",
+          "label": {
+            "en_US": "Is Storno"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "journal_id",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Journal"
+          },
+          "options": "account_journal"
+        },
+        {
+          "fieldname": "journal_group_id",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Ledger"
+          },
+          "options": "account_journal_group"
+        },
+        {
+          "fieldname": "company_id",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Company"
+          },
+          "options": "res_company"
+        },
+        {
+          "fieldname": "line_ids",
+          "fieldtype": "one2many",
+          "label": {
+            "en_US": "Journal Items"
+          },
+          "options": "account_move_line"
+        },
+        {
+          "fieldname": "origin_payment_id",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Payment"
+          },
+          "options": "account_payment"
+        },
+        {
+          "fieldname": "matched_payment_ids",
+          "fieldtype": "many2many",
+          "label": {
+            "en_US": "Matched Payments"
+          },
+          "options": "account_payment"
+        },
+        {
+          "fieldname": "reconciled_payment_ids",
+          "fieldtype": "many2many",
+          "label": {
+            "en_US": "Reconciled Payments"
+          },
+          "options": "account_payment"
+        },
+        {
+          "fieldname": "payment_count",
+          "fieldtype": "integer",
+          "label": {
+            "en_US": "Payment Count"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "statement_line_id",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Statement Line"
+          },
+          "options": "account_bank_statement_line"
+        },
+        {
+          "fieldname": "statement_id",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Statement"
+          },
+          "options": "account_bank_statement"
+        },
+        {
+          "fieldname": "tax_cash_basis_rec_id",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Tax Cash Basis Entry of"
+          },
+          "options": "account_partial_reconcile"
+        },
+        {
+          "fieldname": "tax_cash_basis_origin_move_id",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Cash Basis Origin"
+          },
+          "options": "account_move"
+        },
+        {
+          "fieldname": "tax_cash_basis_created_move_ids",
+          "fieldtype": "one2many",
+          "label": {
+            "en_US": "Cash Basis Entries"
+          },
+          "options": "account_move"
+        },
+        {
+          "fieldname": "always_tax_exigible",
+          "fieldtype": "boolean",
+          "label": {
+            "en_US": "Always Tax Exigible"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "auto_post",
+          "fieldtype": "selection",
+          "label": {
+            "en_US": "Auto-post"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "auto_post_until",
+          "fieldtype": "date",
+          "label": {
+            "en_US": "Auto-post until"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "auto_post_origin_id",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "First recurring entry"
+          },
+          "options": "account_move"
+        },
+        {
+          "fieldname": "hide_post_button",
+          "fieldtype": "boolean",
+          "label": {
+            "en_US": "Hide Post Button"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "checked",
+          "fieldtype": "boolean",
+          "label": {
+            "en_US": "Checked"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "posted_before",
+          "fieldtype": "boolean",
+          "label": {
+            "en_US": "Posted Before"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "suitable_journal_ids",
+          "fieldtype": "many2many",
+          "label": {
+            "en_US": "Suitable Journal"
+          },
+          "options": "account_journal"
+        },
+        {
+          "fieldname": "highest_name",
+          "fieldtype": "char",
+          "label": {
+            "en_US": "Highest Name"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "made_sequence_gap",
+          "fieldtype": "boolean",
+          "label": {
+            "en_US": "Made Sequence Gap"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "show_name_warning",
+          "fieldtype": "boolean",
+          "label": {
+            "en_US": "Show Name Warning"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "type_name",
+          "fieldtype": "char",
+          "label": {
+            "en_US": "Type Name"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "country_code",
+          "fieldtype": "char",
+          "label": {
+            "en_US": "Country Code"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "company_price_include",
+          "fieldtype": "selection",
+          "label": {
+            "en_US": "Default Sales Price Include"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "attachment_ids",
+          "fieldtype": "one2many",
+          "label": {
+            "en_US": "Attachments"
+          },
+          "options": "ir_attachment"
+        },
+        {
+          "fieldname": "audit_trail_message_ids",
+          "fieldtype": "one2many",
+          "label": {
+            "en_US": "Audit Trail Messages"
+          },
+          "options": "mail_message"
+        },
+        {
+          "fieldname": "restrict_mode_hash_table",
+          "fieldtype": "boolean",
+          "label": {
+            "en_US": "Secure Posted Entries with Hash"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "secure_sequence_number",
+          "fieldtype": "integer",
+          "label": {
+            "en_US": "Inalterability No Gap Sequence #"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "inalterable_hash",
+          "fieldtype": "char",
+          "label": {
+            "en_US": "Inalterability Hash"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "secured",
+          "fieldtype": "boolean",
+          "label": {
+            "en_US": "Secured"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "invoice_line_ids",
+          "fieldtype": "one2many",
+          "label": {
+            "en_US": "Invoice lines"
+          },
+          "options": "account_move_line"
+        },
+        {
+          "fieldname": "invoice_date",
+          "fieldtype": "date",
+          "label": {
+            "en_US": "Invoice/Bill Date"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "invoice_date_due",
+          "fieldtype": "date",
+          "label": {
+            "en_US": "Due Date"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "delivery_date",
+          "fieldtype": "date",
+          "label": {
+            "en_US": "Delivery Date"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "show_delivery_date",
+          "fieldtype": "boolean",
+          "label": {
+            "en_US": "Show Delivery Date"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "invoice_payment_term_id",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Payment Terms"
+          },
+          "options": "account_payment_term"
+        },
+        {
+          "fieldname": "needed_terms",
+          "fieldtype": "binary",
+          "label": {
+            "en_US": "Needed Terms"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "needed_terms_dirty",
+          "fieldtype": "boolean",
+          "label": {
+            "en_US": "Needed Terms Dirty"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "tax_calculation_rounding_method",
+          "fieldtype": "selection",
+          "label": {
+            "en_US": "Tax calculation rounding method"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "partner_id",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Partner"
+          },
+          "options": "res_partner"
+        },
+        {
+          "fieldname": "commercial_partner_id",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Commercial Entity"
+          },
+          "options": "res_partner"
+        },
+        {
+          "fieldname": "partner_shipping_id",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Delivery Address"
+          },
+          "options": "res_partner"
+        },
+        {
+          "fieldname": "partner_bank_id",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Recipient Bank"
+          },
+          "options": "res_partner_bank"
+        },
+        {
+          "fieldname": "fiscal_position_id",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Fiscal Position"
+          },
+          "options": "account_fiscal_position"
+        },
+        {
+          "fieldname": "payment_reference",
+          "fieldtype": "char",
+          "label": {
+            "en_US": "Payment Reference"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "display_qr_code",
+          "fieldtype": "boolean",
+          "label": {
+            "en_US": "Display QR-code"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "qr_code_method",
+          "fieldtype": "selection",
+          "label": {
+            "en_US": "Payment QR-code"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "invoice_outstanding_credits_debits_widget",
+          "fieldtype": "binary",
+          "label": {
+            "en_US": "Invoice Outstanding Credits Debits Widget"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "invoice_has_outstanding",
+          "fieldtype": "boolean",
+          "label": {
+            "en_US": "Invoice Has Outstanding"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "invoice_payments_widget",
+          "fieldtype": "binary",
+          "label": {
+            "en_US": "Invoice Payments Widget"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "preferred_payment_method_line_id",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Preferred Payment Method Line"
+          },
+          "options": "account_payment_method_line"
+        },
+        {
+          "fieldname": "company_currency_id",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Company Currency"
+          },
+          "options": "res_currency"
+        },
+        {
+          "fieldname": "currency_id",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Currency"
+          },
+          "options": "res_currency"
+        },
+        {
+          "fieldname": "expected_currency_rate",
+          "fieldtype": "float",
+          "label": {
+            "en_US": "Expected Currency Rate"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "invoice_currency_rate",
+          "fieldtype": "float",
+          "label": {
+            "en_US": "Currency Rate"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "direction_sign",
+          "fieldtype": "integer",
+          "label": {
+            "en_US": "Direction Sign"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "amount_untaxed",
+          "fieldtype": "monetary",
+          "label": {
+            "en_US": "Untaxed Amount"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "amount_tax",
+          "fieldtype": "monetary",
+          "label": {
+            "en_US": "Tax"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "amount_total",
+          "fieldtype": "monetary",
+          "label": {
+            "en_US": "Total"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "amount_residual",
+          "fieldtype": "monetary",
+          "label": {
+            "en_US": "Amount Due"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "amount_untaxed_signed",
+          "fieldtype": "monetary",
+          "label": {
+            "en_US": "Untaxed Amount Signed"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "amount_untaxed_in_currency_signed",
+          "fieldtype": "monetary",
+          "label": {
+            "en_US": "Untaxed Amount Signed Currency"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "amount_tax_signed",
+          "fieldtype": "monetary",
+          "label": {
+            "en_US": "Tax Signed"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "amount_total_signed",
+          "fieldtype": "monetary",
+          "label": {
+            "en_US": "Total Signed"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "amount_total_in_currency_signed",
+          "fieldtype": "monetary",
+          "label": {
+            "en_US": "Total in Currency Signed"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "amount_residual_signed",
+          "fieldtype": "monetary",
+          "label": {
+            "en_US": "Amount Due Signed"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "tax_totals",
+          "fieldtype": "binary",
+          "label": {
+            "en_US": "Invoice Totals"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "payment_state",
+          "fieldtype": "selection",
+          "label": {
+            "en_US": "Payment Status"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "status_in_payment",
+          "fieldtype": "selection",
+          "label": {
+            "en_US": "Status In Payment"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "amount_total_words",
+          "fieldtype": "char",
+          "label": {
+            "en_US": "Amount total in words"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "reversed_entry_id",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Reversal of"
+          },
+          "options": "account_move"
+        },
+        {
+          "fieldname": "reversal_move_ids",
+          "fieldtype": "one2many",
+          "label": {
+            "en_US": "Reversal Move"
+          },
+          "options": "account_move"
+        },
+        {
+          "fieldname": "invoice_vendor_bill_id",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Vendor Bill"
+          },
+          "options": "account_move"
+        },
+        {
+          "fieldname": "invoice_source_email",
+          "fieldtype": "char",
+          "label": {
+            "en_US": "Source Email"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "invoice_partner_display_name",
+          "fieldtype": "char",
+          "label": {
+            "en_US": "Invoice Partner Display Name"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "is_manually_modified",
+          "fieldtype": "boolean",
+          "label": {
+            "en_US": "Is Manually Modified"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "quick_edit_mode",
+          "fieldtype": "boolean",
+          "label": {
+            "en_US": "Quick Edit Mode"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "quick_edit_total_amount",
+          "fieldtype": "monetary",
+          "label": {
+            "en_US": "Total (Tax inc.)"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "quick_encoding_vals",
+          "fieldtype": "json",
+          "label": {
+            "en_US": "Quick Encoding Vals"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "narration",
+          "fieldtype": "html",
+          "label": {
+            "en_US": "Terms and Conditions"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "is_move_sent",
+          "fieldtype": "boolean",
+          "label": {
+            "en_US": "Is Move Sent"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "is_being_sent",
+          "fieldtype": "boolean",
+          "label": {
+            "en_US": "Is Being Sent"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "move_sent_values",
+          "fieldtype": "selection",
+          "label": {
+            "en_US": "Sent"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "invoice_user_id",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Salesperson"
+          },
+          "options": "res_users"
+        },
+        {
+          "fieldname": "user_id",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "User"
+          },
+          "options": "res_users"
+        },
+        {
+          "fieldname": "invoice_origin",
+          "fieldtype": "char",
+          "label": {
+            "en_US": "Origin"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "invoice_incoterm_id",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Incoterm"
+          },
+          "options": "account_incoterms"
+        },
+        {
+          "fieldname": "incoterm_location",
+          "fieldtype": "char",
+          "label": {
+            "en_US": "Incoterm Location"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "invoice_cash_rounding_id",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Cash Rounding Method"
+          },
+          "options": "account_cash_rounding"
+        },
+        {
+          "fieldname": "sending_data",
+          "fieldtype": "json",
+          "label": {
+            "en_US": "Sending Data"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "invoice_pdf_report_id",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "PDF Attachment"
+          },
+          "options": "ir_attachment"
+        },
+        {
+          "fieldname": "invoice_pdf_report_file",
+          "fieldtype": "binary",
+          "label": {
+            "en_US": "PDF File"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "invoice_filter_type_domain",
+          "fieldtype": "char",
+          "label": {
+            "en_US": "Invoice Filter Type Domain"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "bank_partner_id",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Bank Partner"
+          },
+          "options": "res_partner"
+        },
+        {
+          "fieldname": "tax_lock_date_message",
+          "fieldtype": "char",
+          "label": {
+            "en_US": "Tax Lock Date Message"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "display_inactive_currency_warning",
+          "fieldtype": "boolean",
+          "label": {
+            "en_US": "Display Inactive Currency Warning"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "tax_country_id",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Tax Country"
+          },
+          "options": "res_country"
+        },
+        {
+          "fieldname": "tax_country_code",
+          "fieldtype": "char",
+          "label": {
+            "en_US": "Tax Country Code"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "has_reconciled_entries",
+          "fieldtype": "boolean",
+          "label": {
+            "en_US": "Has Reconciled Entries"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "show_reset_to_draft_button",
+          "fieldtype": "boolean",
+          "label": {
+            "en_US": "Show Reset To Draft Button"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "partner_credit_warning",
+          "fieldtype": "text",
+          "label": {
+            "en_US": "Partner Credit Warning"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "partner_credit",
+          "fieldtype": "monetary",
+          "label": {
+            "en_US": "Partner Credit"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "duplicated_ref_ids",
+          "fieldtype": "many2many",
+          "label": {
+            "en_US": "Duplicated Ref"
+          },
+          "options": "account_move"
+        },
+        {
+          "fieldname": "need_cancel_request",
+          "fieldtype": "boolean",
+          "label": {
+            "en_US": "Need Cancel Request"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "show_update_fpos",
+          "fieldtype": "boolean",
+          "label": {
+            "en_US": "Has Fiscal Position Changed"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "payment_term_details",
+          "fieldtype": "binary",
+          "label": {
+            "en_US": "Payment Term Details"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "show_payment_term_details",
+          "fieldtype": "boolean",
+          "label": {
+            "en_US": "Show Payment Term Details"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "show_discount_details",
+          "fieldtype": "boolean",
+          "label": {
+            "en_US": "Show Discount Details"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "abnormal_amount_warning",
+          "fieldtype": "text",
+          "label": {
+            "en_US": "Abnormal Amount Warning"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "abnormal_date_warning",
+          "fieldtype": "text",
+          "label": {
+            "en_US": "Abnormal Date Warning"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "taxes_legal_notes",
+          "fieldtype": "html",
+          "label": {
+            "en_US": "Taxes Legal Notes"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "next_payment_date",
+          "fieldtype": "date",
+          "label": {
+            "en_US": "Next Payment Date"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "id",
+          "fieldtype": "integer",
+          "label": {
+            "en_US": "ID"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "display_name",
+          "fieldtype": "char",
+          "label": {
+            "en_US": "Display Name"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "create_uid",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Created by"
+          },
+          "options": "res_users"
+        },
+        {
+          "fieldname": "create_date",
+          "fieldtype": "datetime",
+          "label": {
+            "en_US": "Created on"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "write_uid",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Last Updated by"
+          },
+          "options": "res_users"
+        },
+        {
+          "fieldname": "write_date",
+          "fieldtype": "datetime",
+          "label": {
+            "en_US": "Last Updated on"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "payment_ids",
+          "fieldtype": "one2many",
+          "label": {
+            "en_US": "Payments"
+          },
+          "options": "account_payment"
+        },
+        {
+          "fieldname": "statement_line_ids",
+          "fieldtype": "one2many",
+          "label": {
+            "en_US": "Statements"
+          },
+          "options": "account_bank_statement_line"
+        },
+        {
+          "fieldname": "ubl_cii_xml_id",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Attachment"
+          },
+          "options": "ir_attachment"
+        },
+        {
+          "fieldname": "ubl_cii_xml_file",
+          "fieldtype": "binary",
+          "label": {
+            "en_US": "UBL/CII File"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "transaction_ids",
+          "fieldtype": "many2many",
+          "label": {
+            "en_US": "Transactions"
+          },
+          "options": "payment_transaction"
+        },
+        {
+          "fieldname": "authorized_transaction_ids",
+          "fieldtype": "many2many",
+          "label": {
+            "en_US": "Authorized Transactions"
+          },
+          "options": "payment_transaction"
+        },
+        {
+          "fieldname": "transaction_count",
+          "fieldtype": "integer",
+          "label": {
+            "en_US": "Transaction Count"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "amount_paid",
+          "fieldtype": "monetary",
+          "label": {
+            "en_US": "Amount paid"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "campaign_id",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Campaign"
+          },
+          "options": "utm_campaign"
+        },
+        {
+          "fieldname": "source_id",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Source"
+          },
+          "options": "utm_source"
+        },
+        {
+          "fieldname": "medium_id",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Medium"
+          },
+          "options": "utm_medium"
+        },
+        {
+          "fieldname": "team_id",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Sales Team"
+          },
+          "options": "crm_team"
+        },
+        {
+          "fieldname": "sale_order_count",
+          "fieldtype": "integer",
+          "label": {
+            "en_US": "Sale Order Count"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "rating_ids",
+          "fieldtype": "one2many",
+          "label": {
+            "en_US": "Ratings"
+          },
+          "options": "rating_rating"
+        },
+        {
+          "fieldname": "stock_move_id",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Stock Move"
+          },
+          "options": "stock_move"
+        },
+        {
+          "fieldname": "stock_valuation_layer_ids",
+          "fieldtype": "one2many",
+          "label": {
+            "en_US": "Stock Valuation Layer"
+          },
+          "options": "stock_valuation_layer"
+        }
+      ],
+      "child_tables": []
+    },
+    "account_move_line": {
+      "name": "account_move_line",
+      "fields": [
+        {
+          "fieldname": "analytic_distribution",
+          "fieldtype": "json",
+          "label": {
+            "en_US": "Analytic Distribution"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "analytic_precision",
+          "fieldtype": "integer",
+          "label": {
+            "en_US": "Analytic Precision"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "distribution_analytic_account_ids",
+          "fieldtype": "many2many",
+          "label": {
+            "en_US": "Distribution Analytic Account"
+          },
+          "options": "account_analytic_account"
+        },
+        {
+          "fieldname": "move_id",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Journal Entry"
+          },
+          "options": "account_move"
+        },
+        {
+          "fieldname": "journal_id",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Journal"
+          },
+          "options": "account_journal"
+        },
+        {
+          "fieldname": "journal_group_id",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Ledger"
+          },
+          "options": "account_journal_group"
+        },
+        {
+          "fieldname": "company_id",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Company"
+          },
+          "options": "res_company"
+        },
+        {
+          "fieldname": "company_currency_id",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Company Currency"
+          },
+          "options": "res_currency"
+        },
+        {
+          "fieldname": "move_name",
+          "fieldtype": "char",
+          "label": {
+            "en_US": "Number"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "parent_state",
+          "fieldtype": "selection",
+          "label": {
+            "en_US": "Status"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "date",
+          "fieldtype": "date",
+          "label": {
+            "en_US": "Date"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "invoice_date",
+          "fieldtype": "date",
+          "label": {
+            "en_US": "Invoice/Bill Date"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "ref",
+          "fieldtype": "char",
+          "label": {
+            "en_US": "Reference"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "is_storno",
+          "fieldtype": "boolean",
+          "label": {
+            "en_US": "Company Storno Accounting"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "sequence",
+          "fieldtype": "integer",
+          "label": {
+            "en_US": "Sequence"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "move_type",
+          "fieldtype": "selection",
+          "label": {
+            "en_US": "Type"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "account_id",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Account"
+          },
+          "options": "account_account"
+        },
+        {
+          "fieldname": "account_name",
+          "fieldtype": "char",
+          "label": {
+            "en_US": "Account Name"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "account_code",
+          "fieldtype": "char",
+          "label": {
+            "en_US": "Code"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "name",
+          "fieldtype": "char",
+          "label": {
+            "en_US": "Label"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "debit",
+          "fieldtype": "monetary",
+          "label": {
+            "en_US": "Debit"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "credit",
+          "fieldtype": "monetary",
+          "label": {
+            "en_US": "Credit"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "balance",
+          "fieldtype": "monetary",
+          "label": {
+            "en_US": "Balance"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "cumulated_balance",
+          "fieldtype": "monetary",
+          "label": {
+            "en_US": "Cumulated Balance"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "currency_rate",
+          "fieldtype": "float",
+          "label": {
+            "en_US": "Currency Rate"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "amount_currency",
+          "fieldtype": "monetary",
+          "label": {
+            "en_US": "Amount in Currency"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "currency_id",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Currency"
+          },
+          "options": "res_currency"
+        },
+        {
+          "fieldname": "is_same_currency",
+          "fieldtype": "boolean",
+          "label": {
+            "en_US": "Is Same Currency"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "partner_id",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Partner"
+          },
+          "options": "res_partner"
+        },
+        {
+          "fieldname": "is_imported",
+          "fieldtype": "boolean",
+          "label": {
+            "en_US": "Is Imported"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "reconcile_model_id",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Reconciliation Model"
+          },
+          "options": "account_reconcile_model"
+        },
+        {
+          "fieldname": "payment_id",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Originator Payment"
+          },
+          "options": "account_payment"
+        },
+        {
+          "fieldname": "statement_line_id",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Originator Statement Line"
+          },
+          "options": "account_bank_statement_line"
+        },
+        {
+          "fieldname": "statement_id",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Statement"
+          },
+          "options": "account_bank_statement"
+        },
+        {
+          "fieldname": "commercial_partner_country",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Commercial Partner Country"
+          },
+          "options": "res_country"
+        },
+        {
+          "fieldname": "tax_ids",
+          "fieldtype": "many2many",
+          "label": {
+            "en_US": "Taxes"
+          },
+          "options": "account_tax"
+        },
+        {
+          "fieldname": "group_tax_id",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Originator Group of Taxes"
+          },
+          "options": "account_tax"
+        },
+        {
+          "fieldname": "tax_line_id",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Originator Tax"
+          },
+          "options": "account_tax"
+        },
+        {
+          "fieldname": "tax_group_id",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Originator tax group"
+          },
+          "options": "account_tax_group"
+        },
+        {
+          "fieldname": "tax_base_amount",
+          "fieldtype": "monetary",
+          "label": {
+            "en_US": "Base Amount"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "tax_repartition_line_id",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Originator Tax Distribution Line"
+          },
+          "options": "account_tax_repartition_line"
+        },
+        {
+          "fieldname": "tax_tag_ids",
+          "fieldtype": "many2many",
+          "label": {
+            "en_US": "Tags"
+          },
+          "options": "account_account_tag"
+        },
+        {
+          "fieldname": "tax_tag_invert",
+          "fieldtype": "boolean",
+          "label": {
+            "en_US": "Invert Tags"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "amount_residual",
+          "fieldtype": "monetary",
+          "label": {
+            "en_US": "Residual Amount"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "amount_residual_currency",
+          "fieldtype": "monetary",
+          "label": {
+            "en_US": "Residual Amount in Currency"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "reconciled",
+          "fieldtype": "boolean",
+          "label": {
+            "en_US": "Reconciled"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "full_reconcile_id",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Matching"
+          },
+          "options": "account_full_reconcile"
+        },
+        {
+          "fieldname": "matched_debit_ids",
+          "fieldtype": "one2many",
+          "label": {
+            "en_US": "Matched Debits"
+          },
+          "options": "account_partial_reconcile"
+        },
+        {
+          "fieldname": "matched_credit_ids",
+          "fieldtype": "one2many",
+          "label": {
+            "en_US": "Matched Credits"
+          },
+          "options": "account_partial_reconcile"
+        },
+        {
+          "fieldname": "matching_number",
+          "fieldtype": "char",
+          "label": {
+            "en_US": "Matching #"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "is_account_reconcile",
+          "fieldtype": "boolean",
+          "label": {
+            "en_US": "Account Reconcile"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "account_type",
+          "fieldtype": "selection",
+          "label": {
+            "en_US": "Internal Type"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "account_internal_group",
+          "fieldtype": "selection",
+          "label": {
+            "en_US": "Internal Group"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "account_root_id",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Account Root"
+          },
+          "options": "account_root"
+        },
+        {
+          "fieldname": "product_category_id",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Product Category"
+          },
+          "options": "product_category"
+        },
+        {
+          "fieldname": "display_type",
+          "fieldtype": "selection",
+          "label": {
+            "en_US": "Display Type"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "product_id",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Product"
+          },
+          "options": "product_product"
+        },
+        {
+          "fieldname": "product_uom_id",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Unit of Measure"
+          },
+          "options": "uom_uom"
+        },
+        {
+          "fieldname": "product_uom_category_id",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Category"
+          },
+          "options": "uom_category"
+        },
+        {
+          "fieldname": "quantity",
+          "fieldtype": "float",
+          "label": {
+            "en_US": "Quantity"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "date_maturity",
+          "fieldtype": "date",
+          "label": {
+            "en_US": "Due Date"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "price_unit",
+          "fieldtype": "float",
+          "label": {
+            "en_US": "Unit Price"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "price_subtotal",
+          "fieldtype": "monetary",
+          "label": {
+            "en_US": "Subtotal"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "price_total",
+          "fieldtype": "monetary",
+          "label": {
+            "en_US": "Total"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "discount",
+          "fieldtype": "float",
+          "label": {
+            "en_US": "Discount (%)"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "tax_calculation_rounding_method",
+          "fieldtype": "selection",
+          "label": {
+            "en_US": "Tax calculation rounding method"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "term_key",
+          "fieldtype": "binary",
+          "label": {
+            "en_US": "Term Key"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "epd_key",
+          "fieldtype": "binary",
+          "label": {
+            "en_US": "Epd Key"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "epd_needed",
+          "fieldtype": "binary",
+          "label": {
+            "en_US": "Epd Needed"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "epd_dirty",
+          "fieldtype": "boolean",
+          "label": {
+            "en_US": "Epd Dirty"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "discount_allocation_key",
+          "fieldtype": "binary",
+          "label": {
+            "en_US": "Discount Allocation Key"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "discount_allocation_needed",
+          "fieldtype": "binary",
+          "label": {
+            "en_US": "Discount Allocation Needed"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "discount_allocation_dirty",
+          "fieldtype": "boolean",
+          "label": {
+            "en_US": "Discount Allocation Dirty"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "analytic_line_ids",
+          "fieldtype": "one2many",
+          "label": {
+            "en_US": "Analytic lines"
+          },
+          "options": "account_analytic_line"
+        },
+        {
+          "fieldname": "discount_date",
+          "fieldtype": "date",
+          "label": {
+            "en_US": "Discount Date"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "discount_amount_currency",
+          "fieldtype": "monetary",
+          "label": {
+            "en_US": "Discount amount in Currency"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "discount_balance",
+          "fieldtype": "monetary",
+          "label": {
+            "en_US": "Discount Balance"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "payment_date",
+          "fieldtype": "date",
+          "label": {
+            "en_US": "Next Payment Date"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "is_refund",
+          "fieldtype": "boolean",
+          "label": {
+            "en_US": "Is Refund"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "id",
+          "fieldtype": "integer",
+          "label": {
+            "en_US": "ID"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "display_name",
+          "fieldtype": "char",
+          "label": {
+            "en_US": "Display Name"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "create_uid",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Created by"
+          },
+          "options": "res_users"
+        },
+        {
+          "fieldname": "create_date",
+          "fieldtype": "datetime",
+          "label": {
+            "en_US": "Created on"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "write_uid",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Last Updated by"
+          },
+          "options": "res_users"
+        },
+        {
+          "fieldname": "write_date",
+          "fieldtype": "datetime",
+          "label": {
+            "en_US": "Last Updated on"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "is_downpayment",
+          "fieldtype": "boolean",
+          "label": {
+            "en_US": "Is Downpayment"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "sale_line_ids",
+          "fieldtype": "many2many",
+          "label": {
+            "en_US": "Sales Order Lines"
+          },
+          "options": "sale_order_line"
+        },
+        {
+          "fieldname": "stock_valuation_layer_ids",
+          "fieldtype": "one2many",
+          "label": {
+            "en_US": "Stock Valuation Layer"
+          },
+          "options": "stock_valuation_layer"
+        },
+        {
+          "fieldname": "cogs_origin_id",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Cogs Origin"
+          },
+          "options": "account_move_line"
+        }
+      ],
+      "child_tables": []
+    },
+    "sale_order": {
+      "name": "sale_order",
+      "fields": [
+        {
+          "fieldname": "medium_id",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Medium"
+          },
+          "options": "utm_medium"
+        },
+        {
+          "fieldname": "campaign_id",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Campaign"
+          },
+          "options": "utm_campaign"
+        },
+        {
+          "fieldname": "source_id",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Source"
+          },
+          "options": "utm_source"
+        },
+        {
+          "fieldname": "activity_ids",
+          "fieldtype": "one2many",
+          "label": {
+            "en_US": "Activities"
+          },
+          "options": "mail_activity"
+        },
+        {
+          "fieldname": "activity_state",
+          "fieldtype": "selection",
+          "label": {
+            "en_US": "Activity State"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "activity_user_id",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Responsible User"
+          },
+          "options": "res_users"
+        },
+        {
+          "fieldname": "activity_type_id",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Next Activity Type"
+          },
+          "options": "mail_activity_type"
+        },
+        {
+          "fieldname": "activity_type_icon",
+          "fieldtype": "char",
+          "label": {
+            "en_US": "Activity Type Icon"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "activity_date_deadline",
+          "fieldtype": "date",
+          "label": {
+            "en_US": "Next Activity Deadline"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "my_activity_date_deadline",
+          "fieldtype": "date",
+          "label": {
+            "en_US": "My Activity Deadline"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "activity_summary",
+          "fieldtype": "char",
+          "label": {
+            "en_US": "Next Activity Summary"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "activity_exception_decoration",
+          "fieldtype": "selection",
+          "label": {
+            "en_US": "Activity Exception Decoration"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "activity_exception_icon",
+          "fieldtype": "char",
+          "label": {
+            "en_US": "Icon"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "message_is_follower",
+          "fieldtype": "boolean",
+          "label": {
+            "en_US": "Is Follower"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "message_follower_ids",
+          "fieldtype": "one2many",
+          "label": {
+            "en_US": "Followers"
+          },
+          "options": "mail_followers"
+        },
+        {
+          "fieldname": "message_partner_ids",
+          "fieldtype": "many2many",
+          "label": {
+            "en_US": "Followers (Partners)"
+          },
+          "options": "res_partner"
+        },
+        {
+          "fieldname": "message_ids",
+          "fieldtype": "one2many",
+          "label": {
+            "en_US": "Messages"
+          },
+          "options": "mail_message"
+        },
+        {
+          "fieldname": "has_message",
+          "fieldtype": "boolean",
+          "label": {
+            "en_US": "Has Message"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "message_needaction",
+          "fieldtype": "boolean",
+          "label": {
+            "en_US": "Action Needed"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "message_needaction_counter",
+          "fieldtype": "integer",
+          "label": {
+            "en_US": "Number of Actions"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "message_has_error",
+          "fieldtype": "boolean",
+          "label": {
+            "en_US": "Message Delivery error"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "message_has_error_counter",
+          "fieldtype": "integer",
+          "label": {
+            "en_US": "Number of errors"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "message_attachment_count",
+          "fieldtype": "integer",
+          "label": {
+            "en_US": "Attachment Count"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "website_message_ids",
+          "fieldtype": "one2many",
+          "label": {
+            "en_US": "Website Messages"
+          },
+          "options": "mail_message"
+        },
+        {
+          "fieldname": "message_has_sms_error",
+          "fieldtype": "boolean",
+          "label": {
+            "en_US": "SMS Delivery error"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "access_url",
+          "fieldtype": "char",
+          "label": {
+            "en_US": "Portal Access URL"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "access_token",
+          "fieldtype": "char",
+          "label": {
+            "en_US": "Security Token"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "access_warning",
+          "fieldtype": "text",
+          "label": {
+            "en_US": "Access warning"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "name",
+          "fieldtype": "char",
+          "label": {
+            "en_US": "Order Reference"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "company_id",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Company"
+          },
+          "options": "res_company"
+        },
+        {
+          "fieldname": "partner_id",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Customer"
+          },
+          "options": "res_partner"
+        },
+        {
+          "fieldname": "state",
+          "fieldtype": "selection",
+          "label": {
+            "en_US": "Status"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "locked",
+          "fieldtype": "boolean",
+          "label": {
+            "en_US": "Locked"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "has_archived_products",
+          "fieldtype": "boolean",
+          "label": {
+            "en_US": "Has Archived Products"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "client_order_ref",
+          "fieldtype": "char",
+          "label": {
+            "en_US": "Customer Reference"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "create_date",
+          "fieldtype": "datetime",
+          "label": {
+            "en_US": "Creation Date"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "commitment_date",
+          "fieldtype": "datetime",
+          "label": {
+            "en_US": "Delivery Date"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "date_order",
+          "fieldtype": "datetime",
+          "label": {
+            "en_US": "Order Date"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "origin",
+          "fieldtype": "char",
+          "label": {
+            "en_US": "Source Document"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "reference",
+          "fieldtype": "char",
+          "label": {
+            "en_US": "Payment Ref."
+          },
+          "options": null
+        },
+        {
+          "fieldname": "require_signature",
+          "fieldtype": "boolean",
+          "label": {
+            "en_US": "Online signature"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "require_payment",
+          "fieldtype": "boolean",
+          "label": {
+            "en_US": "Online payment"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "prepayment_percent",
+          "fieldtype": "float",
+          "label": {
+            "en_US": "Prepayment percentage"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "signature",
+          "fieldtype": "binary",
+          "label": {
+            "en_US": "Signature"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "signed_by",
+          "fieldtype": "char",
+          "label": {
+            "en_US": "Signed By"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "signed_on",
+          "fieldtype": "datetime",
+          "label": {
+            "en_US": "Signed On"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "validity_date",
+          "fieldtype": "date",
+          "label": {
+            "en_US": "Expiration"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "journal_id",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Invoicing Journal"
+          },
+          "options": "account_journal"
+        },
+        {
+          "fieldname": "note",
+          "fieldtype": "html",
+          "label": {
+            "en_US": "Terms and conditions"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "partner_invoice_id",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Invoice Address"
+          },
+          "options": "res_partner"
+        },
+        {
+          "fieldname": "partner_shipping_id",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Delivery Address"
+          },
+          "options": "res_partner"
+        },
+        {
+          "fieldname": "fiscal_position_id",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Fiscal Position"
+          },
+          "options": "account_fiscal_position"
+        },
+        {
+          "fieldname": "payment_term_id",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Payment Terms"
+          },
+          "options": "account_payment_term"
+        },
+        {
+          "fieldname": "pricelist_id",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Pricelist"
+          },
+          "options": "product_pricelist"
+        },
+        {
+          "fieldname": "currency_id",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Currency"
+          },
+          "options": "res_currency"
+        },
+        {
+          "fieldname": "currency_rate",
+          "fieldtype": "float",
+          "label": {
+            "en_US": "Currency Rate"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "user_id",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Salesperson"
+          },
+          "options": "res_users"
+        },
+        {
+          "fieldname": "team_id",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Sales Team"
+          },
+          "options": "crm_team"
+        },
+        {
+          "fieldname": "order_line",
+          "fieldtype": "one2many",
+          "label": {
+            "en_US": "Order Lines"
+          },
+          "options": "sale_order_line"
+        },
+        {
+          "fieldname": "amount_untaxed",
+          "fieldtype": "monetary",
+          "label": {
+            "en_US": "Untaxed Amount"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "amount_tax",
+          "fieldtype": "monetary",
+          "label": {
+            "en_US": "Taxes"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "amount_total",
+          "fieldtype": "monetary",
+          "label": {
+            "en_US": "Total"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "amount_to_invoice",
+          "fieldtype": "monetary",
+          "label": {
+            "en_US": "Un-invoiced Balance"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "amount_invoiced",
+          "fieldtype": "monetary",
+          "label": {
+            "en_US": "Already invoiced"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "invoice_count",
+          "fieldtype": "integer",
+          "label": {
+            "en_US": "Invoice Count"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "invoice_ids",
+          "fieldtype": "many2many",
+          "label": {
+            "en_US": "Invoices"
+          },
+          "options": "account_move"
+        },
+        {
+          "fieldname": "invoice_status",
+          "fieldtype": "selection",
+          "label": {
+            "en_US": "Invoice Status"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "transaction_ids",
+          "fieldtype": "many2many",
+          "label": {
+            "en_US": "Transactions"
+          },
+          "options": "payment_transaction"
+        },
+        {
+          "fieldname": "authorized_transaction_ids",
+          "fieldtype": "many2many",
+          "label": {
+            "en_US": "Authorized Transactions"
+          },
+          "options": "payment_transaction"
+        },
+        {
+          "fieldname": "amount_paid",
+          "fieldtype": "float",
+          "label": {
+            "en_US": "Payment Transactions Amount"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "tag_ids",
+          "fieldtype": "many2many",
+          "label": {
+            "en_US": "Tags"
+          },
+          "options": "crm_tag"
+        },
+        {
+          "fieldname": "amount_undiscounted",
+          "fieldtype": "float",
+          "label": {
+            "en_US": "Amount Before Discount"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "country_code",
+          "fieldtype": "char",
+          "label": {
+            "en_US": "Country code"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "company_price_include",
+          "fieldtype": "selection",
+          "label": {
+            "en_US": "Default Sales Price Include"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "duplicated_order_ids",
+          "fieldtype": "many2many",
+          "label": {
+            "en_US": "Duplicated Order"
+          },
+          "options": "sale_order"
+        },
+        {
+          "fieldname": "is_expired",
+          "fieldtype": "boolean",
+          "label": {
+            "en_US": "Is Expired"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "partner_credit_warning",
+          "fieldtype": "text",
+          "label": {
+            "en_US": "Partner Credit Warning"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "tax_calculation_rounding_method",
+          "fieldtype": "selection",
+          "label": {
+            "en_US": "Tax Calculation Rounding Method"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "tax_country_id",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Tax Country"
+          },
+          "options": "res_country"
+        },
+        {
+          "fieldname": "tax_totals",
+          "fieldtype": "binary",
+          "label": {
+            "en_US": "Tax Totals"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "terms_type",
+          "fieldtype": "selection",
+          "label": {
+            "en_US": "Terms & Conditions format"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "type_name",
+          "fieldtype": "char",
+          "label": {
+            "en_US": "Type Name"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "show_update_fpos",
+          "fieldtype": "boolean",
+          "label": {
+            "en_US": "Has Fiscal Position Changed"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "has_active_pricelist",
+          "fieldtype": "boolean",
+          "label": {
+            "en_US": "Has Active Pricelist"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "show_update_pricelist",
+          "fieldtype": "boolean",
+          "label": {
+            "en_US": "Has Pricelist Changed"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "id",
+          "fieldtype": "integer",
+          "label": {
+            "en_US": "ID"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "display_name",
+          "fieldtype": "char",
+          "label": {
+            "en_US": "Display Name"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "create_uid",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Created by"
+          },
+          "options": "res_users"
+        },
+        {
+          "fieldname": "write_uid",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Last Updated by"
+          },
+          "options": "res_users"
+        },
+        {
+          "fieldname": "write_date",
+          "fieldtype": "datetime",
+          "label": {
+            "en_US": "Last Updated on"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "pending_email_template_id",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Pending Email Template"
+          },
+          "options": "mail_template"
+        },
+        {
+          "fieldname": "rating_ids",
+          "fieldtype": "one2many",
+          "label": {
+            "en_US": "Ratings"
+          },
+          "options": "rating_rating"
+        },
+        {
+          "fieldname": "sale_order_template_id",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Quotation Template"
+          },
+          "options": "sale_order_template"
+        },
+        {
+          "fieldname": "sale_order_option_ids",
+          "fieldtype": "one2many",
+          "label": {
+            "en_US": "Optional Products Lines"
+          },
+          "options": "sale_order_option"
+        },
+        {
+          "fieldname": "available_product_document_ids",
+          "fieldtype": "many2many",
+          "label": {
+            "en_US": "Available Product Documents"
+          },
+          "options": "quotation_document"
+        },
+        {
+          "fieldname": "is_pdf_quote_builder_available",
+          "fieldtype": "boolean",
+          "label": {
+            "en_US": "Is Pdf Quote Builder Available"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "quotation_document_ids",
+          "fieldtype": "many2many",
+          "label": {
+            "en_US": "Headers/Footers"
+          },
+          "options": "quotation_document"
+        },
+        {
+          "fieldname": "customizable_pdf_form_fields",
+          "fieldtype": "json",
+          "label": {
+            "en_US": "Customizable PDF Form Fields"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "expected_date",
+          "fieldtype": "datetime",
+          "label": {
+            "en_US": "Expected Date"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "incoterm",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Incoterm"
+          },
+          "options": "account_incoterms"
+        },
+        {
+          "fieldname": "incoterm_location",
+          "fieldtype": "char",
+          "label": {
+            "en_US": "Incoterm Location"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "picking_policy",
+          "fieldtype": "selection",
+          "label": {
+            "en_US": "Shipping Policy"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "warehouse_id",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Warehouse"
+          },
+          "options": "stock_warehouse"
+        },
+        {
+          "fieldname": "picking_ids",
+          "fieldtype": "one2many",
+          "label": {
+            "en_US": "Transfers"
+          },
+          "options": "stock_picking"
+        },
+        {
+          "fieldname": "delivery_count",
+          "fieldtype": "integer",
+          "label": {
+            "en_US": "Delivery Orders"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "delivery_status",
+          "fieldtype": "selection",
+          "label": {
+            "en_US": "Delivery Status"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "procurement_group_id",
+          "fieldtype": "many2one",
+          "label": {
+            "en_US": "Procurement Group"
+          },
+          "options": "procurement_group"
+        },
+        {
+          "fieldname": "effective_date",
+          "fieldtype": "datetime",
+          "label": {
+            "en_US": "Effective Date"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "json_popover",
+          "fieldtype": "char",
+          "label": {
+            "en_US": "JSON data for the popover widget"
+          },
+          "options": null
+        },
+        {
+          "fieldname": "show_json_popover",
+          "fieldtype": "boolean",
+          "label": {
+            "en_US": "Has late picking"
+          },
+          "options": null
+        }
+      ],
+      "child_tables": []
+    }
+  }
 }

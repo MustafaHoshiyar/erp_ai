@@ -90,7 +90,7 @@ def run_sync():
         ingest_url = _build_ingest_url(MOTHERBRAIN_URL)
         
         try:
-            response = requests.post(ingest_url, json={"telemetry_data": payload}, headers=headers, timeout=10)
+            response = requests.post(ingest_url, json={"telemetry_data": payload}, headers=headers, timeout=60)
             
             if response.status_code == 200:
                 print(f"Successfully synced {len(payload)} telemetry events to Motherbrain: {response.json()}")

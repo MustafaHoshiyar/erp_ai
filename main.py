@@ -26,10 +26,10 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 def _simplify_error_message(error_str: str) -> str:
     """Masks technical tracebacks with user-friendly messages for the frontend."""
     err = str(error_str).lower()
-    if "1054" in err or "unknown column" in err:
-        return "The query referenced a column that doesn't exist in the current schema. You may need to refresh the schema."
-    if "1146" in err or "table" in err and "doesn't exist" in err:
-        return "The query referenced a table that was not found in the database."
+    if "1054" in err or "unknown column" in err or ("column" in err and "does not exist" in err):
+        return "The query referenced a column that doesn't exist in the current schema. Please tell me which field I should use instead, or refresh the schema."
+    if "1146" in err or ("table" in err and ("doesn't exist" in err or "does not exist" in err)):
+        return "The query referenced a table that was not found in the database. Please check if the table name is correct."
     if "1064" in err or "syntax" in err:
         return "There was a syntax error in the generated query. I've logged this for improvement."
     if "access denied" in err or "1045" in err or "unauthorized" in err:
@@ -250,22 +250,33 @@ async def generate_report(request: PromptRequest, background_tasks: BackgroundTa
         db.commit()
         background_tasks.add_task(backfill_embeddings_in_background, client_id)
     except Exception as e:
+        err_str = str(e)
         msg.execution_status = "error"
-        msg.error_message = str(e)
+        msg.error_message = err_str
         msg.execution_ms = round((time.perf_counter() - execution_started_at) * 1000) if 'execution_started_at' in locals() else None
         msg.total_duration_ms = round((time.perf_counter() - request_started_at) * 1000)
+        
+        simplified_error = _simplify_error_message(err_str)
+        is_schema_error = ("column" in err_str.lower() or "table" in err_str.lower()) and ("does not exist" in err_str.lower() or "unknown column" in err_str.lower() or "1054" in err_str or "1146" in err_str)
+        
+        # If it's a schema error, we treat it as a clarification request instead of a 'crash'
+        if is_schema_error:
+            msg.detected_intent = "clarification_needed"
+            msg.assistant_response = f"I tried to generate the report, but encountered a schema issue: {simplified_error}"
+        
         db.commit()
         # Auto-push failures to Motherbrain immediately
         background_tasks.add_task(_push_telemetry_to_motherbrain, msg.id)
         failed_sql = locals().get("validated_sql") or result.get("sql")
+        
         return {
             "conversation_id": conversation_id,
             "message_id": msg.id,
             "intent": msg.detected_intent,
             "sql": failed_sql,
             "data": None,
-            "message": result.get("message"),
-            "error": _simplify_error_message(str(e)),
+            "message": msg.assistant_response,
+            "error": None if is_schema_error else simplified_error,
             "tokens_used": tokens_used
         }
 
