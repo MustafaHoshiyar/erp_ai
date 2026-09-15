@@ -147,6 +147,8 @@ class ClientConfig(Base):
     erp_url = Column(String(500), nullable=False) # e.g. https://supernatural.ribox.me
     api_key = Column(String(255), nullable=False)
     api_secret = Column(String(255), nullable=False)
+    erp_type = Column(String(20), default="erpnext", nullable=False)
+    odoo_db = Column(String(100), nullable=True)
     app_name_override = Column(String(100), nullable=True)
     default_currency_code = Column(String(10), default="KWD")
     default_currency_symbol = Column(String(10), default="KWD")
@@ -199,6 +201,10 @@ def init_db(bind_engine=None):
             },
             "client_context_overrides": {
                 "app_name": "VARCHAR(100)"
+            },
+            "client_configs": {
+                "erp_type": "VARCHAR(20) DEFAULT 'erpnext'",
+                "odoo_db": "VARCHAR(100)"
             }
         }
         

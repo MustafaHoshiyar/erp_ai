@@ -21,10 +21,12 @@ _SCHEMA_INDEX_CACHE = {
     "global_length": 0,
     "local_length": 0,
     "index_string": "",
+    "erp_type": "",
+    "client_id": "",
 }
 
 
-def build_schema_index(global_schema: str, local_schema: dict) -> str:
+def build_schema_index(global_schema: str, local_schema: dict, client_id: str = "") -> str:
     """
     Builds a lightweight list of available tables so the router knows what truly exists.
     """
@@ -32,16 +34,19 @@ def build_schema_index(global_schema: str, local_schema: dict) -> str:
 
     local_schema_len = len(str(local_schema)) if local_schema else 0
     global_schema_len = len(global_schema)
+    erp_type = (local_schema or {}).get("erp_type", "erpnext")
 
     if (
         global_schema_len == _SCHEMA_INDEX_CACHE["global_length"]
         and local_schema_len == _SCHEMA_INDEX_CACHE["local_length"]
+        and erp_type == _SCHEMA_INDEX_CACHE["erp_type"]
+        and client_id == _SCHEMA_INDEX_CACHE["client_id"]
         and _SCHEMA_INDEX_CACHE["index_string"]
     ):
         return _SCHEMA_INDEX_CACHE["index_string"]
 
     lines = [
-        "Available Live ERP Tables:",
+        f"Available Live {erp_type.upper()} Tables:",
         "Only choose tables that exist in the live inventory below.",
     ]
 
@@ -54,17 +59,19 @@ def build_schema_index(global_schema: str, local_schema: dict) -> str:
     lines.append("\nGeneric Global Schema Excerpts:")
     for line in global_schema.split("\n"):
         line = line.strip()
-        if line.startswith("`tab"):
+        if (erp_type == "erpnext" and line.startswith("`tab")) or (erp_type == "odoo" and line.startswith("`") and not line.startswith("`tab")):
             lines.append(line)
 
     index_str = "\n".join(lines)
     _SCHEMA_INDEX_CACHE["global_length"] = global_schema_len
     _SCHEMA_INDEX_CACHE["local_length"] = local_schema_len
+    _SCHEMA_INDEX_CACHE["erp_type"] = erp_type
+    _SCHEMA_INDEX_CACHE["client_id"] = client_id
     _SCHEMA_INDEX_CACHE["index_string"] = index_str
     return index_str
 
 
-def identify_required_tables(user_prompt: str, schema_index: str) -> tuple[list[str], int]:
+def identify_required_tables(user_prompt: str, schema_index: str, erp_type: str = "erpnext") -> tuple[list[str], int]:
     """
     Pass 1: asks a fast LLM to identify the exact live tables needed to answer the prompt.
     """
@@ -73,15 +80,16 @@ def identify_required_tables(user_prompt: str, schema_index: str) -> tuple[list[
         "maintenance" in prompt_lower
         and any(term in prompt_lower for term in ["scheduled", "schedule", "next week", "upcoming", "this week"])
     ):
-        return ["tabMaintenance"], 0
+        return ["tabMaintenance" if erp_type == "erpnext" else "maintenance_order"], 0
 
     if not client:
         return [], 0
 
+    table_example = '["tabSales Invoice", "tabSales Invoice Item"]' if erp_type == "erpnext" else '["sale_order", "sale_order_line"]'
     system_prompt = f"""
-You are a database routing assistant for ERPNext.
+You are a database routing assistant for {erp_type}.
 Given a user request and a list of available live tables, identify EXACTLY which tables are required to write the SQL query.
-Return your answer ONLY as a JSON array of table strings (for example ["tabSales Invoice", "tabSales Invoice Item"]).
+Return your answer ONLY as a JSON array of table strings (for example {table_example}).
 Do not include backticks in your JSON output.
 Do not include any other text or markdown block formatting.
 Never invent a table that is not present in the live inventory.
@@ -137,15 +145,16 @@ def filter_schema(
     rules_block = []
     in_rules = False
 
+    erp_type = (local_schema or {}).get("erp_type", "erpnext")
     for line in global_schema.split("\n"):
-        if "## KEY RELATIONSHIPS" in line:
+        if erp_type == "erpnext" and "## KEY RELATIONSHIPS" in line:
             in_rules = True
 
         if in_rules:
             rules_block.append(line)
             continue
 
-        if line.startswith("`tab"):
+        if (erp_type == "erpnext" and line.startswith("`tab")) or (erp_type == "odoo" and line.startswith("`") and not line.startswith("`tab")):
             table_name = line.split(":", 1)[0].replace("`", "").strip()
             if table_name in required_tables:
                 filtered_schema.append(line)
@@ -153,12 +162,12 @@ def filter_schema(
     if local_schema_text:
         filtered_schema.append("\n### CUSTOM CLIENT SCHEMA ###")
         for line in local_schema_text.split("\n"):
-            if line.startswith("`tab"):
+            if (erp_type == "erpnext" and line.startswith("`tab")) or (erp_type == "odoo" and line.startswith("`") and not line.startswith("`tab")):
                 table_name = line.split(":", 1)[0].replace("`", "").strip()
                 if table_name in required_tables:
                     filtered_schema.append(line)
             elif "added:" in line:
-                match_dt = re.search(r"`(tab.*?)`", line)
+                match_dt = re.search(r"`(tab.*?|[a-zA-Z_][\w]*)`", line)
                 if match_dt and match_dt.group(1) in required_tables:
                     filtered_schema.append(line)
 
@@ -171,8 +180,9 @@ def get_optimized_schema_context(user_prompt: str, global_schema: str, local_sch
     """
     Returns the filtered schema string and the tokens used by the routing pass.
     """
-    schema_index = build_schema_index(global_schema, local_schema)
-    required_tables, pass1_tokens = identify_required_tables(user_prompt, schema_index)
+    schema_index = build_schema_index(global_schema, local_schema, client_id=client_id)
+    erp_type = (local_schema or {}).get("erp_type", "erpnext")
+    required_tables, pass1_tokens = identify_required_tables(user_prompt, schema_index, erp_type=erp_type)
 
     updated_schema = ensure_doctype_details(required_tables, local_schema, client_id=client_id) if local_schema else local_schema
     local_schema_text = format_local_schema_for_prompt(updated_schema) if updated_schema else ""

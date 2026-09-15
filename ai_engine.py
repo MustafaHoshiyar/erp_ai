@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 from memory_manager import get_relevant_schema_context
 from schema_fetcher import extract_available_table_names, get_local_schema
 from database import SessionLocal, ClientSystemPrompt, ClientFeatureFlag
+from runtime_config import get_client_runtime_config
 
 load_dotenv()
 
@@ -207,7 +208,7 @@ _SHORT_AFFIRMATION_TERMS = (
     "go ahead",
 )
 
-SYSTEM_PROMPT = """
+ERPNEXT_SYSTEM_PROMPT = """
 You are a senior ERPNext database engineer and MariaDB expert.
 
 You specialize in writing complex, optimized, production-safe SQL queries
@@ -308,6 +309,31 @@ ERPNext Semantics To Respect:
 - For Payment Entry reports, submitted records should normally be filtered with `docstatus = 1`. Do not invent workflow statuses like `Completed` unless the schema or prompt explicitly requires them.
 """
 
+ODOO_SYSTEM_PROMPT = """
+You are a senior Odoo functional expert and PostgreSQL database engineer.
+Generate safe, optimized SELECT queries for the connected Odoo database.
+
+Odoo tables use PostgreSQL names without the Frappe `tab` prefix. Common tables
+include `sale_order`, `sale_order_line`, `purchase_order`, `account_move`,
+`account_move_line`, `stock_move`, `stock_quant`, `product_product`,
+`product_template`, `res_partner`, and `res_users`.
+
+Use PostgreSQL syntax such as COALESCE, TO_CHAR, CURRENT_DATE, ILIKE, and
+date_trunc(). Standard columns include `id`, `create_date`, `write_date`,
+`create_uid`, and `write_uid`. Many2one fields end in `_id`; join them to the
+related table's `id`. Product names normally require joining `product_product`
+to `product_template`, and user names require joining `res_users` to
+`res_partner`.
+
+For invoices, use `account_move.move_type` and `account_move.state`; invoice
+lines are in `account_move_line`. For current stock, use `stock_quant` and
+filter internal locations through `stock_location.usage = 'internal'`.
+
+Only generate SELECT or WITH queries. Never generate data-changing SQL. Return
+raw numeric amounts, avoid FORMAT(), and use a maximum of 1000 rows unless the
+user explicitly requests no limit using the `/* NO_LIMIT */` marker.
+"""
+
 
 _V14_SCHEMA_NOTES = """
 [ERPNext v14 Schema Notes]
@@ -360,7 +386,7 @@ def _client_has_feature_flag(client_id: str, feature_key: str) -> bool:
     finally:
         db.close()
 
-def _get_dynamic_system_prompt_segments(client_id: str, app_name: str = None) -> str:
+def _get_dynamic_system_prompt_segments(client_id: str, app_name: str = None, erp_type: str = "erpnext") -> str:
     if not client_id:
         return ""
     db = SessionLocal()
@@ -390,6 +416,8 @@ def _get_dynamic_system_prompt_segments(client_id: str, app_name: str = None) ->
         
         lines = ["\n### DYNAMIC CLIENT-SPECIFIC INSTRUCTIONS ###"]
         for s in segments:
+            if erp_type == "odoo" and ("tab" in s.prompt_text.lower() or "is_return" in s.prompt_text.lower()):
+                continue
             lines.append(f"Rule ({s.segment_key}): {s.prompt_text}")
         return "\n".join(lines)
     except Exception as e:
@@ -399,11 +427,19 @@ def _get_dynamic_system_prompt_segments(client_id: str, app_name: str = None) ->
         db.close()
 
 
-def build_prompt_specific_guidance(user_prompt, history=None, client_id="DEMO_CLIENT_123", app_name=None):
+def build_prompt_specific_guidance(user_prompt, history=None, client_id="DEMO_CLIENT_123", app_name=None, erp_type="erpnext"):
     prompt_lower = (user_prompt or "").strip().lower()
     guidance_lines = []
     last_sql = _extract_last_sql_from_history(history)
     client_guardrail_enabled = _client_has_feature_flag(client_id, "sales_invoice_followup_guardrail")
+
+    if erp_type == "odoo":
+        if "product" in prompt_lower or "item" in prompt_lower:
+            guidance_lines.append("- Odoo: join product_product to product_template for readable product names.")
+        if any(term in prompt_lower for term in ("customer", "partner", "supplier")):
+            guidance_lines.append("- Odoo: include the readable partner name from res_partner, not only partner_id.")
+        if "stock" in prompt_lower or "inventory" in prompt_lower:
+            guidance_lines.append("- Odoo: use stock_quant for current quantities and internal stock_location rows.")
 
     if _contains_any(prompt_lower, _REORDER_TERMS):
         guidance_lines.extend(
@@ -499,20 +535,25 @@ def build_prompt_specific_guidance(user_prompt, history=None, client_id="DEMO_CL
                 "- For Sales Invoice header reports, do not join `tabSales Invoice Item` unless the user explicitly needs line-item fields, filters, or item-level aggregation."
             )
 
+    if erp_type == "odoo":
+        guidance_lines = [line for line in guidance_lines if "`tab" not in line.lower()]
+
     if not guidance_lines:
         return ""
 
     return "Prompt-Specific Guidance:\n" + "\n".join(guidance_lines)
 
 
-def _extract_referenced_tables(sql_text):
+def _extract_referenced_tables(sql_text, erp_type="erpnext"):
     if not sql_text:
         return []
 
     tables = []
     for match in _SQL_TABLE_PATTERN.finditer(sql_text):
         table_name = (match.group(1) or match.group(2) or "").strip()
-        if table_name.lower().startswith("tab") and table_name not in tables:
+        if erp_type == "erpnext" and not table_name.lower().startswith("tab"):
+            continue
+        if table_name not in tables:
             tables.append(table_name)
     return tables
 
@@ -525,7 +566,11 @@ def _find_unknown_tables(sql_text, local_schema):
     if not available_tables:
         return []
 
-    return [table for table in _extract_referenced_tables(sql_text) if table not in available_tables]
+    erp_type = local_schema.get("erp_type", "erpnext")
+    if erp_type == "odoo":
+        normalized = {table.replace(".", "_") for table in available_tables}
+        return [table for table in _extract_referenced_tables(sql_text, erp_type) if table.replace(".", "_") not in normalized]
+    return [table for table in _extract_referenced_tables(sql_text, erp_type) if table not in available_tables]
 
 
 def _parse_sql_response(raw_output, tokens_used, needs_forecast):
@@ -699,11 +744,18 @@ def _build_effective_user_prompt(user_prompt, history):
     ]
 
     for relation in clarification.get("relations", []):
+        child_table = relation["child_table"]
         parent_table = relation["parent_table"]
+        if not parent_table.startswith("tab"):
+            lines.append(
+                f"- `{child_table}` must join to `{parent_table}` with "
+                f"`{child_table}`.`{parent_table}_id` = `{parent_table}`.`id`."
+            )
+            continue
         parent_doctype = parent_table[3:] if parent_table.startswith("tab") else parent_table
         lines.append(
-            f"- `{relation['child_table']}` must join to `{parent_table}` with "
-            f"`{relation['child_table']}`.`parent` = `{parent_table}`.`name` "
+            f"- `{child_table}` must join to `{parent_table}` with "
+            f"`{child_table}`.`parent` = `{parent_table}`.`name` "
             f"and `{relation['child_table']}`.`parenttype` = '{parent_doctype}'."
         )
 
@@ -991,20 +1043,27 @@ def generate_sql(user_prompt, history=None, client_id="DEMO_CLIENT_123", app_nam
     effective_user_prompt = _build_effective_user_prompt(user_prompt, history)
     memory_context = get_relevant_schema_context(client_id, effective_user_prompt, app_name=app_name)
     
-    dynamic_system_prompt = SYSTEM_PROMPT.format(currency=currency)
+    erp_type = get_client_runtime_config(client_id).get("erp_type", "erpnext")
+    dynamic_system_prompt = (
+        ODOO_SYSTEM_PROMPT + f"\nCurrency context: {currency}"
+        if erp_type == "odoo"
+        else ERPNEXT_SYSTEM_PROMPT.format(currency=currency)
+    )
     
     # Inject ERPNext version-specific schema notes
-    if erp_version:
+    if erp_version and erp_type == "erpnext":
         version_notes = _get_version_schema_notes(erp_version)
         if version_notes:
             dynamic_system_prompt += f"\n\n{version_notes}"
     
     # Inject Dynamic Database-stored Prompt Segments
-    dynamic_segments = _get_dynamic_system_prompt_segments(client_id, app_name)
+    dynamic_segments = _get_dynamic_system_prompt_segments(client_id, app_name, erp_type=erp_type)
     if dynamic_segments:
         dynamic_system_prompt += f"\n{dynamic_segments}"
         
-    prompt_specific_guidance = build_prompt_specific_guidance(effective_user_prompt, history, client_id, app_name)
+    prompt_specific_guidance = build_prompt_specific_guidance(
+        effective_user_prompt, history, client_id, app_name, erp_type=erp_type
+    )
     
     from schema_router import get_optimized_schema_context
     from schema_planner import build_relation_constraints
@@ -1042,7 +1101,10 @@ def generate_sql(user_prompt, history=None, client_id="DEMO_CLIENT_123", app_nam
             content = str(item.get("content", "")).strip()
             
             # If the content is an Assistant's Technical Error (Traceback), summarize it
-            if role == "assistant" and ("Traceback (most recent call last)" in content or "ERPNext SQL Error" in content):
+            if role == "assistant" and any(
+                error_text in content
+                for error_text in ("Traceback (most recent call last)", "ERPNext SQL Error", "Odoo SQL Error")
+            ):
                 # Extract only the last error line if possible, or just a short summary
                 last_line = content.splitlines()[-1] if content.strip() else "Unknown Database Error"
                 content = f"Error: {last_line}"

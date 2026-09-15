@@ -1,9 +1,10 @@
 import os
+from urllib.parse import urlparse
 
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import RedirectResponse
-from pydantic import BaseModel
+from pydantic import BaseModel, field_validator, model_validator
 import time
 from ai_engine import (
     generate_sql,
@@ -33,9 +34,9 @@ def _simplify_error_message(error_str: str) -> str:
     if "1064" in err or "syntax" in err:
         return "There was a syntax error in the generated query. I've logged this for improvement."
     if "access denied" in err or "1045" in err or "unauthorized" in err:
-        return "Database access denied. Please check your ERPNext credentials."
+        return "Database access denied. Please check your ERP credentials."
     if "connection" in err or "refused" in err:
-        return "Could not connect to the ERPNext server. Please check the ERP URL."
+        return "Could not connect to the ERP server. Please check the ERP URL."
     if "timeout" in err:
         return "The database request timed out. Please try again."
     if "ssl" in err:
@@ -109,7 +110,6 @@ def get_config(client_id: str = "DEMO_CLIENT_123"):
     }
     
 from typing import List, Optional, Dict, Any
-from pydantic import BaseModel
 
 class PromptRequest(BaseModel):
     prompt: str
@@ -181,9 +181,13 @@ async def generate_report(request: PromptRequest, background_tasks: BackgroundTa
             "tokens_used": 0
         }
 
-    from erp_client import get_default_currency_info, get_frappe_version
+    from erp_client import get_default_currency_info
     currency_info = await get_default_currency_info(client_id)
-    erp_version = await get_frappe_version(client_id)
+    erp_version = None
+    from runtime_config import get_client_runtime_config
+    if get_client_runtime_config(client_id).get("erp_type", "erpnext") == "erpnext":
+        from erp_client import get_frappe_version
+        erp_version = await get_frappe_version(client_id)
     generation_started_at = time.perf_counter()
 
     try:
@@ -647,25 +651,43 @@ async def login(req: LoginRequest):
             raise HTTPException(status_code=404, detail=f"No configuration found for Workspace ID: {client_id}")
 
         async with httpx.AsyncClient() as client:
-            resp = await client.post(
+            if config.get("erp_type", "erpnext") == "odoo":
+                if not config.get("odoo_db"):
+                    raise HTTPException(status_code=400, detail="Odoo database is not configured")
+                response = await client.post(
+                    f"{config['erp_url']}/web/session/authenticate",
+                    json={
+                        "jsonrpc": "2.0",
+                        "method": "call",
+                        "params": {
+                            "db": config["odoo_db"],
+                            "login": username,
+                            "password": req.password,
+                        },
+                    },
+                    timeout=15.0,
+                )
+                data = response.json()
+                result = data.get("result") or {}
+                if response.status_code == 200 and result.get("uid"):
+                    return {"token": result.get("session_id", username + "-auth-token"), "email": username}
+                raise HTTPException(status_code=401, detail="Invalid credentials for Odoo")
+
+            response = await client.post(
                 f"{config['erp_url']}/api/method/login",
-                json={"usr": username, "pwd": req.password}
+                json={"usr": username, "pwd": req.password},
+                timeout=15.0,
             )
-            data = resp.json()
-            
-            if resp.status_code == 200 and data.get("message") == "Logged In":
-                return {
-                    "token": data.get("full_name", username) + "-auth-token",
-                    "email": username
-                }
-                
-            raise HTTPException(status_code=401, detail="Invalid credentials for Frappe")
+            data = response.json()
+            if response.status_code == 200 and data.get("message") == "Logged In":
+                return {"token": data.get("full_name", username) + "-auth-token", "email": username}
+            raise HTTPException(status_code=401, detail="Invalid credentials for ERPNext")
             
     except httpx.RequestError as exc:
         import traceback
-        print(f"FAILED TO CONNECT TO ERPNext for client_id={client_id} at {config['erp_url']}")
+        print(f"FAILED TO CONNECT TO ERP for client_id={client_id} at {config['erp_url']}")
         traceback.print_exc()
-        _safe_http_error(502, exc, "Failed to connect to ERPNext")
+        _safe_http_error(502, exc, "Failed to connect to ERP")
     except HTTPException:
         raise
     except Exception as e:
@@ -678,8 +700,45 @@ class ClientConfigRequest(BaseModel):
     erp_url: str
     api_key: str
     api_secret: str
+    erp_type: str = "erpnext"
+    odoo_db: Optional[str] = None
     app_name_override: Optional[str] = None
     is_active: bool = True
+
+    @field_validator("client_id", "erp_url", "api_key", "api_secret")
+    @classmethod
+    def require_non_empty(cls, value: str) -> str:
+        value = value.strip()
+        if not value:
+            raise ValueError("This field is required")
+        return value
+
+    @field_validator("erp_url")
+    @classmethod
+    def validate_erp_url(cls, value: str) -> str:
+        parsed = urlparse(value)
+        if parsed.scheme not in {"http", "https"} or not parsed.netloc:
+            raise ValueError("erp_url must be an HTTP or HTTPS URL")
+        return value.rstrip("/")
+
+    @field_validator("erp_type")
+    @classmethod
+    def validate_erp_type(cls, value: str) -> str:
+        value = value.strip().lower()
+        if value not in {"erpnext", "odoo"}:
+            raise ValueError("erp_type must be erpnext or odoo")
+        return value
+
+    @field_validator("odoo_db")
+    @classmethod
+    def validate_odoo_db(cls, value: Optional[str]) -> Optional[str]:
+        return value.strip() if value else value
+
+    @model_validator(mode="after")
+    def validate_cross_fields(self):
+        if self.erp_type == "odoo" and not self.odoo_db:
+            raise ValueError("odoo_db is required for Odoo clients")
+        return self
 
 @app.get("/api/client-configs")
 def list_client_configs(db: Session = Depends(get_db)):
@@ -688,8 +747,10 @@ def list_client_configs(db: Session = Depends(get_db)):
         {
             "client_id": config.client_id,
             "erp_url": config.erp_url,
-            "api_key": config.api_key,
-            "api_secret": config.api_secret,
+            "api_key_configured": bool(config.api_key),
+            "api_secret_configured": bool(config.api_secret),
+            "erp_type": config.erp_type,
+            "odoo_db": config.odoo_db,
             "app_name_override": config.app_name_override,
             "is_active": config.is_active,
         }
@@ -707,8 +768,10 @@ def get_client_config(client_id: str, db: Session = Depends(get_db)):
         return {
             "client_id": config.client_id,
             "erp_url": config.erp_url,
-            "api_key": config.api_key,
-            "api_secret": config.api_secret,
+            "api_key_configured": bool(config.api_key),
+            "api_secret_configured": bool(config.api_secret),
+            "erp_type": config.erp_type,
+            "odoo_db": config.odoo_db,
             "app_name_override": config.app_name_override,
             "is_active": config.is_active,
         }
@@ -730,6 +793,8 @@ def upsert_client_config(request: ClientConfigRequest, db: Session = Depends(get
     config.erp_url = request.erp_url.rstrip("/")
     config.api_key = request.api_key
     config.api_secret = request.api_secret
+    config.erp_type = request.erp_type
+    config.odoo_db = request.odoo_db
     config.app_name_override = request.app_name_override
     config.is_active = request.is_active
     db.commit()
@@ -739,8 +804,10 @@ def upsert_client_config(request: ClientConfigRequest, db: Session = Depends(get
         "status": "success",
         "client_id": config.client_id,
         "erp_url": config.erp_url,
-        "api_key": config.api_key,
-        "api_secret": config.api_secret,
+        "api_key_configured": bool(config.api_key),
+        "api_secret_configured": bool(config.api_secret),
+        "erp_type": config.erp_type,
+        "odoo_db": config.odoo_db,
         "app_name_override": config.app_name_override,
         "is_active": config.is_active,
     }

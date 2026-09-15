@@ -10,6 +10,13 @@ DEFAULT_ERP_URL = os.getenv("ERP_URL", "").rstrip("/")
 DEFAULT_ERP_API_KEY = os.getenv("ERP_API_KEY", "")
 DEFAULT_ERP_API_SECRET = os.getenv("ERP_API_SECRET", "")
 DEFAULT_APP_NAME = os.getenv("ERP_APP_NAME", "")
+DEFAULT_ERP_TYPE = os.getenv("ERP_TYPE", "erpnext").strip().lower() or "erpnext"
+DEFAULT_ODOO_DB = os.getenv("ODOO_DB", "")
+
+
+def _normalize_erp_type(value: str) -> str:
+    normalized = (value or "erpnext").strip().lower()
+    return normalized if normalized in {"erpnext", "odoo"} else "erpnext"
 
 
 def _fallback_config(client_id: str):
@@ -18,6 +25,8 @@ def _fallback_config(client_id: str):
         "erp_url": DEFAULT_ERP_URL,
         "api_key": DEFAULT_ERP_API_KEY,
         "api_secret": DEFAULT_ERP_API_SECRET,
+        "erp_type": _normalize_erp_type(DEFAULT_ERP_TYPE),
+        "odoo_db": DEFAULT_ODOO_DB,
         "app_name_override": DEFAULT_APP_NAME or None,
         "source": "env_fallback",
     }
@@ -39,6 +48,8 @@ def get_client_runtime_config(client_id: str = "DEMO_CLIENT_123"):
             "erp_url": (config.erp_url or "").rstrip("/"),
             "api_key": config.api_key,
             "api_secret": config.api_secret,
+            "erp_type": _normalize_erp_type(config.erp_type),
+            "odoo_db": config.odoo_db or "",
             "app_name_override": config.app_name_override,
             "source": "db",
         }

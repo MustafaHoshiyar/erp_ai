@@ -15,6 +15,22 @@ def _doctype_to_table(doctype_name):
     return doctype_name if doctype_name.startswith("tab") else f"tab{doctype_name}"
 
 
+def _erp_type(schema):
+    return (schema or {}).get("erp_type", "erpnext")
+
+
+def _schema_table(schema, name):
+    if _erp_type(schema) == "odoo":
+        return name
+    return _doctype_to_table(name)
+
+
+def _schema_resource(schema, table_name):
+    if _erp_type(schema) == "odoo":
+        return table_name
+    return _table_to_doctype(table_name)
+
+
 def _build_relation_graph(schema):
     detail_map = get_doctype_detail_map(schema)
     graph = {doctype_name: [] for doctype_name in detail_map}
@@ -25,7 +41,7 @@ def _build_relation_graph(schema):
             fieldname = field.get("fieldname")
             options = field.get("options")
 
-            if fieldtype == "Link" and options:
+            if fieldtype in {"Link", "many2one"} and options:
                 edge = {
                     "kind": "link",
                     "left_doctype": doctype_name,
@@ -69,20 +85,23 @@ def _find_shortest_path(graph, start, goal):
     return None
 
 
-def _format_edge_step(current_doctype, next_doctype, edge):
+def _format_edge_step(current_doctype, next_doctype, edge, schema):
     if edge["kind"] == "link":
-        left_table = _doctype_to_table(edge["left_doctype"])
-        right_table = _doctype_to_table(edge["right_doctype"])
+        left_table = _schema_table(schema, edge["left_doctype"])
+        right_table = _schema_table(schema, edge["right_doctype"])
         left_field = edge["left_field"]
+        target_key = "id" if _erp_type(schema) == "odoo" else "name"
         return (
-            f"`{left_table}`.`{left_field}` links to `{right_table}`.`name`."
-            f" Use this relation when connecting `{_doctype_to_table(current_doctype)}` and"
-            f" `{_doctype_to_table(next_doctype)}`."
+            f"`{left_table}`.`{left_field}` links to `{right_table}`.`{target_key}`."
+            f" Use this relation when connecting `{_schema_table(schema, current_doctype)}` and"
+            f" `{_schema_table(schema, next_doctype)}`."
         )
 
-    parent_table = _doctype_to_table(edge["parent_doctype"])
-    child_table = _doctype_to_table(edge["child_doctype"])
+    parent_table = _schema_table(schema, edge["parent_doctype"])
+    child_table = _schema_table(schema, edge["child_doctype"])
     parent_field = edge["parent_field"]
+    if _erp_type(schema) == "odoo":
+        return f"`{child_table}` references `{parent_table}` through `{parent_table}_id` and `id`."
     return (
         f"`{child_table}` is a child table of `{parent_table}` via `{parent_field}`."
         f" Join with `{child_table}`.`parent` = `{parent_table}`.`name`"
@@ -90,7 +109,7 @@ def _format_edge_step(current_doctype, next_doctype, edge):
     )
 
 
-def _build_path_steps(required_doctypes, graph):
+def _build_path_steps(required_doctypes, graph, schema):
     if not required_doctypes:
         return []
 
@@ -116,19 +135,19 @@ def _build_path_steps(required_doctypes, graph):
             if edge_key in seen_edges:
                 continue
             seen_edges.add(edge_key)
-            steps.append(_format_edge_step(current, nxt, edge))
+            steps.append(_format_edge_step(current, nxt, edge, schema))
 
     return steps
 
 
-def _build_shared_target_hints(required_doctypes, detail_map):
+def _build_shared_target_hints(required_doctypes, detail_map, schema):
     target_map = {}
     hints = []
 
     for doctype_name in required_doctypes:
         detail = detail_map.get(doctype_name, {})
         for field in detail.get("fields", []):
-            if field.get("fieldtype") != "Link" or not field.get("options"):
+            if field.get("fieldtype") not in {"Link", "many2one"} or not field.get("options"):
                 continue
             target_map.setdefault(field["options"], []).append((doctype_name, field.get("fieldname")))
 
@@ -143,9 +162,9 @@ def _build_shared_target_hints(required_doctypes, detail_map):
         for fieldname, doctypes in field_groups.items():
             if len(doctypes) < 2:
                 continue
-            tables = ", ".join(f"`{_doctype_to_table(name)}`" for name in sorted(doctypes))
+            tables = ", ".join(f"`{_schema_table(schema, name)}`" for name in sorted(doctypes))
             hints.append(
-                f"{tables} all have `{fieldname}` linking to `{_doctype_to_table(target_doctype)}`."
+                f"{tables} all have `{fieldname}` linking to `{_schema_table(schema, target_doctype)}`."
                 f" Match those fields when the business logic requires the same {fieldname.replace('_', ' ')}."
             )
 
@@ -155,16 +174,16 @@ def _build_shared_target_hints(required_doctypes, detail_map):
 def build_relation_plan_text(user_prompt, required_tables, schema):
     graph, detail_map = _build_relation_graph(schema)
     required_doctypes = [
-        _table_to_doctype(table_name)
+        _schema_resource(schema, table_name)
         for table_name in required_tables or []
-        if _table_to_doctype(table_name) in graph
+        if _schema_resource(schema, table_name) in graph
     ]
 
     if len(required_doctypes) < 2:
         return ""
 
-    relation_steps = _build_path_steps(required_doctypes, graph)
-    shared_target_hints = _build_shared_target_hints(required_doctypes, detail_map)
+    relation_steps = _build_path_steps(required_doctypes, graph, schema)
+    shared_target_hints = _build_shared_target_hints(required_doctypes, detail_map, schema)
 
     if not relation_steps and not shared_target_hints:
         return ""

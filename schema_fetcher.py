@@ -14,12 +14,20 @@ from urllib.parse import quote
 import httpx
 from dotenv import load_dotenv
 from runtime_config import get_client_runtime_config, sanitize_client_cache_key
+from schema_providers import FrappeSchemaProvider, OdooSchemaProvider
 
 load_dotenv()
 
 CACHE_DIR = os.path.join(os.path.dirname(__file__), "schemas")
 CACHE_TTL_SECONDS = 86400  # 24 Hours
 _LAYOUT_FIELD_TYPES = {"Section Break", "Column Break", "Tab Break", "HTML", "Button", "Heading"}
+
+
+def get_schema_provider(client_id: str):
+    config = get_client_runtime_config(client_id)
+    if config.get("erp_type", "erpnext") == "odoo":
+        return OdooSchemaProvider(config)
+    return FrappeSchemaProvider(config)
 
 
 def _get_cache_path(client_id: str):
@@ -146,31 +154,38 @@ def _fetch_custom_fields(config):
         return []
 
 
-def _table_to_doctype(table_name):
+def _table_to_doctype(table_name, erp_type="erpnext"):
     if not table_name:
         return ""
+    if erp_type == "odoo":
+        return table_name
     return table_name[3:] if table_name.startswith("tab") else table_name
 
 
-def _doctype_to_table(doctype_name):
+def _doctype_to_table(doctype_name, erp_type="erpnext"):
     if not doctype_name:
         return ""
+    if erp_type == "odoo":
+        return doctype_name
     return doctype_name if doctype_name.startswith("tab") else f"tab{doctype_name}"
 
 
 def fetch_and_cache_local_schema(client_id="DEMO_CLIENT_123"):
     """Fetches live schema metadata from ERPNext and caches it locally."""
     config = get_client_runtime_config(client_id)
-    print(f"[SchemaFetcher] Fetching local schema from ERPNext for {client_id}...")
+    erp_type = config.get("erp_type", "erpnext")
+    provider = get_schema_provider(client_id)
+    print(f"[SchemaFetcher] Fetching local schema from {erp_type} for {client_id}...")
 
-    available_doctypes = _fetch_available_doctypes(config)
-    custom_doctypes = _fetch_custom_doctypes(config)
-    custom_fields = _fetch_custom_fields(config)
+    available_doctypes = provider.fetch_available_tables()
+    custom_doctypes = provider.fetch_custom_tables()
+    custom_fields = provider.fetch_custom_fields()
     doctype_details = {dt["name"]: dt for dt in custom_doctypes if dt.get("name")}
 
     schema = {
         "fetched_at": time.time(),
         "fetched_at_readable": time.strftime("%Y-%m-%d %H:%M:%S"),
+        "erp_type": erp_type,
         "available_doctypes": available_doctypes,
         "custom_doctypes": custom_doctypes,
         "custom_fields": custom_fields,
@@ -191,11 +206,13 @@ def get_local_schema(client_id="DEMO_CLIENT_123"):
     """Returns the cached schema. Refreshes if stale or missing new required sections."""
     schema = _load_cached_schema(client_id)
     if schema:
+        configured_erp_type = get_client_runtime_config(client_id).get("erp_type", "erpnext")
         fetched_at = schema.get("fetched_at", 0)
         has_required_sections = all(
             key in schema for key in ("available_doctypes", "custom_doctypes", "custom_fields", "doctype_details")
         )
-        if has_required_sections and (time.time() - fetched_at) < CACHE_TTL_SECONDS:
+        cache_matches_client = schema.get("erp_type", "erpnext") == configured_erp_type
+        if has_required_sections and cache_matches_client and (time.time() - fetched_at) < CACHE_TTL_SECONDS:
             return schema
 
         print("[SchemaFetcher] Cache is stale or missing live schema sections, refreshing...")
@@ -209,12 +226,13 @@ def ensure_doctype_details(required_tables, schema=None, client_id="DEMO_CLIENT_
     Returns the updated schema dict.
     """
     schema = schema or get_local_schema(client_id)
+    erp_type = schema.get("erp_type", "erpnext")
     doctype_details = schema.setdefault("doctype_details", {})
     available_doctypes = {row.get("name") for row in schema.get("available_doctypes", []) if row.get("name")}
 
     required_doctypes = []
     for table_name in required_tables or []:
-        doctype_name = _table_to_doctype(table_name)
+        doctype_name = _table_to_doctype(table_name, erp_type)
         if doctype_name and doctype_name in available_doctypes and doctype_name not in doctype_details:
             required_doctypes.append(doctype_name)
 
@@ -222,10 +240,9 @@ def ensure_doctype_details(required_tables, schema=None, client_id="DEMO_CLIENT_
         return schema
 
     try:
-        config = get_client_runtime_config(client_id)
-        with httpx.Client(timeout=30) as client:
-            for doctype_name in required_doctypes:
-                doctype_details[doctype_name] = _fetch_doctype_detail(client, doctype_name, config)
+        provider = get_schema_provider(client_id)
+        for doctype_name in required_doctypes:
+            doctype_details[doctype_name] = provider.fetch_table_detail(doctype_name)
     except Exception as e:
         print(f"[SchemaFetcher] Error fetching routed doctype details: {e}")
         return schema
@@ -240,21 +257,22 @@ def extract_available_table_names(schema):
     if not schema:
         return tables
 
+    erp_type = schema.get("erp_type", "erpnext")
     for row in schema.get("available_doctypes", []):
         if row.get("name"):
-            tables.add(_doctype_to_table(row["name"]))
+            tables.add(_doctype_to_table(row["name"], erp_type))
 
     for row in schema.get("custom_doctypes", []):
         if row.get("name"):
-            tables.add(_doctype_to_table(row["name"]))
+            tables.add(_doctype_to_table(row["name"], erp_type))
 
     for dt_name in schema.get("doctype_details", {}):
         if dt_name:
-            tables.add(_doctype_to_table(dt_name))
+            tables.add(_doctype_to_table(dt_name, erp_type))
 
     for field in schema.get("custom_fields", []):
         if field.get("dt"):
-            tables.add(_doctype_to_table(field["dt"]))
+            tables.add(_doctype_to_table(field["dt"], erp_type))
 
     return tables
 
@@ -282,11 +300,13 @@ def format_live_doctype_details_for_prompt(schema, required_tables=None):
         return ""
 
     detail_map = schema.get("doctype_details", {})
-    required_doctypes = {_table_to_doctype(table_name) for table_name in (required_tables or [])}
+    erp_type = schema.get("erp_type", "erpnext")
+    required_doctypes = {_table_to_doctype(table_name, erp_type) for table_name in (required_tables or [])}
+    prefix = "tab" if erp_type == "erpnext" else ""
 
     lines = [
-        "### LIVE ERP DOCTYPE DETAILS ###",
-        "Only use the following DocTypes and fields when generating SQL for this tenant.",
+        f"### LIVE {erp_type.upper()} SCHEMA DETAILS ###",
+        "Only use the following tables and fields when generating SQL for this tenant.",
         "",
     ]
 
@@ -304,9 +324,9 @@ def format_live_doctype_details_for_prompt(schema, required_tables=None):
             else:
                 field_strs.append(f"{fieldname} ({fieldtype})")
 
-        lines.append(f"`tab{doctype_name}`: {', '.join(field_strs)}")
+        lines.append(f"`{prefix}{doctype_name}`: {', '.join(field_strs)}")
         for child in detail.get("child_tables", []):
-            lines.append(f"  Child: `tab{child['child_doctype']}` (via field: {child['fieldname']})")
+            lines.append(f"  Child: `{prefix}{child['child_doctype']}` (via field: {child['fieldname']})")
         added_any = True
 
     if not added_any:
@@ -319,9 +339,11 @@ def format_local_schema_for_prompt(schema):
     """
     Converts cached custom schema into a concise text block for injection into the AI's system prompt.
     """
+    erp_type = schema.get("erp_type", "erpnext")
+    prefix = "tab" if erp_type == "erpnext" else ""
     lines = [
         "### CLIENT CUSTOM SCHEMA ###",
-        "The following custom tables and fields are specific to THIS client's ERPNext instance.",
+        f"The following custom tables and fields are specific to THIS client's {erp_type.upper()} instance.",
         "Use these when the user asks about custom or non-standard data.",
         "",
     ]
@@ -329,7 +351,7 @@ def format_local_schema_for_prompt(schema):
     if schema.get("custom_doctypes"):
         lines.append("## CUSTOM DOCTYPES:")
         for dt in schema["custom_doctypes"]:
-            table_name = f"`tab{dt['name']}`"
+            table_name = f"`{prefix}{dt['name']}`"
             field_strs = []
             for field in dt.get("fields", []):
                 fieldtype = field.get("fieldtype", "")
@@ -341,7 +363,7 @@ def format_local_schema_for_prompt(schema):
             lines.append(f"{table_name}: {', '.join(field_strs)}")
 
             for child in dt.get("child_tables", []):
-                lines.append(f"  Child: `tab{child['child_doctype']}` (via field: {child['fieldname']})")
+                lines.append(f"  Child: `{prefix}{child['child_doctype']}` (via field: {child['fieldname']})")
         lines.append("")
 
     if schema.get("custom_fields"):
@@ -361,6 +383,6 @@ def format_local_schema_for_prompt(schema):
                 elif fieldtype not in _LAYOUT_FIELD_TYPES:
                     field_strs.append(f"{fieldname} ({fieldtype})")
             if field_strs:
-                lines.append(f"`tab{dt_name}` added: {', '.join(field_strs)}")
+                lines.append(f"`{prefix}{dt_name}` added: {', '.join(field_strs)}")
 
     return "\n".join(lines)

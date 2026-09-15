@@ -61,6 +61,9 @@ async def get_erp_version(client_id: str = "DEMO_CLIENT_123") -> str | None:
         return _VERSION_CACHE[client_id]
 
     config = get_client_runtime_config(client_id)
+    if config.get("erp_type", "erpnext") != "erpnext":
+        _VERSION_CACHE[client_id] = None
+        return None
     version = await _detect_via_version_endpoint(config)
     if version:
         _VERSION_CACHE[client_id] = version
