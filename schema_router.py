@@ -127,6 +127,7 @@ def filter_schema(
     live_doctype_text: str,
     relation_plan_text: str,
     required_tables: list[str],
+    erp_type: str = "erpnext",
 ) -> str:
     """
     Extracts only the definitions for the required tables from the known schema sources.
@@ -145,7 +146,6 @@ def filter_schema(
     rules_block = []
     in_rules = False
 
-    erp_type = (local_schema or {}).get("erp_type", "erpnext")
     for line in global_schema.split("\n"):
         if erp_type == "erpnext" and "## KEY RELATIONSHIPS" in line:
             in_rules = True
@@ -198,5 +198,6 @@ def get_optimized_schema_context(user_prompt: str, global_schema: str, local_sch
         live_doctype_text,
         relation_plan_text,
         required_tables,
+        erp_type=erp_type,
     )
     return filtered_schema, pass1_tokens, required_tables

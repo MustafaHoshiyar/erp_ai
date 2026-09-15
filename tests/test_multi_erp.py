@@ -5,6 +5,7 @@ from erp_providers import FrappeProvider, OdooProvider, get_provider
 from main import ClientConfigRequest
 from schema_fetcher import extract_available_table_names, format_live_doctype_details_for_prompt
 from schema_planner import build_relation_plan_text
+from schema_router import filter_schema
 from sql_validator import validate_sql
 
 
@@ -86,6 +87,26 @@ class MultiERPTests(unittest.TestCase):
         self.assertEqual(_extract_referenced_tables("SELECT id FROM sale_order", "odoo"), ["sale_order"])
         self.assertEqual(_find_unknown_tables("SELECT id FROM sale_order", schema), [])
         self.assertEqual(_find_unknown_tables("SELECT id FROM missing_table", schema), ["missing_table"])
+
+    def test_schema_filter_accepts_both_erp_types(self):
+        erpnext_schema = filter_schema(
+            "`tabCustomer`: name",
+            "",
+            "",
+            "",
+            ["tabCustomer"],
+            erp_type="erpnext",
+        )
+        odoo_schema = filter_schema(
+            "`res_partner`: id",
+            "",
+            "",
+            "",
+            ["res_partner"],
+            erp_type="odoo",
+        )
+        self.assertIn("tabCustomer", erpnext_schema)
+        self.assertIn("res_partner", odoo_schema)
 
 
 if __name__ == "__main__":
